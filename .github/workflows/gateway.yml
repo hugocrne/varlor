@@ -97,4 +97,5 @@ jobs:
 
       - name: Deployment skipped (no reachable cluster)
         if: ${{ steps.gate.outputs.can_deploy != 'true' }}
-        run: echo "Deploy skipped: provide a cloud-accessible kubeconfig in KUBE_CONFIG to enable."
+        run: |
+          echo "Deploy skipped: provide a cloud-accessible kubeconfig in KUBE_CONFIG to enable."
