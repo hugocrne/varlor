@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: VARLOR_GATEWAY
 
     steps:
       - name: Checkout repository
@@ -34,4 +35,39 @@ jobs:
           context: .
           file: docker/gateway/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/varlor-gateway:latest
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/varlor-gateway:latest
+            ${{ secrets.DOCKER_USERNAME }}/varlor-gateway:${{ github.sha }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: VARLOR_GATEWAY
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: latest
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${KUBE_CONFIG}" > ~/.kube/config
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/gateway/deployment.yaml
+          kubectl apply -f k8s/gateway/service.yaml || true
+          if [ -f k8s/gateway/ingress.yaml ]; then kubectl apply -f k8s/gateway/ingress.yaml; fi
+
+      - name: Update image with current commit SHA
+        run: |
+          kubectl set image deployment/varlor-gateway \
+            gateway=${{ secrets.DOCKER_USERNAME }}/varlor-gateway:${{ github.sha }}
+          kubectl rollout status deployment/varlor-gateway --timeout=180s
