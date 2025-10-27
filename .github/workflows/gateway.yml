@@ -40,10 +40,12 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/varlor-gateway:${{ github.sha }}
 
   deploy:
-    if: ${{ secrets.KUBE_CONFIG && !contains(secrets.KUBE_CONFIG, '127.0.0.1:6443') }}
-    needs: build
+    if: ${{ env.KUBE_CONFIG != '' && !contains(env.KUBE_CONFIG, '127.0.0.1:6443') }}
     runs-on: ubuntu-latest
+    needs: build
     environment: VARLOR_GATEWAY
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
     steps:
       - name: Checkout repository
@@ -58,8 +60,6 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "${KUBE_CONFIG}" > ~/.kube/config
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
       - name: Apply Kubernetes manifests
         run: |
