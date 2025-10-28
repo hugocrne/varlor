@@ -12,8 +12,10 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CALCULATIONS_API_URL=http://calculations-api:8000
+      - PRODUCT_API_URL=http://product-api:80
     depends_on:
       - calculations-api
+      - product-api
       - postgres
     networks:
       - varlor-net
@@ -32,6 +34,22 @@ services:
       - DB_NAME=varlor
       - DB_USER=varlor
       - DB_PASSWORD=varlor
+    depends_on:
+      - postgres
+    networks:
+      - varlor-net
+
+  # 📦 Product API (ASP.NET Core)
+  product-api:
+    container_name: varlor-product
+    build:
+      context: .
+      dockerfile: docker/product-api/Dockerfile
+    ports:
+      - "5091:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
     depends_on:
       - postgres
     networks:

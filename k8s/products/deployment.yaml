@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-api
+  namespace: default
+  labels:
+    app: product-api
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product-api
+  template:
+    metadata:
+      labels:
+        app: product-api
+        component: backend
+    spec:
+      containers:
+        # 📦 Product API (ASP.NET Core)
+        - name: product-api
+          image: ${{ secrets.DOCKER_USERNAME }}/varlor-product:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_URLS
+              value: "http://+:80"
+            # Configuration de la base de données (optionnel)
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: product-secrets
+                  key: db-connection-string
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "300m"
+          livenessProbe:
+            httpGet:
+              path: /weatherforecast  # Endpoint de santé
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /weatherforecast  # Endpoint de santé
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+---
+# 🔐 Secrets for Product API
+apiVersion: v1
+kind: Secret
+metadata:
+  name: product-secrets
+  namespace: default
+type: Opaque
+data:
+  # Exemple de chaîne de connexion (base64 encoded)
+  # Format: "Server=postgres-service;Database=varlor;User Id=varlor;Password=varlor;"
+  db-connection-string: U2VydmVyPXBvc3RncmVzLXNlcnZpY2U7RGF0YWJhc2U9dmFybG9yO1VzZXIgSWQ9dmFybG9yO1Bhc3N3b3JkPXZhcmxvcjs=
