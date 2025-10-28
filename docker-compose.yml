@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+  # 🧠 Gateway Kotlin (Spring Boot)
   gateway:
     container_name: varlor-gateway
     build:
@@ -10,9 +11,53 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - CALCULATIONS_API_URL=http://calculations-api:8000
+    depends_on:
+      - calculations-api
+      - postgres
     networks:
       - varlor-net
 
+  # ⚙️ Calculations API (C++)
+  calculations-api:
+    container_name: varlor-calculations
+    build:
+      context: .
+      dockerfile: docker/calculations-api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=varlor
+      - DB_USER=varlor
+      - DB_PASSWORD=varlor
+    depends_on:
+      - postgres
+    networks:
+      - varlor-net
+
+  # 🗄️ PostgreSQL Database
+  postgres:
+    image: postgres:16
+    container_name: varlor-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=varlor
+      - POSTGRES_USER=varlor
+      - POSTGRES_PASSWORD=varlor
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - varlor-net
+
+# 🔗 Shared network
 networks:
   varlor-net:
     driver: bridge
+
+# 💾 Persistent volume for PostgreSQL
+volumes:
+  pgdata:

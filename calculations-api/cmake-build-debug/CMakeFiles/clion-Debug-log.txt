@@ -1,0 +1,8 @@
+/Users/hugo/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Users/hugo/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja -G Ninja -S /Users/hugo/Perso/Projets/varlor/calculations-api -B /Users/hugo/Perso/Projets/varlor/calculations-api/cmake-build-debug
+-- ✅ OATPP_LIB found at: /usr/local/lib/oatpp-1.4.0/liboatpp.a
+CMake Error at CMakeLists.txt:34 (message):
+  ❌ Impossible de trouver oatpp/base/Config.hpp dans
+  /usr/local/include/oatpp/base
+
+
+-- Configuring incomplete, errors occurred!

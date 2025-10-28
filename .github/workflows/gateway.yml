@@ -1,12 +1,15 @@
-name: Build & Push Gateway
+name: Build & Deploy Varlor Services
 
 on:
   push:
     branches: ["main"]
     paths:
       - "gateway/**"
+      - "calculations-api/**"
       - "docker/gateway/**"
+      - "docker/calculations-api/**"
       - "k8s/gateway/**"
+      - "k8s/calculations/**"
       - ".github/workflows/gateway.yml"
 
 jobs:
@@ -18,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 for Gateway
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -30,7 +33,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push Docker image
+      # 🧱 Build & Push Gateway
+      - name: Build & Push Gateway image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -39,6 +43,17 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/varlor-gateway:latest
             ${{ secrets.DOCKER_USERNAME }}/varlor-gateway:${{ github.sha }}
+
+      # 🧮 Build & Push Calculations API
+      - name: Build & Push Calculations API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/calculations-api/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/varlor-calculations:latest
+            ${{ secrets.DOCKER_USERNAME }}/varlor-calculations:${{ github.sha }}
 
   deploy:
     needs: build
@@ -81,19 +96,33 @@ jobs:
           mkdir -p ~/.kube
           echo "${KUBE_CONFIG}" > ~/.kube/config
 
+      # 🚀 Deploy both services
       - name: Apply Kubernetes manifests
         if: ${{ steps.gate.outputs.can_deploy == 'true' }}
         run: |
-          kubectl apply -f k8s/gateway/deployment.yaml
-          kubectl apply -f k8s/gateway/service.yaml || true
-          if [ -f k8s/gateway/ingress.yaml ]; then kubectl apply -f k8s/gateway/ingress.yaml; fi
+          echo "🚀 Deploying Calculations API + PostgreSQL pod..."
+          kubectl apply -f k8s/calculations/
+          echo "⏳ Waiting for PostgreSQL to be ready..."
+          kubectl wait --for=condition=ready pod -l app=calculations-api -n default --timeout=300s
+          echo "🌐 Deploying Gateway..."
+          kubectl apply -f k8s/gateway/
 
-      - name: Update image with current commit SHA & wait rollout
+      # 🔁 Rollout Gateway
+      - name: Rollout Gateway deployment
         if: ${{ steps.gate.outputs.can_deploy == 'true' }}
         run: |
           kubectl set image deployment/varlor-gateway \
             gateway=${{ secrets.DOCKER_USERNAME }}/varlor-gateway:${{ github.sha }}
           kubectl rollout status deployment/varlor-gateway --timeout=180s
+
+      # 🔁 Rollout Calculations API (same pod as PostgreSQL)
+      - name: Rollout Calculations deployment
+        if: ${{ steps.gate.outputs.can_deploy == 'true' }}
+        run: |
+          kubectl set image deployment/calculations-api \
+            calculations-api=${{ secrets.DOCKER_USERNAME }}/varlor-calculations:${{ github.sha }} \
+            postgres=postgres:16
+          kubectl rollout status deployment/calculations-api --timeout=300s
 
       - name: Deployment skipped (no reachable cluster)
         if: ${{ steps.gate.outputs.can_deploy != 'true' }}

@@ -1,0 +1,201 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calculations-api
+  namespace: default
+  labels:
+    app: calculations-api
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calculations-api
+  template:
+    metadata:
+      labels:
+        app: calculations-api
+        component: backend
+    spec:
+      containers:
+        # 🧮 C++ Calculations API
+        - name: calculations-api
+          image: ${{ secrets.DOCKER_USERNAME }}/varlor-calculations:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              value: "localhost"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "varlor"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: calculations-secrets
+                  key: db-user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: calculations-secrets
+                  key: db-password
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+        # 🗄️ PostgreSQL Database
+        - name: postgres
+          image: postgres:16
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
+              name: postgres
+              protocol: TCP
+          env:
+            - name: POSTGRES_DB
+              value: "varlor"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: calculations-secrets
+                  key: db-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: calculations-secrets
+                  key: db-password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "300m"
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+            - name: postgres-init
+              mountPath: /docker-entrypoint-initdb.d
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - postgres
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+      # 💾 Volumes
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: calculations-pvc
+        - name: postgres-init
+          configMap:
+            name: postgres-init-scripts
+            optional: true
+
+      # 🏗️ Init container to wait for PostgreSQL
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h localhost -p 5432 -U postgres; do
+                echo "Waiting for PostgreSQL..."
+                sleep 2
+              done
+              echo "PostgreSQL is ready!"
+
+---
+# 🗄️ Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: calculations-pvc
+  namespace: default
+  labels:
+    app: calculations-api
+    component: storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard
+
+---
+# 🔐 Secrets for Database
+apiVersion: v1
+kind: Secret
+metadata:
+  name: calculations-secrets
+  namespace: default
+type: Opaque
+data:
+  # Base64 encoded values: echo -n "varlor" | base64
+  db-user: dmFybG9y
+  db-password: dmFybG9y
+
+---
+# 📄 PostgreSQL Init Scripts (Optional)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-scripts
+  namespace: default
+data:
+  init.sql: |
+    -- Create initial database schema
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+    -- Create tables for calculations if needed
+    CREATE TABLE IF NOT EXISTS calculation_history (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        operation VARCHAR(50) NOT NULL,
+        operand1 NUMERIC NOT NULL,
+        operand2 NUMERIC,
+        result NUMERIC NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Create indexes
+    CREATE INDEX IF NOT EXISTS idx_calculation_history_operation ON calculation_history(operation);
+    CREATE INDEX IF NOT EXISTS idx_calculation_history_created_at ON calculation_history(created_at);

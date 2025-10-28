@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: calculations-api-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: calculations-api.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: calculations-api-service
+                port:
+                  number: 8000
+    # Optional: Add path-based routing
+    - host: varlor.local
+      http:
+        paths:
+          - path: /api/calculations
+            pathType: Prefix
+            backend:
+              service:
+                name: calculations-api-service
+                port:
+                  number: 8000
