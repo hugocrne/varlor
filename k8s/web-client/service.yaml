@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-client-service
+  namespace: default
+  labels:
+    app: web-client
+    component: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    app: web-client
+
+---
+# Service pour la communication interne (port alternatif si nécessaire)
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-client-internal
+  namespace: default
+  labels:
+    app: web-client
+    component: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 80
+      protocol: TCP
+      name: http-internal
+  selector:
+    app: web-client
