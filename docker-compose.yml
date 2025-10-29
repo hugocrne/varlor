@@ -13,9 +13,11 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CALCULATIONS_API_URL=http://calculations-api:8000
       - PRODUCT_API_URL=http://product-api:80
+      - AI_API_URL=http://ai-api:3000
     depends_on:
       - calculations-api
       - product-api
+      - ai-api
       - postgres
     networks:
       - varlor-net
@@ -54,6 +56,25 @@ services:
       - postgres
     networks:
       - varlor-net
+
+  # 🤖 AI API (NestJS - Node.js/TypeScript)
+  ai-api:
+    container_name: varlor-ai
+    build:
+      context: .
+      dockerfile: docker/ai-api/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Database connection (optional)
+      - DATABASE_URL=postgresql://varlor:varlor@postgres:5432/varlor
+    depends_on:
+      - postgres
+    networks:
+      - varlor-net
+    restart: unless-stopped
 
   # 🗄️ PostgreSQL Database
   postgres:

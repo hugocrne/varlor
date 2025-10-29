@@ -7,12 +7,15 @@ on:
       - "gateway/**"
       - "calculations-api/**"
       - "product-api/**"
+      - "ai-api/**"
       - "docker/gateway/**"
       - "docker/calculations-api/**"
       - "docker/product-api/**"
+      - "docker/ai-api/**"
       - "k8s/gateway/**"
       - "k8s/calculations/**"
       - "k8s/products/**"
+      - "k8s/ai/**"
       - ".github/workflows/gateway.yml"
 
 jobs:
@@ -69,6 +72,17 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/varlor-product:latest
             ${{ secrets.DOCKER_USERNAME }}/varlor-product:${{ github.sha }}
 
+      # 🤖 Build & Push AI API
+      - name: Build & Push AI API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/ai-api/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/varlor-ai:latest
+            ${{ secrets.DOCKER_USERNAME }}/varlor-ai:${{ github.sha }}
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -118,9 +132,12 @@ jobs:
           kubectl apply -f k8s/calculations/
           echo "📦 Deploying Product API..."
           kubectl apply -f k8s/products/
+          echo "🤖 Deploying AI API..."
+          kubectl apply -f k8s/ai/
           echo "⏳ Waiting for services to be ready..."
           kubectl wait --for=condition=ready pod -l app=calculations-api -n default --timeout=300s
           kubectl wait --for=condition=ready pod -l app=product-api -n default --timeout=300s
+          kubectl wait --for=condition=ready pod -l app=ai-api -n default --timeout=300s
           echo "🌐 Deploying Gateway..."
           kubectl apply -f k8s/gateway/
 
@@ -148,6 +165,14 @@ jobs:
           kubectl set image deployment/product-api \
             product-api=${{ secrets.DOCKER_USERNAME }}/varlor-product:${{ github.sha }}
           kubectl rollout status deployment/product-api --timeout=180s
+
+      # 🔁 Rollout AI API
+      - name: Rollout AI API deployment
+        if: ${{ steps.gate.outputs.can_deploy == 'true' }}
+        run: |
+          kubectl set image deployment/ai-api \
+            ai-api=${{ secrets.DOCKER_USERNAME }}/varlor-ai:${{ github.sha }}
+          kubectl rollout status deployment/ai-api --timeout=180s
 
       - name: Deployment skipped (no reachable cluster)
         if: ${{ steps.gate.outputs.can_deploy != 'true' }}

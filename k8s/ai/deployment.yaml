@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-api
+  namespace: default
+  labels:
+    app: ai-api
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-api
+  template:
+    metadata:
+      labels:
+        app: ai-api
+        component: backend
+    spec:
+      containers:
+        # 🤖 AI API (NestJS - Node.js/TypeScript)
+        - name: ai-api
+          image: ${{ secrets.DOCKER_USERNAME }}/varlor-ai:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            # Configuration de la base de données (optionnel)
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ai-secrets
+                  key: database-url
+            # Variables pour services externes (APIs d'IA, etc.)
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-secrets
+                  key: openai-api-key
+              optional: true
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-secrets
+                  key: anthropic-api-key
+              optional: true
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          # Security context
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+---
+# 🔐 Secrets for AI API
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ai-secrets
+  namespace: default
+type: Opaque
+data:
+  # Database connection string (base64 encoded)
+  # Format: postgresql://varlor:varlor@postgres-service:5432/varlor
+  database-url: cG9zdGdyZXNxbDovdmFybG9yOnZhcmxvckBwb3N0Z3Jlcy1zZXJ2aWNlOjU0MzIvdmFybG9y
+  # API keys (remplacer par tes vraies clés encodées en base64)
+  # openai-api-key: ""
+  # anthropic-api-key: ""
