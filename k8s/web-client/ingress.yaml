@@ -11,11 +11,22 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS, PATCH"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,X-API-Key"
-    # Cache pour les assets statiques
+    # Timeout augmenté pour les requêtes SSR Next.js
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+    # Cache pour les assets statiques Next.js
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+      location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
+      }
+      # Support pour Next.js API routes
+      location /api/ {
+        proxy_pass http://web-client-service:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
       }
 spec:
   ingressClassName: nginx
@@ -30,7 +41,7 @@ spec:
               service:
                 name: web-client-service
                 port:
-                  number: 80
+                  number: 3000
 
     # Route via le domaine principal (application principale)
     - host: varlor.local
@@ -42,7 +53,7 @@ spec:
               service:
                 name: web-client-service
                 port:
-                  number: 80
+                  number: 3000
 
     # Route alternative pour l'app
     - host: app.varlor.local
@@ -54,4 +65,4 @@ spec:
               service:
                 name: web-client-service
                 port:
-                  number: 80
+                  number: 3000

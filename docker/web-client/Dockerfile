@@ -8,8 +8,9 @@ WORKDIR /app
 
 # Copy package files
 COPY web-client/package*.json ./
-COPY web-client/angular.json ./
 COPY web-client/tsconfig*.json ./
+COPY web-client/next.config.mjs ./
+COPY web-client/tailwind.config.ts ./
 
 # Install dependencies
 RUN npm ci && npm cache clean --force
@@ -17,38 +18,46 @@ RUN npm ci && npm cache clean --force
 # Copy source code
 COPY web-client/src ./src
 COPY web-client/public ./public
+COPY web-client/app ./app
 
 # Build the application (production build)
 RUN npm run build
 
 # ------------------------------------------------------------
-# 🚀  RUNTIME STAGE (Nginx)
+# 🚀  RUNTIME STAGE (Node.js)
 # ------------------------------------------------------------
-FROM nginx:alpine AS runtime
+FROM node:20-alpine AS runtime
 
-# Copy custom nginx configuration
-COPY config/web-client/nginx.conf /etc/nginx/nginx.conf
+# Set working directory
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S nextjs
+RUN adduser -S nextjs -u 1001 -G nextjs
+
+# Copy package files and install only production dependencies
+COPY web-client/package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application from build stage
-COPY --from=build /app/dist/web-client /usr/share/nginx/html
+COPY --from=build --chown=nextjs:nextjs /app/.next/standalone ./
+COPY --from=build --chown=nextjs:nextjs /app/.next/static ./.next/static
+COPY --from=build --chown=nextjs:nextjs /app/public ./public
 
-# Change ownership of nginx directories for the existing nginx user
-RUN chown -R nginx:nginx /usr/share/nginx/html
-RUN chown -R nginx:nginx /var/cache/nginx
-RUN chown -R nginx:nginx /var/log/nginx
-RUN chown -R nginx:nginx /etc/nginx/conf.d
-RUN touch /var/run/nginx.pid
-RUN chown -R nginx:nginx /var/run/nginx.pid
-
-# Switch to non-root user (nginx user already exists)
-USER nginx
+# Switch to non-root user
+USER nextjs
 
 # Expose port
-EXPOSE 80
+EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
+# Start the application
+CMD ["node", "server.js"]
