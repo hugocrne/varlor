@@ -1,9 +1,0 @@
-task_groups:
-  - name: project-structure-and-configuration
-    claude_code_subagent: implementer
-  - name: entity-models-creation
-    claude_code_subagent: implementer
-  - name: dbcontext-implementation
-    claude_code_subagent: implementation-verifier
-  - name: integration-testing
-    claude_code_subagent: general-purpose
