@@ -74,8 +74,8 @@ public static class ServiceCollectionExtensions
         // Enable sensitive data logging in development
         services.AddDbContext<VarlorDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
-                   .EnableSensitiveDataLogging()
-                   .EnableDetailedErrors());
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors());
 
         return services;
     }
