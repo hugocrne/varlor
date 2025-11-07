@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using product_api.Data;
+using product_api.Models;
 
 namespace product_api.Extensions;
 
@@ -15,7 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddControllers();
 
         // Add password hasher for user management
-        services.AddSingleton<IPasswordHasher<object>, PasswordHasher<object>>();
+        services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
         return services;
     }

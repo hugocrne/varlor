@@ -28,4 +28,6 @@ public sealed record class UpdateUserDto
     public UserStatus? Status { get; init; }
 
     public DateTime? LastLoginAt { get; init; }
+
+    public DateTime? DeletedAt { get; init; }
 }

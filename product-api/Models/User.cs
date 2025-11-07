@@ -15,6 +15,7 @@ public class User
     public DateTime? LastLoginAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     // Navigation properties
     public Client Client { get; set; } = null!;

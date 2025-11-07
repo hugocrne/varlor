@@ -10,6 +10,7 @@ public class Client
     public ClientStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     // Navigation property for relationship with Users
     public ICollection<User> Users { get; set; } = new List<User>();

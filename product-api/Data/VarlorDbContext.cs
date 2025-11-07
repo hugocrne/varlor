@@ -54,6 +54,10 @@ public class VarlorDbContext : DbContext
                 .HasColumnType("timestamp")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+            entity.Property(e => e.DeletedAt)
+                .HasColumnName("deleted_at")
+                .HasColumnType("timestamp");
+
             // Configure indexes
             entity.HasIndex(e => e.Name).HasDatabaseName("idx_clients_name");
             entity.HasIndex(e => e.Status).HasDatabaseName("idx_clients_status");
@@ -115,6 +119,10 @@ public class VarlorDbContext : DbContext
                 .HasColumnName("updated_at")
                 .HasColumnType("timestamp")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.DeletedAt)
+                .HasColumnName("deleted_at")
+                .HasColumnType("timestamp");
 
             // Configure foreign key relationship to Client
             entity.HasOne(e => e.Client)
