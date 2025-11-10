@@ -1,7 +1,11 @@
+using System.IO;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using product_api.Data;
 using product_api.Middlewares;
+using product_api.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +31,54 @@ builder.Services
     });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
+        {
+            Title = "Varlor API",
+            Version = "v1",
+            Description = "Documentation OpenAPI pour l'API Varlor."
+        });
+
+    var xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+    }
+
+    options.CustomOperationIds(apiDesc =>
+    {
+        var controller = apiDesc.ActionDescriptor.RouteValues.TryGetValue("controller", out var controllerName)
+            ? controllerName
+            : null;
+        var action = apiDesc.ActionDescriptor.RouteValues.TryGetValue("action", out var actionName)
+            ? actionName
+            : null;
+
+        return controller is null || action is null ? null : $"{controller}_{action}";
+    });
+
+    options.TagActionsBy(apiDesc =>
+    {
+        if (!string.IsNullOrEmpty(apiDesc.GroupName))
+        {
+            return new[] { apiDesc.GroupName };
+        }
+
+        if (apiDesc.ActionDescriptor.RouteValues.TryGetValue("controller", out var controller))
+        {
+            return new[] { controller };
+        }
+
+        return new[] { "Endpoints" };
+    });
+    options.DocInclusionPredicate((_, _) => true);
+
+    options.SchemaFilter<EnumSchemaFilter>();
+});
 
 builder.Services.AddCors(options =>
 {
