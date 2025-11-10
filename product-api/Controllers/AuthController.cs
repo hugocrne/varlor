@@ -62,7 +62,7 @@ public class AuthController : ControllerBase
 
         if (user is null)
         {
-            return Unauthorized("Identifiants invalides.");
+            return NotFound("Utilisateur introuvable.");
         }
 
         var verificationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
