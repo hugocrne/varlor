@@ -203,6 +203,11 @@ public class VarlorDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(255);
 
+            entity.Property(e => e.TokenHash)
+                .HasColumnName("token_hash")
+                .IsRequired()
+                .HasMaxLength(128);
+
             entity.Property(e => e.IpAddress)
                 .HasColumnName("ip_address")
                 .IsRequired()
@@ -222,6 +227,18 @@ public class VarlorDbContext : DbContext
                 .HasColumnName("expires_at")
                 .HasColumnType("timestamp");
 
+            entity.Property(e => e.RevokedAt)
+                .HasColumnName("revoked_at")
+                .HasColumnType("timestamp");
+
+            entity.Property(e => e.ReplacedByTokenId)
+                .HasColumnName("replaced_by_token_id")
+                .HasMaxLength(255);
+
+            entity.Property(e => e.RevocationReason)
+                .HasColumnName("revocation_reason")
+                .HasMaxLength(255);
+
             // Configure foreign key relationship to User
             entity.HasOne(e => e.User)
                 .WithMany(u => u.UserSessions)
@@ -232,6 +249,7 @@ public class VarlorDbContext : DbContext
             // Configure indexes
             entity.HasIndex(e => e.UserId).HasDatabaseName("idx_user_sessions_user_id");
             entity.HasIndex(e => e.TokenId).HasDatabaseName("idx_user_sessions_token_id").IsUnique();
+            entity.HasIndex(e => e.TokenHash).HasDatabaseName("idx_user_sessions_token_hash").IsUnique();
             entity.HasIndex(e => e.ExpiresAt).HasDatabaseName("idx_user_sessions_expires_at");
         });
     }

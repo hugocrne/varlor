@@ -11,4 +11,7 @@ public sealed record class UserSessionDto
     public string UserAgent { get; init; } = string.Empty;
     public DateTime CreatedAt { get; init; }
     public DateTime ExpiresAt { get; init; }
+    public DateTime? RevokedAt { get; init; }
+    public string? ReplacedByTokenId { get; init; }
+    public string? RevocationReason { get; init; }
 }

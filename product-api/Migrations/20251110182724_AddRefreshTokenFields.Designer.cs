@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using product_api.Data;
@@ -11,9 +12,11 @@ using product_api.Data;
 namespace product_api.Migrations
 {
     [DbContext(typeof(VarlorDbContext))]
-    partial class VarlorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110182724_AddRefreshTokenFields")]
+    partial class AddRefreshTokenFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

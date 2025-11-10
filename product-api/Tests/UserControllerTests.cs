@@ -11,6 +11,12 @@ namespace product_api.Tests;
 
 public class UserControllerTests : IntegrationTestBase
 {
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        AuthenticateAs(UserRole.ADMIN);
+    }
+
     [Fact]
     public async Task GetUsers_RetourneUtilisateursActifs()
     {

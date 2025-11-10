@@ -10,6 +10,9 @@ public sealed record class UpdateUserSessionDto
     [MaxLength(255)]
     public string? TokenId { get; init; }
 
+    [MaxLength(128)]
+    public string? TokenHash { get; init; }
+
     [MaxLength(255)]
     public string? IpAddress { get; init; }
 

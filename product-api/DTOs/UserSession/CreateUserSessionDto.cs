@@ -13,6 +13,10 @@ public sealed record class CreateUserSessionDto
     public string TokenId { get; init; } = string.Empty;
 
     [Required]
+    [MaxLength(128)]
+    public string TokenHash { get; init; } = string.Empty;
+
+    [Required]
     [MaxLength(255)]
     public string IpAddress { get; init; } = string.Empty;
 

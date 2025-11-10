@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using product_api.DTOs.UserSession;
 using product_api.Models;
 using Xunit;
@@ -10,6 +12,12 @@ namespace product_api.Tests;
 
 public class UserSessionControllerTests : IntegrationTestBase
 {
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        AuthenticateAs(UserRole.ADMIN);
+    }
+
     [Fact]
     public async Task GetUserSessions_RetourneListe()
     {
@@ -20,6 +28,7 @@ public class UserSessionControllerTests : IntegrationTestBase
             Id = Guid.NewGuid(),
             UserId = userId,
             TokenId = Guid.NewGuid().ToString(),
+            TokenHash = HashToken(Guid.NewGuid().ToString()),
             IpAddress = "127.0.0.1",
             UserAgent = "TestAgent",
             CreatedAt = DateTime.UtcNow,
@@ -47,6 +56,7 @@ public class UserSessionControllerTests : IntegrationTestBase
         {
             UserId = userId,
             TokenId = Guid.NewGuid().ToString(),
+            TokenHash = HashToken(Guid.NewGuid().ToString()),
             IpAddress = "127.0.0.1",
             UserAgent = "TestAgent",
             ExpiresAt = DateTime.UtcNow.AddHours(2)
@@ -70,6 +80,7 @@ public class UserSessionControllerTests : IntegrationTestBase
         {
             UserId = userId,
             TokenId = Guid.NewGuid().ToString(),
+            TokenHash = HashToken(Guid.NewGuid().ToString()),
             IpAddress = "127.0.0.1",
             UserAgent = "TestAgent",
             ExpiresAt = DateTime.UtcNow.AddMinutes(-5)
@@ -90,6 +101,7 @@ public class UserSessionControllerTests : IntegrationTestBase
             Id = Guid.NewGuid(),
             UserId = userId,
             TokenId = tokenId,
+            TokenHash = HashToken(tokenId),
             IpAddress = "127.0.0.1",
             UserAgent = "Agent",
             CreatedAt = DateTime.UtcNow,
@@ -101,6 +113,7 @@ public class UserSessionControllerTests : IntegrationTestBase
         {
             UserId = userId,
             TokenId = tokenId,
+            TokenHash = HashToken(tokenId),
             IpAddress = "127.0.0.2",
             UserAgent = "Agent2",
             ExpiresAt = DateTime.UtcNow.AddHours(2)
@@ -119,6 +132,7 @@ public class UserSessionControllerTests : IntegrationTestBase
             Id = Guid.NewGuid(),
             UserId = userId,
             TokenId = Guid.NewGuid().ToString(),
+            TokenHash = HashToken(Guid.NewGuid().ToString()),
             IpAddress = "127.0.0.10",
             UserAgent = "DeleteAgent",
             CreatedAt = DateTime.UtcNow,
@@ -174,6 +188,13 @@ public class UserSessionControllerTests : IntegrationTestBase
         await DbContext.SaveChangesAsync();
 
         return user.Id;
+    }
+
+    private static string HashToken(string value)
+    {
+        var bytes = Encoding.UTF8.GetBytes(value);
+        var hash = SHA256.HashData(bytes);
+        return Convert.ToBase64String(hash);
     }
 }
 

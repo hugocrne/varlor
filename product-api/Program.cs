@@ -81,6 +81,7 @@ builder.Services.AddSwaggerGen(options =>
     options.DocInclusionPredicate((_, _) => true);
 
     options.SchemaFilter<EnumSchemaFilter>();
+    options.OperationFilter<AuthorizeOperationFilter>();
 
     var securityScheme = new OpenApiSecurityScheme
     {

@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +20,11 @@ namespace product_api.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private static readonly TimeSpan TokenLifetime = TimeSpan.FromHours(1);
+    private static readonly TimeSpan AccessTokenLifetime = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan RefreshTokenLifetime = TimeSpan.FromDays(14);
+    private const int RefreshTokenByteLength = 64;
+    private const string RevocationReasonUserLogout = "LOGOUT";
+    private const string RevocationReasonRotation = "ROTATED";
 
     private readonly VarlorDbContext _context;
     private readonly IConfiguration _configuration;
@@ -76,10 +83,21 @@ public class AuthController : ControllerBase
             user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
         }
 
-        var response = GenerateToken(user);
+        if (user.Status != UserStatus.ACTIVE)
+        {
+            return Unauthorized("Le compte utilisateur est inactif.");
+        }
 
-        user.LastLoginAt = DateTime.UtcNow;
-        user.UpdatedAt = DateTime.UtcNow;
+        await CleanupExpiredSessionsAsync(user.Id, cancellationToken);
+
+        var now = DateTime.UtcNow;
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        var userAgent = Request.Headers["User-Agent"].ToString();
+
+        var tokenPair = CreateTokenPair(user, ipAddress, userAgent, now);
+
+        user.LastLoginAt = now;
+        user.UpdatedAt = now;
 
         try
         {
@@ -87,13 +105,199 @@ public class AuthController : ControllerBase
         }
         catch (DbUpdateException exception)
         {
-            _logger.LogError(exception, "Échec de mise à jour de la date de dernière connexion pour l'utilisateur {UserId}", user.Id);
+            _logger.LogError(exception, "Échec lors de la persistance de la session pour l'utilisateur {UserId}", user.Id);
+            return StatusCode(StatusCodes.Status500InternalServerError, "Échec de la création de la session.");
         }
+
+        var response = new LoginResponseDto
+        {
+            AccessToken = tokenPair.AccessToken,
+            RefreshToken = tokenPair.RefreshToken,
+            ExpiresAt = tokenPair.ExpiresAt,
+            RefreshExpiresAt = tokenPair.RefreshExpiresAt
+        };
 
         return Ok(response);
     }
 
-    private LoginResponseDto GenerateToken(User user)
+    /// <summary>
+    /// Permet de régénérer un couple de jetons à partir d'un refresh token valide.
+    /// </summary>
+    /// <param name="request">Refresh token à échanger.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    [HttpPost("refresh")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(TokenPairResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<TokenPairResponseDto>> Refresh(
+        [FromBody] RefreshTokenRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var tokenHash = HashRefreshToken(request.RefreshToken);
+
+        var session = await _context.UserSessions
+            .Include(entity => entity.User)
+            .FirstOrDefaultAsync(
+                entity => entity.TokenHash == tokenHash,
+                cancellationToken);
+
+        if (session is null)
+        {
+            return Unauthorized("Refresh token invalide.");
+        }
+
+        if (session.RevokedAt is not null || session.ExpiresAt <= DateTime.UtcNow)
+        {
+            return Unauthorized("Refresh token expiré ou révoqué.");
+        }
+
+        if (session.User.DeletedAt is not null || session.User.Status != UserStatus.ACTIVE)
+        {
+            return Unauthorized("Utilisateur invalide.");
+        }
+
+        await CleanupExpiredSessionsAsync(session.UserId, cancellationToken);
+
+        var now = DateTime.UtcNow;
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+        var userAgent = Request.Headers["User-Agent"].ToString();
+
+        var tokenPair = CreateTokenPair(session.User, ipAddress, userAgent, now, session);
+
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException exception)
+        {
+            _logger.LogError(exception, "Échec lors de la rotation du refresh token pour la session {SessionId}", session.Id);
+            return StatusCode(StatusCodes.Status500InternalServerError, "Échec de la rotation du refresh token.");
+        }
+
+        return Ok(tokenPair);
+    }
+
+    /// <summary>
+    /// Révoque le refresh token courant (et optionnellement toutes les sessions actives de l'utilisateur).
+    /// </summary>
+    /// <param name="request">Refresh token à révoquer.</param>
+    /// <param name="cancellationToken">Jeton d'annulation.</param>
+    [HttpPost("logout")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Logout(
+        [FromBody] LogoutRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+
+        var tokenHash = HashRefreshToken(request.RefreshToken);
+
+        var session = await _context.UserSessions
+            .FirstOrDefaultAsync(
+                entity => entity.TokenHash == tokenHash,
+                cancellationToken);
+
+        if (session is null)
+        {
+            return NoContent();
+        }
+
+        var now = DateTime.UtcNow;
+
+        if (request.RevokeAllSessions)
+        {
+            var sessions = await _context.UserSessions
+                .Where(entity => entity.UserId == session.UserId && entity.RevokedAt == null)
+                .ToListAsync(cancellationToken);
+
+            foreach (var userSession in sessions)
+            {
+                userSession.RevokedAt = now;
+                userSession.RevocationReason = RevocationReasonUserLogout;
+                userSession.ReplacedByTokenId = null;
+            }
+        }
+        else
+        {
+            if (session.RevokedAt is null)
+            {
+                session.RevokedAt = now;
+                session.RevocationReason = RevocationReasonUserLogout;
+                session.ReplacedByTokenId = null;
+            }
+        }
+
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException exception)
+        {
+            _logger.LogError(exception, "Échec lors de la révocation de la session {SessionId}", session.Id);
+            return StatusCode(StatusCodes.Status500InternalServerError, "Échec de la révocation du refresh token.");
+        }
+
+        return NoContent();
+    }
+
+    private TokenPairResponseDto CreateTokenPair(
+        User user,
+        string ipAddress,
+        string userAgent,
+        DateTime utcNow,
+        UserSession? sessionToRevoke = null)
+    {
+        var issuedAt = new DateTimeOffset(utcNow, TimeSpan.Zero);
+        var accessTokenExpiresAt = issuedAt.Add(AccessTokenLifetime);
+        var refreshTokenExpiresAt = issuedAt.Add(RefreshTokenLifetime);
+        var refreshToken = GenerateRefreshToken();
+        var refreshTokenHash = HashRefreshToken(refreshToken);
+        var newTokenId = Guid.NewGuid().ToString("N");
+
+        var session = new UserSession
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            TokenId = newTokenId,
+            TokenHash = refreshTokenHash,
+            IpAddress = Truncate(ipAddress, 45),
+            UserAgent = Truncate(string.IsNullOrWhiteSpace(userAgent) ? "unknown" : userAgent, 500),
+            CreatedAt = utcNow,
+            ExpiresAt = refreshTokenExpiresAt.UtcDateTime
+        };
+
+        if (sessionToRevoke is not null)
+        {
+            sessionToRevoke.RevokedAt = utcNow;
+            sessionToRevoke.RevocationReason = RevocationReasonRotation;
+            sessionToRevoke.ReplacedByTokenId = newTokenId;
+        }
+
+        _context.UserSessions.Add(session);
+
+        var accessToken = GenerateAccessToken(user, accessTokenExpiresAt);
+
+        return new TokenPairResponseDto
+        {
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            ExpiresAt = accessTokenExpiresAt,
+            RefreshExpiresAt = refreshTokenExpiresAt
+        };
+    }
+
+    private string GenerateAccessToken(User user, DateTimeOffset expiresAt)
     {
         var key = _configuration["Jwt:Key"];
         var issuer = _configuration["Jwt:Issuer"];
@@ -106,8 +310,6 @@ public class AuthController : ControllerBase
 
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-
-        var expiresAt = DateTimeOffset.UtcNow.Add(TokenLifetime);
 
         var claims = new List<Claim>
         {
@@ -125,13 +327,45 @@ public class AuthController : ControllerBase
             expires: expiresAt.UtcDateTime,
             signingCredentials: signingCredentials);
 
-        var encodedToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+    }
 
-        return new LoginResponseDto
+    private static string GenerateRefreshToken()
+    {
+        Span<byte> buffer = stackalloc byte[RefreshTokenByteLength];
+        RandomNumberGenerator.Fill(buffer);
+        return Convert.ToBase64String(buffer);
+    }
+
+    private static string HashRefreshToken(string refreshToken)
+    {
+        var refreshTokenBytes = Encoding.UTF8.GetBytes(refreshToken);
+        var hash = SHA256.HashData(refreshTokenBytes);
+        return Convert.ToBase64String(hash);
+    }
+
+    private async Task CleanupExpiredSessionsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var now = DateTime.UtcNow;
+
+        var expiredSessions = await _context.UserSessions
+            .Where(session => session.UserId == userId && session.ExpiresAt <= now)
+            .ToListAsync(cancellationToken);
+
+        if (expiredSessions.Count > 0)
         {
-            Token = encodedToken,
-            ExpiresAt = expiresAt
-        };
+            _context.UserSessions.RemoveRange(expiredSessions);
+        }
+    }
+
+    private static string Truncate(string value, int maxLength)
+    {
+        if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+        {
+            return value;
+        }
+
+        return value[..maxLength];
     }
 }
 

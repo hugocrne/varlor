@@ -35,10 +35,13 @@ public class UserSessionController : ControllerBase
                 Id = session.Id,
                 UserId = session.UserId,
                 TokenId = session.TokenId,
+                ReplacedByTokenId = session.ReplacedByTokenId,
                 IpAddress = session.IpAddress,
                 UserAgent = session.UserAgent,
                 CreatedAt = session.CreatedAt,
-                ExpiresAt = session.ExpiresAt
+                ExpiresAt = session.ExpiresAt,
+                RevokedAt = session.RevokedAt,
+                RevocationReason = session.RevocationReason
             })
             .ToListAsync(cancellationToken);
 
@@ -87,11 +90,21 @@ public class UserSessionController : ControllerBase
             return Conflict("Un jeton de session identique existe déjà.");
         }
 
+        var tokenHashAlreadyExists = await _context.UserSessions
+            .AsNoTracking()
+            .AnyAsync(session => session.TokenHash == dto.TokenHash, cancellationToken);
+
+        if (tokenHashAlreadyExists)
+        {
+            return Conflict("Un jeton de session équivalent existe déjà.");
+        }
+
         var session = new UserSession
         {
             Id = Guid.NewGuid(),
             UserId = dto.UserId,
             TokenId = dto.TokenId,
+            TokenHash = dto.TokenHash,
             IpAddress = dto.IpAddress,
             UserAgent = dto.UserAgent,
             CreatedAt = DateTime.UtcNow,
@@ -107,7 +120,7 @@ public class UserSessionController : ControllerBase
     [HttpPatch("{id:guid}")]
     public async Task<ActionResult<UserSessionDto>> UpdateUserSession(Guid id, UpdateUserSessionDto dto, CancellationToken cancellationToken)
     {
-        if (dto.UserId is null && dto.TokenId is null && dto.IpAddress is null && dto.UserAgent is null && dto.ExpiresAt is null)
+        if (dto.UserId is null && dto.TokenId is null && dto.TokenHash is null && dto.IpAddress is null && dto.UserAgent is null && dto.ExpiresAt is null)
         {
             return BadRequest("Aucune donnée de mise à jour fournie.");
         }
@@ -146,6 +159,20 @@ public class UserSessionController : ControllerBase
             }
 
             session.TokenId = dto.TokenId;
+        }
+
+        if (dto.TokenHash is not null)
+        {
+            var tokenHashAlreadyExists = await _context.UserSessions
+                .AsNoTracking()
+                .AnyAsync(entity => entity.TokenHash == dto.TokenHash && entity.Id != session.Id, cancellationToken);
+
+            if (tokenHashAlreadyExists)
+            {
+                return Conflict("Un jeton de session équivalent existe déjà.");
+            }
+
+            session.TokenHash = dto.TokenHash;
         }
 
         if (dto.IpAddress is not null)
@@ -198,10 +225,13 @@ public class UserSessionController : ControllerBase
             Id = session.Id,
             UserId = session.UserId,
             TokenId = session.TokenId,
+            ReplacedByTokenId = session.ReplacedByTokenId,
             IpAddress = session.IpAddress,
             UserAgent = session.UserAgent,
             CreatedAt = session.CreatedAt,
-            ExpiresAt = session.ExpiresAt
+            ExpiresAt = session.ExpiresAt,
+            RevokedAt = session.RevokedAt,
+            RevocationReason = session.RevocationReason
         };
     }
 }
