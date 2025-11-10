@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using product_api.Data;
@@ -12,6 +13,7 @@ using product_api.Models;
 namespace product_api.Controllers;
 
 [ApiController]
+[Authorize(Roles = "OWNER,ADMIN,MEMBER")]
 [Route("api/[controller]")]
 public class UserPreferenceController : ControllerBase
 {

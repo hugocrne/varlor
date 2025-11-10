@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using product_api.Data;
@@ -15,6 +16,7 @@ namespace product_api.Controllers;
 /// Expose les opérations REST pour l’entité Client avec gestion du soft delete.
 /// </summary>
 [ApiController]
+[Authorize(Roles = "OWNER,ADMIN,SERVICE")]
 [Route("api/[controller]")]
 public class ClientController : ControllerBase
 {

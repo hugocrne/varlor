@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace product_api.Controllers;
 /// Expose les opérations REST pour l’entité User avec gestion du soft delete et hachage des mots de passe.
 /// </summary>
 [ApiController]
+[Authorize(Roles = "OWNER,ADMIN,MEMBER")]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
