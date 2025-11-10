@@ -78,6 +78,30 @@ builder.Services.AddSwaggerGen(options =>
     options.DocInclusionPredicate((_, _) => true);
 
     options.SchemaFilter<EnumSchemaFilter>();
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Authentification JWT. Saisissez: Bearer {votre token}.",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+
+    options.AddSecurityDefinition("Bearer", securityScheme);
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            securityScheme,
+            Array.Empty<string>()
+        }
+    });
 });
 
 builder.Services.AddCors(options =>
