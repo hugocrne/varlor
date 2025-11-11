@@ -1,7 +1,10 @@
 #include "AnalysisController.hpp"
 
 #include "../Core/DataPreprocessor.hpp"
+#include "../Core/IndicatorEngine.hpp"
 #include "../Models/PreprocessingResult.hpp"
+#include "../Models/OperationDefinition.hpp"
+#include "../Models/OperationResult.hpp"
 
 #include "oatpp/core/macro/codegen.hpp"
 #include "oatpp/web/protocol/http/Http.hpp"
@@ -34,6 +37,7 @@ using varlor::models::FieldValue;
 using varlor::models::PreprocessingResult;
 using varlor::models::PreprocessingReport;
 using varlor::models::MetaInfo;
+using varlor::core::IndicatorEngine;
 
 std::string toStdString(const oatpp::String& value) {
     if (!value) {
@@ -70,6 +74,7 @@ struct ParsedRequest {
     bool autodetect{false};
     std::optional<double> outlierMultiplier;
     Dataset dataset;
+    std::vector<varlor::models::OperationDefinition> operations;
 };
 
 struct ColumnCollector {
@@ -476,6 +481,101 @@ Dataset buildDatasetFromJson(const oatpp::Any& dataAny) {
     return dataset;
 }
 
+std::vector<varlor::models::OperationDefinition> parseOperationsFromJson(
+    const oatpp::List<oatpp::Object<AnalysisOperationDefinitionDto>>& operationsDto) {
+    std::vector<varlor::models::OperationDefinition> operations;
+    if (!operationsDto) {
+        return operations;
+    }
+
+    operations.reserve(operationsDto->size());
+    for (const auto& opDto : *operationsDto) {
+        if (!opDto || !opDto->expr) {
+            throw RequestValidationError("Chaque opération doit contenir le champ `expr`.");
+        }
+
+        varlor::models::OperationDefinition operation;
+        operation.expr = trimCopy(toStdString(opDto->expr));
+        if (operation.expr.empty()) {
+            throw RequestValidationError("Le champ `expr` d'une opération ne peut pas être vide.");
+        }
+
+        if (opDto->alias && !opDto->alias->empty()) {
+            const auto alias = trimCopy(toStdString(opDto->alias));
+            if (!alias.empty()) {
+                operation.alias = alias;
+            }
+        }
+
+        if (opDto->params && !opDto->params->empty()) {
+            std::unordered_map<std::string, std::string> params;
+            for (const auto& entry : *opDto->params) {
+                if (!entry.first) {
+                    throw RequestValidationError("Clé de paramètre invalide dans `operations.params`.");
+                }
+                params.emplace(toStdString(entry.first), toStdString(entry.second));
+            }
+            if (!params.empty()) {
+                operation.params = std::move(params);
+            }
+        }
+
+        operations.push_back(std::move(operation));
+    }
+
+    return operations;
+}
+
+std::vector<varlor::models::OperationDefinition> parseOperationsFromYaml(const YAML::Node& root) {
+    std::vector<varlor::models::OperationDefinition> operations;
+    const YAML::Node operationsNode = root["operations"];
+    if (!operationsNode) {
+        return operations;
+    }
+
+    if (!operationsNode.IsSequence()) {
+        throw RequestValidationError("Le champ `operations` doit être une séquence YAML.");
+    }
+
+    for (const auto& item : operationsNode) {
+        if (!item.IsMap()) {
+            throw RequestValidationError("Chaque entrée de `operations` doit être un mapping.");
+        }
+
+        const YAML::Node exprNode = item["expr"];
+        if (!exprNode || exprNode.IsNull()) {
+            throw RequestValidationError("Chaque opération doit contenir le champ `expr`.");
+        }
+
+        varlor::models::OperationDefinition operation;
+        operation.expr = trimCopy(exprNode.as<std::string>());
+        if (operation.expr.empty()) {
+            throw RequestValidationError("Le champ `expr` d'une opération ne peut pas être vide.");
+        }
+
+        if (const YAML::Node aliasNode = item["alias"]; aliasNode && !aliasNode.IsNull()) {
+            const auto alias = trimCopy(aliasNode.as<std::string>());
+            if (!alias.empty()) {
+                operation.alias = alias;
+            }
+        }
+
+        if (const YAML::Node paramsNode = item["params"]; paramsNode && paramsNode.IsMap()) {
+            std::unordered_map<std::string, std::string> params;
+            for (auto it = paramsNode.begin(); it != paramsNode.end(); ++it) {
+                params.emplace(it->first.Scalar(), it->second.Scalar());
+            }
+            if (!params.empty()) {
+                operation.params = std::move(params);
+            }
+        }
+
+        operations.push_back(std::move(operation));
+    }
+
+    return operations;
+}
+
 ParsedRequest parseJsonRequest(const oatpp::String& body, const std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>& mapper) {
     oatpp::Object<AnalysisPreprocessRequestDto> requestDto;
     try {
@@ -509,6 +609,7 @@ ParsedRequest parseJsonRequest(const oatpp::String& body, const std::shared_ptr<
     }
 
     request.dataset = buildDatasetFromJson(requestDto->data);
+    request.operations = parseOperationsFromJson(requestDto->operations);
     return request;
 }
 
@@ -552,6 +653,7 @@ ParsedRequest parseYamlRequest(const oatpp::String& body) {
     }
 
     request.dataset = buildDatasetFromYaml(root["data"]);
+    request.operations = parseOperationsFromYaml(root);
     return request;
 }
 
@@ -580,6 +682,75 @@ oatpp::Object<AnalysisDatasetDto> datasetToDto(const Dataset& dataset) {
     return dto;
 }
 
+std::string operationStatusToString(varlor::models::OperationStatus status) {
+    return status == varlor::models::OperationStatus::Success ? "success" : "error";
+}
+
+oatpp::Any operationResultValueToAny(const varlor::models::OperationResult& result) {
+    if (std::holds_alternative<double>(result.result)) {
+        return oatpp::Any(oatpp::Float64(std::get<double>(result.result)));
+    }
+    if (std::holds_alternative<std::vector<double>>(result.result)) {
+        auto list = oatpp::List<oatpp::Float64>::createShared();
+        for (double value : std::get<std::vector<double>>(result.result)) {
+            list->push_back(oatpp::Float64(value));
+        }
+        return oatpp::Any(list);
+    }
+    return oatpp::Any(nullptr);
+}
+
+oatpp::List<oatpp::Object<AnalysisOperationResultDto>> operationsResultToDto(
+    const std::vector<varlor::models::OperationResult>& operations) {
+    if (operations.empty()) {
+        return nullptr;
+    }
+
+    auto list = oatpp::List<oatpp::Object<AnalysisOperationResultDto>>::createShared();
+    for (const auto& operation : operations) {
+        auto dto = AnalysisOperationResultDto::createShared();
+        dto->expr = oatpp::String(operation.expr);
+        dto->status = oatpp::String(operationStatusToString(operation.status));
+        dto->result = operationResultValueToAny(operation);
+        if (operation.errorMessage.has_value()) {
+            dto->error_message = oatpp::String(operation.errorMessage.value());
+        }
+        dto->executed_at = oatpp::String(operation.executedAt);
+        list->push_back(dto);
+    }
+    return list;
+}
+
+YAML::Node operationsResultToYaml(const std::vector<varlor::models::OperationResult>& operations) {
+    YAML::Node node(YAML::NodeType::Sequence);
+    for (const auto& operation : operations) {
+        YAML::Node entry;
+        entry["expr"] = operation.expr;
+        entry["status"] = operationStatusToString(operation.status);
+
+        if (std::holds_alternative<double>(operation.result)) {
+            entry["result"] = std::get<double>(operation.result);
+        } else if (std::holds_alternative<std::vector<double>>(operation.result)) {
+            YAML::Node values(YAML::NodeType::Sequence);
+            for (double value : std::get<std::vector<double>>(operation.result)) {
+                values.push_back(value);
+            }
+            entry["result"] = values;
+        } else {
+            entry["result"] = YAML::Node();
+            entry["result"] = YAML::Null;
+        }
+
+        if (operation.errorMessage.has_value()) {
+            entry["error_message"] = operation.errorMessage.value();
+        }
+
+        entry["executed_at"] = operation.executedAt;
+        node.push_back(entry);
+    }
+    return node;
+}
+
 oatpp::Object<AnalysisPreprocessingReportDto> reportToDto(const PreprocessingReport& report) {
     auto dto = AnalysisPreprocessingReportDto::createShared();
     dto->input_row_count = oatpp::Int64(static_cast<v_int64>(report.getInputRowCount()));
@@ -595,11 +766,16 @@ oatpp::Object<AnalysisPreprocessingReportDto> reportToDto(const PreprocessingRep
     return dto;
 }
 
-oatpp::Object<AnalysisPreprocessResponseDto> resultToDto(const PreprocessingResult& result) {
+oatpp::Object<AnalysisPreprocessResponseDto> resultToDto(
+    const PreprocessingResult& result,
+    const std::vector<varlor::models::OperationResult>& operations) {
     auto dto = AnalysisPreprocessResponseDto::createShared();
     dto->cleaned_dataset = datasetToDto(result.cleanedDataset);
     dto->outliers_dataset = datasetToDto(result.outliersDataset);
     dto->report = reportToDto(result.report);
+    if (auto list = operationsResultToDto(operations); list) {
+        dto->operation_results = list;
+    }
     return dto;
 }
 
@@ -631,7 +807,9 @@ YAML::Node datasetToYaml(const Dataset& dataset) {
     return node;
 }
 
-YAML::Node responseToYaml(const PreprocessingResult& result) {
+YAML::Node responseToYaml(
+    const PreprocessingResult& result,
+    const std::vector<varlor::models::OperationResult>& operations) {
     YAML::Node root;
     root["report"]["input_row_count"] = static_cast<long long>(result.report.getInputRowCount());
     root["report"]["output_row_count"] = static_cast<long long>(result.report.getOutputRowCount());
@@ -646,6 +824,9 @@ YAML::Node responseToYaml(const PreprocessingResult& result) {
 
     root["cleaned_dataset"] = datasetToYaml(result.cleanedDataset);
     root["outliers_dataset"] = datasetToYaml(result.outliersDataset);
+    if (!operations.empty()) {
+        root["operation_results"] = operationsResultToYaml(operations);
+    }
     return root;
 }
 
@@ -726,15 +907,21 @@ std::shared_ptr<AnalysisController::OutgoingResponse> AnalysisController::handle
         varlor::core::DataPreprocessor preprocessor(extractOutlierMultiplier(parsed.outlierMultiplier));
         PreprocessingResult result = preprocessor.process(parsed.dataset);
 
+        std::vector<varlor::models::OperationResult> operationResults;
+        if (!parsed.operations.empty()) {
+            IndicatorEngine engine;
+            operationResults = engine.execute(result.cleanedDataset, parsed.operations);
+        }
+
         if (responseFormat == ResponseFormat::Yaml) {
-            const YAML::Node yaml = responseToYaml(result);
+            const YAML::Node yaml = responseToYaml(result, operationResults);
             const std::string serialized = YAML::Dump(yaml);
             auto response = createResponse(oatpp::web::protocol::http::Status::CODE_200, oatpp::String(serialized));
             response->putHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE, std::string(kMimeYamlPrimary));
             return response;
         }
 
-        auto dto = resultToDto(result);
+        auto dto = resultToDto(result, operationResults);
         auto response = createDtoResponse(oatpp::web::protocol::http::Status::CODE_200, dto);
         response->putHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE, std::string(kMimeJson));
         return response;

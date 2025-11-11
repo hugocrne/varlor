@@ -15,8 +15,13 @@ if(oatpp_FOUND)
     add_executable(calculations_api
         main.cpp
         Core/DataPreprocessor.cpp
+        Core/BuiltinOperations.cpp
+        Core/MathOperationParser.cpp
+        Core/ExpressionExecutor.cpp
+        Core/IndicatorEngine.cpp
         Controllers/AnalysisController.cpp
     )
+    target_include_directories(calculations_api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/exprtk)
     # ✅ Lier Oat++ automatiquement
     target_link_libraries(calculations_api PRIVATE oatpp::oatpp yaml-cpp::yaml-cpp)
 else()
@@ -56,9 +61,17 @@ catch_discover_tests(test_models)
 # Tests pour le cœur de logique
 add_executable(test_core
     tests/core/test_DataPreprocessor.cpp
+    tests/core/test_BuiltinOperations.cpp
+    tests/core/test_ExpressionExecutor.cpp
+    tests/core/test_IndicatorEngine.cpp
     Core/DataPreprocessor.cpp
+    Core/BuiltinOperations.cpp
+    Core/MathOperationParser.cpp
+    Core/ExpressionExecutor.cpp
+    Core/IndicatorEngine.cpp
 )
 
+target_include_directories(test_core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/exprtk)
 target_link_libraries(test_core PRIVATE Catch2::Catch2WithMain)
 
 catch_discover_tests(test_core)
@@ -67,8 +80,13 @@ add_executable(test_controllers
     tests/controllers/test_AnalysisController.cpp
     Controllers/AnalysisController.cpp
     Core/DataPreprocessor.cpp
+    Core/BuiltinOperations.cpp
+    Core/MathOperationParser.cpp
+    Core/ExpressionExecutor.cpp
+    Core/IndicatorEngine.cpp
 )
 
+target_include_directories(test_controllers PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/exprtk)
 target_link_libraries(test_controllers PRIVATE Catch2::Catch2WithMain oatpp::oatpp oatpp::oatpp-test yaml-cpp::yaml-cpp)
 
 catch_discover_tests(test_controllers)

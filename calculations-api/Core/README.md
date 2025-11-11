@@ -16,6 +16,25 @@ Le `DataPreprocessor` constitue la brique centrale du moteur de pré-analyse : i
   - `outliersDataset` : lignes marquées comme outliers, conservées pour audit.
   - `report` : métriques agrégées (lignes, outliers, valeurs imputées, champs normalisés).
 
+## Fonctions supportées
+Le moteur `IndicatorEngine` complète le prétraitement en exposant des opérations analytiques
+dynamiques. Les fonctions ci-dessous sont injectées dans le DSL supporté par `MathOperationParser`
+et `ExpressionExecutor`.
+
+| Fonction | Description |
+|----------|-------------|
+| `mean(field)` | Moyenne arithmétique sur la colonne `field`. |
+| `median(field)` | Médiane (avec interpolation) de la colonne numérique. |
+| `variance(field)` | Variance populationnelle de la colonne. |
+| `stddev(field)` | Écart-type (racine carrée de la variance). |
+| `min(field)` / `max(field)` | Valeur minimale / maximale observée. |
+| `percentile(field, p)` | Percentile `p` en pourcentage (0-100) avec interpolation linéaire. |
+| `correlation(fieldA, fieldB)` | Corrélation de Pearson entre deux colonnes. |
+
+Ces fonctions peuvent être utilisées seules (`mean(price)`) ou combinées dans des expressions libres
+(`(max(price) - min(price)) / mean(price)`). Les paramètres additionnels sont passés via
+`OperationDefinition::params` lorsque nécessaire (par exemple `percentile` sans second argument).
+
 ## Métadonnées `_meta`
 Le champ `_meta` s’appuie sur `MetaInfo`, une structure hiérarchique sérialisable en YAML. Les clés standard sont :
 - `status/outlier`, `status/reason`, `status/method`

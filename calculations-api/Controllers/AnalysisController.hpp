@@ -36,6 +36,18 @@ class AnalysisOptionsDto : public oatpp::DTO {
 };
 
 /**
+ * @class AnalysisOperationDefinitionDto
+ * @brief Opération analytique déclarée par le client.
+ */
+class AnalysisOperationDefinitionDto : public oatpp::DTO {
+    DTO_INIT(AnalysisOperationDefinitionDto, DTO)
+
+    DTO_FIELD(oatpp::String, expr);
+    DTO_FIELD(oatpp::String, alias);
+    DTO_FIELD(oatpp::Fields<oatpp::String>, params);
+};
+
+/**
  * @class AnalysisPreprocessRequestDto
  * @brief Structure complète attendue dans la requête REST.
  */
@@ -45,6 +57,7 @@ class AnalysisPreprocessRequestDto : public oatpp::DTO {
     DTO_FIELD(oatpp::Object<AnalysisDataDescriptorDto>, data_descriptor);
     DTO_FIELD(oatpp::Object<AnalysisOptionsDto>, options);
     DTO_FIELD(oatpp::Any, data);
+    DTO_FIELD(oatpp::List<oatpp::Object<AnalysisOperationDefinitionDto>>, operations);
 };
 
 /**
@@ -84,6 +97,20 @@ class AnalysisPreprocessingReportDto : public oatpp::DTO {
 };
 
 /**
+ * @class AnalysisOperationResultDto
+ * @brief Résultat d'une opération d'analyse exécutée.
+ */
+class AnalysisOperationResultDto : public oatpp::DTO {
+    DTO_INIT(AnalysisOperationResultDto, DTO)
+
+    DTO_FIELD(oatpp::String, expr);
+    DTO_FIELD(oatpp::String, status);
+    DTO_FIELD(oatpp::Any, result);
+    DTO_FIELD(oatpp::String, error_message);
+    DTO_FIELD(oatpp::String, executed_at);
+};
+
+/**
  * @class AnalysisPreprocessResponseDto
  * @brief Payload retourné lors d'un prétraitement réussi.
  */
@@ -93,6 +120,7 @@ class AnalysisPreprocessResponseDto : public oatpp::DTO {
     DTO_FIELD(oatpp::Object<AnalysisDatasetDto>, cleaned_dataset);
     DTO_FIELD(oatpp::Object<AnalysisDatasetDto>, outliers_dataset);
     DTO_FIELD(oatpp::Object<AnalysisPreprocessingReportDto>, report);
+    DTO_FIELD(oatpp::List<oatpp::Object<AnalysisOperationResultDto>>, operation_results);
 };
 
 /**

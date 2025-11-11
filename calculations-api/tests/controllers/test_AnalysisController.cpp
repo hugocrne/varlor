@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
 
 #include "../../Controllers/AnalysisController.hpp"
 
@@ -111,6 +112,22 @@ const char* kValidJsonPayload = "{\n"
 "  ]\n"
 "}";
 
+const char* kJsonWithOperations = "{\n"
+"  \"data_descriptor\": {\n"
+"    \"origin\": \"inline\",\n"
+"    \"content_type\": \"application/json\",\n"
+"    \"autodetect\": false\n"
+"  },\n"
+"  \"data\": [\n"
+"    { \"price\": 10.0, \"clicks\": 100.0 },\n"
+"    { \"price\": 20.0, \"clicks\": 200.0 }\n"
+"  ],\n"
+"  \"operations\": [\n"
+"    { \"expr\": \"mean(price)\", \"alias\": \"avg_price\" },\n"
+"    { \"expr\": \"price * clicks / 10\" }\n"
+"  ]\n"
+"}";
+
 const auto kValidYamlPayload = R"YAML(data_descriptor:
   origin: inline
   content_type: application/x-yaml
@@ -215,6 +232,49 @@ TEST_CASE("POST /api/analyses/preprocess - JSON succès", "[AnalysisController][
     REQUIRE(outputRows == cleanedRows);
     REQUIRE(inputRows == cleanedRows + outlierRows);
     REQUIRE(inputRows == 3);
+}
+
+TEST_CASE("POST /api/analyses/preprocess - opérations custom", "[AnalysisController][Integration]") {
+    auto jsonMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
+    auto controller = varlor::controllers::AnalysisController::createShared(jsonMapper);
+
+    auto response = execute(controller, kJsonWithOperations, "application/json", "application/json");
+    REQUIRE(response);
+    REQUIRE(response->getStatus().code == oatpp::web::protocol::http::Status::CODE_200.code);
+
+    auto body = readBody(response);
+    REQUIRE(body);
+
+    auto dto = jsonMapper->readFromString<oatpp::Object<varlor::controllers::AnalysisPreprocessResponseDto>>(body);
+    REQUIRE(dto);
+
+    const auto yamlRoot = YAML::Load(body->c_str());
+    REQUIRE(yamlRoot["operation_results"]);
+    const auto ops = yamlRoot["operation_results"];
+    REQUIRE(ops.IsSequence());
+    REQUIRE(ops.size() == 2);
+
+    const auto first = ops[0];
+    REQUIRE(first["expr"].as<std::string>() == "avg_price");
+    REQUIRE(first["status"].as<std::string>() == "success");
+    REQUIRE(first["result"].as<double>() == Catch::Approx(15.0));
+    REQUIRE_FALSE(first["executed_at"].as<std::string>().empty());
+    const auto firstError = first["error_message"];
+    const bool firstHasError = firstError && !firstError.IsNull();
+    REQUIRE_FALSE(firstHasError);
+
+    const auto second = ops[1];
+    REQUIRE(second["expr"].as<std::string>() == "price * clicks / 10");
+    REQUIRE(second["status"].as<std::string>() == "success");
+    const auto secondError = second["error_message"];
+    const bool secondHasError = secondError && !secondError.IsNull();
+    REQUIRE_FALSE(secondHasError);
+    REQUIRE(second["result"].IsSequence());
+    std::vector<double> seriesValues;
+    for (const auto& entry : second["result"]) {
+        seriesValues.push_back(entry.as<double>());
+    }
+    REQUIRE(seriesValues == std::vector<double>{100.0, 400.0});
 }
 
 TEST_CASE("POST /api/analyses/preprocess - YAML succès", "[AnalysisController][Integration]") {

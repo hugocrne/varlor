@@ -12,6 +12,48 @@ Le contrôleur `AnalysisController` expose le pipeline de prétraitement de Varl
 
 Le contrôleur détermine le format d’entrée grâce au header `Content-Type` et renvoie la réponse au format demandé via le header `Accept`. Le champ `data_descriptor.content_type` est vérifié pour s’assurer que la gateway annonce un type cohérent avec le corps reçu.
 
+## Opérations dynamiques (Indicator Engine)
+
+Le corps de la requête peut optionnellement contenir un tableau `operations`. Chaque entrée décrit une
+opération calculée après le prétraitement :
+
+- `expr` (obligatoire) : expression ou fonction à exécuter (`"mean(price)"`, `"price * clicks / 10"`).
+- `alias` (optionnel) : nom logique utilisé dans la réponse (`"avg_price"`).
+- `params` (optionnel) : dictionnaire `clé → valeur` pour les paramètres supplémentaires
+  (`{ "percentile": "95" }` pour `percentile`).
+
+La réponse inclut alors la liste `operation_results` contenant :
+
+- `expr` : alias si défini, sinon l’expression originale.
+- `status` : `"success"` ou `"error"`.
+- `result` : scalaire (`Float64`) ou série (`List<Float64>`). Lorsque l’opération échoue, le champ vaut `null`.
+- `error_message` : message détaillé en cas d’échec.
+- `executed_at` : instant d’exécution au format ISO 8601 (UTC).
+
+### Exemple d’opération combinée
+
+```json
+{
+  "operations": [
+    { "expr": "mean(price)", "alias": "avg_price" },
+    { "expr": "(max(price) - min(price)) / mean(price)" },
+    { "expr": "percentile(price)", "params": { "percentile": "95" } }
+  ]
+}
+```
+
+Dans la réponse JSON :
+
+```json
+{
+  "operation_results": [
+    { "expr": "avg_price", "status": "success", "result": 42.1, "executed_at": "2025-11-11T10:05:32Z" },
+    { "expr": "(max(price) - min(price)) / mean(price)", "status": "success", "result": 0.25, "executed_at": "2025-11-11T10:05:32Z" },
+    { "expr": "percentile(price)", "status": "error", "result": null, "error_message": "..." }
+  ]
+}
+```
+
 ### Exemple de requête (JSON)
 
 ```http
