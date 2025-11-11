@@ -1,0 +1,45 @@
+# Répertoires de build
+/build/
+/cmake-build-*/
+
+# Fichiers générés par CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+*.cmake
+*.ninja
+
+# Binaires et bibliothèques compilés
+*.o
+*.obj
+*.lo
+*.la
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+
+# Fichiers de couverture et profils
+*.gcno
+*.gcda
+*.profraw
+*.profdata
+
+# Sorties de documentation
+/docs/html/
+/docs/latex/
+
+# Configurations et caches d'IDE
+.vscode/
+.idea/
+*.user
+*.swp
+.DS_Store
+
+# Autres fichiers temporaires
+compile_commands.json
+
