@@ -1,8 +1,0 @@
-var searchData=
-[
-  ['parse_0',['parse',['../classvarlor_1_1core_1_1_math_operation_parser.html#afb4da7a869d446e7189f495e6cbb329c',1,'varlor::core::MathOperationParser']]],
-  ['parsedexpression_1',['ParsedExpression',['../structvarlor_1_1core_1_1_math_operation_parser_1_1_parsed_expression.html#a2756fba9921b80364fa4eab04295d527',1,'varlor::core::MathOperationParser::ParsedExpression::ParsedExpression()=default'],['../structvarlor_1_1core_1_1_math_operation_parser_1_1_parsed_expression.html#a4f98d17aa8e53912982dcc4362f08a07',1,'varlor::core::MathOperationParser::ParsedExpression::ParsedExpression(const ParsedExpression &amp;)=delete'],['../structvarlor_1_1core_1_1_math_operation_parser_1_1_parsed_expression.html#afb6e8b5459a0eabfae9c8af2799f28fb',1,'varlor::core::MathOperationParser::ParsedExpression::ParsedExpression(ParsedExpression &amp;&amp;) noexcept=default']]],
-  ['percentile_2',['percentile',['../classvarlor_1_1core_1_1_builtin_operations.html#a2766881dcb448f15520f1aec31732d53',1,'varlor::core::BuiltinOperations']]],
-  ['preprocessingreport_3',['PreprocessingReport',['../classvarlor_1_1models_1_1_preprocessing_report.html#a482bc142ef852591c622a8f33b85e017',1,'varlor::models::PreprocessingReport::PreprocessingReport()'],['../classvarlor_1_1models_1_1_preprocessing_report.html#ab2d985b09f5f23dd36a724ec153ad3e1',1,'varlor::models::PreprocessingReport::PreprocessingReport(std::size_t inputRowCount, std::size_t outputRowCount)']]],
-  ['process_4',['process',['../classvarlor_1_1core_1_1_data_preprocessor.html#ad5d2774f3949ed76f944b40e9cc1e747',1,'varlor::core::DataPreprocessor']]]
-];
