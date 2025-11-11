@@ -5,12 +5,20 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ✅ Trouver Oat++ automatiquement (optionnel pour permettre les tests sans Oat++)
-find_package(oatpp 1.3.0 QUIET)
+find_package(oatpp QUIET CONFIG)
+find_package(yaml-cpp QUIET)
 if(oatpp_FOUND)
+    if(NOT yaml-cpp_FOUND)
+        message(FATAL_ERROR "yaml-cpp est requis pour construire l'exécutable principal.")
+    endif()
     # ✅ Ajoute ton code source principal
-    add_executable(calculations_api main.cpp)
+    add_executable(calculations_api
+        main.cpp
+        Core/DataPreprocessor.cpp
+        Controllers/AnalysisController.cpp
+    )
     # ✅ Lier Oat++ automatiquement
-    target_link_libraries(calculations_api PRIVATE oatpp::oatpp)
+    target_link_libraries(calculations_api PRIVATE oatpp::oatpp yaml-cpp::yaml-cpp)
 else()
     message(WARNING "Oat++ not found - main executable will not be built, but tests can still run")
 endif()
@@ -54,3 +62,13 @@ add_executable(test_core
 target_link_libraries(test_core PRIVATE Catch2::Catch2WithMain)
 
 catch_discover_tests(test_core)
+
+add_executable(test_controllers
+    tests/controllers/test_AnalysisController.cpp
+    Controllers/AnalysisController.cpp
+    Core/DataPreprocessor.cpp
+)
+
+target_link_libraries(test_controllers PRIVATE Catch2::Catch2WithMain oatpp::oatpp oatpp::oatpp-test yaml-cpp::yaml-cpp)
+
+catch_discover_tests(test_controllers)

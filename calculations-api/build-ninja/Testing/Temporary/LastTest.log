@@ -1,0 +1,624 @@
+Start testing: Nov 11 10:07 CET
+----------------------------------------------------------
+1/31 Testing: FieldType enum values
+1/31 Test: FieldType enum values
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "FieldType enum values"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"FieldType enum values" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "FieldType enum values"
+Randomness seeded to: 514985564
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"FieldType enum values" end time: Nov 11 10:07 CET
+"FieldType enum values" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/31 Testing: DataPoint construction
+2/31 Test: DataPoint construction
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "DataPoint construction"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPoint construction" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint construction"
+Randomness seeded to: 1402259574
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint construction" end time: Nov 11 10:07 CET
+"DataPoint construction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/31 Testing: DataPoint field operations
+3/31 Test: DataPoint field operations
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "DataPoint field operations"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPoint field operations" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint field operations"
+Randomness seeded to: 949733478
+===============================================================================
+All tests passed (25 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint field operations" end time: Nov 11 10:07 CET
+"DataPoint field operations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/31 Testing: DataPoint with multiple field types
+4/31 Test: DataPoint with multiple field types
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "DataPoint with multiple field types"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPoint with multiple field types" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint with multiple field types"
+Randomness seeded to: 3038911541
+===============================================================================
+All tests passed (5 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint with multiple field types" end time: Nov 11 10:07 CET
+"DataPoint with multiple field types" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/31 Testing: DataPoint field access
+5/31 Test: DataPoint field access
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "DataPoint field access"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPoint field access" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint field access"
+Randomness seeded to: 2947008582
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint field access" end time: Nov 11 10:07 CET
+"DataPoint field access" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/31 Testing: DataPoint move semantics
+6/31 Test: DataPoint move semantics
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "DataPoint move semantics"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPoint move semantics" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint move semantics"
+Randomness seeded to: 2792304496
+===============================================================================
+All tests passed (2 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint move semantics" end time: Nov 11 10:07 CET
+"DataPoint move semantics" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/31 Testing: Dataset construction
+7/31 Test: Dataset construction
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "Dataset construction"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"Dataset construction" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset construction"
+Randomness seeded to: 431145048
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset construction" end time: Nov 11 10:07 CET
+"Dataset construction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/31 Testing: Dataset column management
+8/31 Test: Dataset column management
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "Dataset column management"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"Dataset column management" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset column management"
+Randomness seeded to: 1742197436
+===============================================================================
+All tests passed (10 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset column management" end time: Nov 11 10:07 CET
+"Dataset column management" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/31 Testing: Dataset data point management
+9/31 Test: Dataset data point management
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "Dataset data point management"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"Dataset data point management" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset data point management"
+Randomness seeded to: 2647329523
+===============================================================================
+All tests passed (14 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset data point management" end time: Nov 11 10:07 CET
+"Dataset data point management" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/31 Testing: Dataset iteration
+10/31 Test: Dataset iteration
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "Dataset iteration"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"Dataset iteration" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset iteration"
+Randomness seeded to: 3044791298
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset iteration" end time: Nov 11 10:07 CET
+"Dataset iteration" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/31 Testing: Dataset clear and access
+11/31 Test: Dataset clear and access
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "Dataset clear and access"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"Dataset clear and access" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset clear and access"
+Randomness seeded to: 2160732300
+===============================================================================
+All tests passed (9 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset clear and access" end time: Nov 11 10:07 CET
+"Dataset clear and access" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/31 Testing: Dataset complex scenario
+12/31 Test: Dataset complex scenario
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "Dataset complex scenario"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"Dataset complex scenario" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset complex scenario"
+Randomness seeded to: 1142840063
+===============================================================================
+All tests passed (32 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset complex scenario" end time: Nov 11 10:07 CET
+"Dataset complex scenario" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/31 Testing: PreprocessingReport construction
+13/31 Test: PreprocessingReport construction
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "PreprocessingReport construction"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"PreprocessingReport construction" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport construction"
+Randomness seeded to: 3873479246
+===============================================================================
+All tests passed (9 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport construction" end time: Nov 11 10:07 CET
+"PreprocessingReport construction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/31 Testing: PreprocessingReport setters and getters
+14/31 Test: PreprocessingReport setters and getters
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "PreprocessingReport setters and getters"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"PreprocessingReport setters and getters" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport setters and getters"
+Randomness seeded to: 3802546434
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport setters and getters" end time: Nov 11 10:07 CET
+"PreprocessingReport setters and getters" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/31 Testing: PreprocessingReport increment operations
+15/31 Test: PreprocessingReport increment operations
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "PreprocessingReport increment operations"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"PreprocessingReport increment operations" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport increment operations"
+Randomness seeded to: 3543998970
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport increment operations" end time: Nov 11 10:07 CET
+"PreprocessingReport increment operations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/31 Testing: PreprocessingReport normalized fields
+16/31 Test: PreprocessingReport normalized fields
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "PreprocessingReport normalized fields"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"PreprocessingReport normalized fields" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport normalized fields"
+Randomness seeded to: 2235799209
+===============================================================================
+All tests passed (10 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport normalized fields" end time: Nov 11 10:07 CET
+"PreprocessingReport normalized fields" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/31 Testing: PreprocessingReport rows removed calculation
+17/31 Test: PreprocessingReport rows removed calculation
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "PreprocessingReport rows removed calculation"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"PreprocessingReport rows removed calculation" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport rows removed calculation"
+Randomness seeded to: 3306227617
+===============================================================================
+All tests passed (4 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport rows removed calculation" end time: Nov 11 10:07 CET
+"PreprocessingReport rows removed calculation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/31 Testing: PreprocessingReport reset
+18/31 Test: PreprocessingReport reset
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "PreprocessingReport reset"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"PreprocessingReport reset" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport reset"
+Randomness seeded to: 3983371440
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport reset" end time: Nov 11 10:07 CET
+"PreprocessingReport reset" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/31 Testing: PreprocessingReport complete scenario
+19/31 Test: PreprocessingReport complete scenario
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_models" "PreprocessingReport complete scenario"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"PreprocessingReport complete scenario" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport complete scenario"
+Randomness seeded to: 3177008209
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport complete scenario" end time: Nov 11 10:07 CET
+"PreprocessingReport complete scenario" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/31 Testing: DataPreprocessor - normalisation des types
+20/31 Test: DataPreprocessor - normalisation des types
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_core" "DataPreprocessor - normalisation des types"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPreprocessor - normalisation des types" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPreprocessor - normalisation des types"
+Randomness seeded to: 441467668
+===============================================================================
+All tests passed (11 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPreprocessor - normalisation des types" end time: Nov 11 10:07 CET
+"DataPreprocessor - normalisation des types" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/31 Testing: DataPreprocessor - détection d'outliers
+21/31 Test: DataPreprocessor - détection d'outliers
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_core" "DataPreprocessor - détection d'outliers"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPreprocessor - détection d'outliers" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPreprocessor - détection d'outliers"
+Randomness seeded to: 2868077233
+===============================================================================
+All tests passed (9 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPreprocessor - détection d'outliers" end time: Nov 11 10:07 CET
+"DataPreprocessor - détection d'outliers" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/31 Testing: DataPreprocessor - imputation des valeurs manquantes
+22/31 Test: DataPreprocessor - imputation des valeurs manquantes
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_core" "DataPreprocessor - imputation des valeurs manquantes"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPreprocessor - imputation des valeurs manquantes" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPreprocessor - imputation des valeurs manquantes"
+Randomness seeded to: 3592944435
+===============================================================================
+All tests passed (26 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPreprocessor - imputation des valeurs manquantes" end time: Nov 11 10:07 CET
+"DataPreprocessor - imputation des valeurs manquantes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/31 Testing: DataPreprocessor - rapport et cohérence
+23/31 Test: DataPreprocessor - rapport et cohérence
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_core" "DataPreprocessor - rapport et cohérence"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPreprocessor - rapport et cohérence" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPreprocessor - rapport et cohérence"
+Randomness seeded to: 2693667867
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPreprocessor - rapport et cohérence" end time: Nov 11 10:07 CET
+"DataPreprocessor - rapport et cohérence" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/31 Testing: DataPreprocessor - comportement non destructif
+24/31 Test: DataPreprocessor - comportement non destructif
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_core" "DataPreprocessor - comportement non destructif"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPreprocessor - comportement non destructif" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPreprocessor - comportement non destructif"
+Randomness seeded to: 585064198
+===============================================================================
+All tests passed (5 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPreprocessor - comportement non destructif" end time: Nov 11 10:07 CET
+"DataPreprocessor - comportement non destructif" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/31 Testing: DataPreprocessor - cas limites
+25/31 Test: DataPreprocessor - cas limites
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_core" "DataPreprocessor - cas limites"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"DataPreprocessor - cas limites" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPreprocessor - cas limites"
+Randomness seeded to: 2673583501
+===============================================================================
+All tests passed (11 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPreprocessor - cas limites" end time: Nov 11 10:07 CET
+"DataPreprocessor - cas limites" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/31 Testing: POST /api/analyses/preprocess - JSON succès
+26/31 Test: POST /api/analyses/preprocess - JSON succès
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_controllers" "POST /api/analyses/preprocess - JSON succès"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"POST /api/analyses/preprocess - JSON succès" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "POST /api/analyses/preprocess - JSON succès"
+Randomness seeded to: 792100810
+[integration][json-success] status=200 body={"cleaned_dataset":{"columns":["value","flag"],"rows":[{"values":{"value":10,"flag":true},"_meta":null},{"values":{"value":12,"flag":false},"_meta":null},{"values":{"value":11,"flag":true},"_meta":null}]},"outliers_dataset":{"columns":["value","flag"],"rows":[]},"report":{"input_row_count":3,"output_row_count":3,"outliers_removed":0,"missing_values_replaced":0,"normalized_fields":["value","flag"]}}
+===============================================================================
+All tests passed (12 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"POST /api/analyses/preprocess - JSON succès" end time: Nov 11 10:07 CET
+"POST /api/analyses/preprocess - JSON succès" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/31 Testing: POST /api/analyses/preprocess - YAML succès
+27/31 Test: POST /api/analyses/preprocess - YAML succès
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_controllers" "POST /api/analyses/preprocess - YAML succès"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"POST /api/analyses/preprocess - YAML succès" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "POST /api/analyses/preprocess - YAML succès"
+Randomness seeded to: 101025378
+===============================================================================
+All tests passed (10 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"POST /api/analyses/preprocess - YAML succès" end time: Nov 11 10:07 CET
+"POST /api/analyses/preprocess - YAML succès" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/31 Testing: POST /api/analyses/preprocess - mismatch content_type
+28/31 Test: POST /api/analyses/preprocess - mismatch content_type
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_controllers" "POST /api/analyses/preprocess - mismatch content_type"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"POST /api/analyses/preprocess - mismatch content_type" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "POST /api/analyses/preprocess - mismatch content_type"
+Randomness seeded to: 395187510
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"POST /api/analyses/preprocess - mismatch content_type" end time: Nov 11 10:07 CET
+"POST /api/analyses/preprocess - mismatch content_type" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/31 Testing: POST /api/analyses/preprocess - format invalide
+29/31 Test: POST /api/analyses/preprocess - format invalide
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_controllers" "POST /api/analyses/preprocess - format invalide"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"POST /api/analyses/preprocess - format invalide" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "POST /api/analyses/preprocess - format invalide"
+Randomness seeded to: 2104539432
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"POST /api/analyses/preprocess - format invalide" end time: Nov 11 10:07 CET
+"POST /api/analyses/preprocess - format invalide" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/31 Testing: POST /api/analyses/preprocess - erreur interne
+30/31 Test: POST /api/analyses/preprocess - erreur interne
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_controllers" "POST /api/analyses/preprocess - erreur interne"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"POST /api/analyses/preprocess - erreur interne" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "POST /api/analyses/preprocess - erreur interne"
+Randomness seeded to: 145806295
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"POST /api/analyses/preprocess - erreur interne" end time: Nov 11 10:07 CET
+"POST /api/analyses/preprocess - erreur interne" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/31 Testing: POST /api/analyses/preprocess - dataset vide
+31/31 Test: POST /api/analyses/preprocess - dataset vide
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja/test_controllers" "POST /api/analyses/preprocess - dataset vide"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build-ninja
+"POST /api/analyses/preprocess - dataset vide" start time: Nov 11 10:07 CET
+Output:
+----------------------------------------------------------
+Filters: "POST /api/analyses/preprocess - dataset vide"
+Randomness seeded to: 630989723
+===============================================================================
+All tests passed (10 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"POST /api/analyses/preprocess - dataset vide" end time: Nov 11 10:07 CET
+"POST /api/analyses/preprocess - dataset vide" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 11 10:07 CET

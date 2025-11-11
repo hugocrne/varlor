@@ -1,0 +1,316 @@
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+POST 0 0
+FieldType enum values 1 0.0114201
+DataPoint construction 1 0.0072755
+DataPoint field operations 1 0.00707583
+DataPoint with multiple field types 1 0.00747317
+DataPoint field access 1 0.00689825
+DataPoint move semantics 1 0.00710404
+Dataset construction 1 0.00663633
+Dataset column management 1 0.00707979
+Dataset data point management 1 0.00731567
+Dataset iteration 1 0.00715267
+Dataset clear and access 1 0.00723537
+Dataset complex scenario 1 0.00675046
+PreprocessingReport construction 1 0.0077075
+PreprocessingReport setters and getters 1 0.00735888
+PreprocessingReport increment operations 1 0.00788042
+PreprocessingReport normalized fields 1 0.00694912
+PreprocessingReport rows removed calculation 1 0.00756121
+PreprocessingReport reset 1 0.00684783
+PreprocessingReport complete scenario 1 0.007038
+DataPreprocessor - normalisation des types 1 0.0110297
+DataPreprocessor - détection d'outliers 1 0.0072485
+DataPreprocessor - imputation des valeurs manquantes 1 0.00723325
+DataPreprocessor - rapport et cohérence 1 0.00749517
+DataPreprocessor - comportement non destructif 1 0.00722229
+DataPreprocessor - cas limites 1 0.00727946
+POST /api/analyses/preprocess - JSON succès 1 0.012794
+POST /api/analyses/preprocess - YAML succès 1 0.0121147
+POST /api/analyses/preprocess - mismatch content_type 1 0.0125484
+POST /api/analyses/preprocess - format invalide 1 0.012157
+POST /api/analyses/preprocess - erreur interne 1 0.0126448
+POST /api/analyses/preprocess - dataset vide 1 0.0137557
+---

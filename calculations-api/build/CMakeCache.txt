@@ -521,6 +521,9 @@ calculations_api_SOURCE_DIR:STATIC=/Users/hugo/Perso/Projets/varlor/calculations
 //The directory containing a CMake configuration file for oatpp.
 oatpp_DIR:PATH=oatpp_DIR-NOTFOUND
 
+//The directory containing a CMake configuration file for yaml-cpp.
+yaml-cpp_DIR:PATH=/opt/homebrew/lib/cmake/yaml-cpp
+
 
 ########################
 # INTERNAL cache entries

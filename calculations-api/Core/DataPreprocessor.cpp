@@ -5,6 +5,7 @@
 #include <cmath>
 #include <limits>
 #include <sstream>
+#include <stdexcept>
 
 namespace varlor::core {
 
@@ -15,6 +16,13 @@ constexpr const char* kColumnsSection = "columns";
 constexpr const char* kStatusSection = "status";
 constexpr const char* kImputationSection = "imputation";
 } // namespace
+
+DataPreprocessor::DataPreprocessor(double outlierThresholdMultiplier)
+    : outlierThresholdMultiplier_(outlierThresholdMultiplier) {
+    if (outlierThresholdMultiplier_ <= 0.0) {
+        throw std::invalid_argument("Le multiplicateur d'outliers doit être strictement positif.");
+    }
+}
 
 models::PreprocessingResult DataPreprocessor::process(const models::Dataset& dataset) const {
     models::PreprocessingResult result;
@@ -202,18 +210,19 @@ std::vector<bool> DataPreprocessor::buildOutlierMask(
             values.push_back(sample.second);
         }
 
-        const auto [q1, q3] = computeQuartiles(values);
-        const double iqr = q3 - q1;
-        if (iqr == 0.0) {
-            continue;
-        }
-        const double lowerBound = q1 - 1.5 * iqr;
-        const double upperBound = q3 + 1.5 * iqr;
+        std::sort(values.begin(), values.end());
 
-        for (const auto& sample : profile.numericSamples) {
-            if (sample.second < lowerBound || sample.second > upperBound) {
-                if (sample.first < mask.size()) {
-                    mask[sample.first] = true;
+        const auto quartiles = computeQuartiles(values);
+        const double q1 = quartiles.first;
+        const double q3 = quartiles.second;
+        const double iqr = q3 - q1;
+        const double lowerBound = q1 - outlierThresholdMultiplier_ * iqr;
+        const double upperBound = q3 + outlierThresholdMultiplier_ * iqr;
+
+        for (const auto& [rowIndex, value] : profile.numericSamples) {
+            if (value < lowerBound || value > upperBound) {
+                if (rowIndex < mask.size()) {
+                    mask[rowIndex] = true;
                 }
             }
         }

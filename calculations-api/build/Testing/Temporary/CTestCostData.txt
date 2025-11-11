@@ -67,29 +67,54 @@ DataPreprocessor 0 0
 DataPreprocessor 0 0
 DataPreprocessor 0 0
 DataPreprocessor 0 0
-FieldType enum values 1 0.0104032
-DataPoint construction 1 0.00672771
-DataPoint field operations 1 0.00680037
-DataPoint with multiple field types 1 0.00666167
-DataPoint field access 1 0.00657642
-DataPoint move semantics 1 0.00666779
-Dataset construction 1 0.00682162
-Dataset column management 1 0.00668079
-Dataset data point management 1 0.00674475
-Dataset iteration 1 0.00685546
-Dataset clear and access 1 0.00683554
-Dataset complex scenario 1 0.00682771
-PreprocessingReport construction 1 0.00702683
-PreprocessingReport setters and getters 1 0.00710854
-PreprocessingReport increment operations 1 0.0067175
-PreprocessingReport normalized fields 1 0.00676362
-PreprocessingReport rows removed calculation 1 0.00673321
-PreprocessingReport reset 1 0.00658867
-PreprocessingReport complete scenario 1 0.00665938
-DataPreprocessor - normalisation des types 1 0.0122198
-DataPreprocessor - détection d'outliers 1 0.00733042
-DataPreprocessor - imputation des valeurs manquantes 1 0.00713912
-DataPreprocessor - rapport et cohérence 1 0.00704583
-DataPreprocessor - comportement non destructif 1 0.00697529
-DataPreprocessor - cas limites 1 0.00692037
+FieldType 0 0
+DataPoint 0 1
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+DataPoint 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+Dataset 0 1
+Dataset 0 0
+Dataset 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 0
+PreprocessingReport 0 1
+PreprocessingReport 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+DataPreprocessor 0 0
+FieldType enum values 1 0.00727112
+DataPoint construction 1 0.0069765
+DataPoint field operations 1 0.00708146
+DataPoint with multiple field types 1 0.00699267
+DataPoint field access 1 0.00691067
+DataPoint move semantics 1 0.00669613
+Dataset construction 1 0.00677038
+Dataset column management 1 0.00663079
+Dataset data point management 1 0.00676079
+Dataset iteration 1 0.00672079
+Dataset clear and access 1 0.00661754
+Dataset complex scenario 1 0.006721
+PreprocessingReport construction 1 0.00705888
+PreprocessingReport setters and getters 1 0.00694254
+PreprocessingReport increment operations 1 0.00671371
+PreprocessingReport normalized fields 1 0.00663625
+PreprocessingReport rows removed calculation 1 0.00664871
+PreprocessingReport reset 1 0.00661158
+PreprocessingReport complete scenario 1 0.00663575
+DataPreprocessor - normalisation des types 1 0.00729908
+DataPreprocessor - détection d'outliers 1 0.0068885
+DataPreprocessor - imputation des valeurs manquantes 1 0.00725846
+DataPreprocessor - rapport et cohérence 1 0.00697313
+DataPreprocessor - comportement non destructif 1 0.00689033
+DataPreprocessor - cas limites 1 0.00696967
 ---

@@ -28,10 +28,21 @@ namespace varlor::core {
  * - Imputation des valeurs manquantes avec annotation dans `_meta`
  * - Génération d'un rapport synthétisant les opérations effectuées
  *
- * @note L'instance ne maintient aucun état : toutes les méthodes sont pures.
+ * @note L'instance ne maintient pas d'état métier : seules les options de configuration
+ *       (facteur d'outliers) sont conservées entre deux traitements.
  */
 class DataPreprocessor {
 public:
+    /**
+     * @brief Constructeur permettant d'ajuster le seuil de détection des outliers.
+     *
+     * @param outlierThresholdMultiplier Multiplicateur appliqué à l'IQR afin de définir
+     *        les bornes de détection des valeurs extrêmes. La valeur par défaut (1.5)
+     *        correspond au facteur de Tukey.
+     * @throws std::invalid_argument si le multiplicateur est inférieur ou égal à zéro.
+     */
+    explicit DataPreprocessor(double outlierThresholdMultiplier = 1.5);
+
     /**
      * @brief Traite un dataset et renvoie le résultat complet du prétraitement.
      *
@@ -189,6 +200,9 @@ private:
      * @brief Supprime les espaces en début et fin de chaîne.
      */
     [[nodiscard]] std::string trim(const std::string& value) const;
+
+private:
+    double outlierThresholdMultiplier_;
 };
 
 } // namespace varlor::core
