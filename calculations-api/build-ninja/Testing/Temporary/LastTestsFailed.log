@@ -1,1 +1,2 @@
-35:POST /api/analyses/preprocess - opérations custom
+43:POST /api/analyses/indicators - colonne manquante
+44:POST /api/analyses/indicators - expression invalide

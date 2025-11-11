@@ -72,6 +72,47 @@ std::shared_ptr<oatpp::web::protocol::http::outgoing::Response> execute(
     return controller->preprocess(makeRequest(body, contentType, accept));
 }
 
+std::shared_ptr<oatpp::web::protocol::http::incoming::Request> makeIndicatorsRequest(
+    const std::string& body,
+    const std::string& contentType,
+    const std::optional<std::string>& accept) {
+    using namespace oatpp::web::protocol::http;
+
+    Headers headers;
+    auto bodyStream = std::make_shared<oatpp::data::stream::BufferInputStream>(oatpp::String(body.c_str()));
+
+    RequestStartingLine startingLine;
+    startingLine.method = oatpp::data::share::StringKeyLabel("POST");
+    startingLine.path = oatpp::data::share::StringKeyLabel("/api/analyses/indicators");
+    startingLine.protocol = oatpp::data::share::StringKeyLabel("HTTP/1.1");
+
+    auto decoder = std::make_shared<oatpp::web::protocol::http::incoming::SimpleBodyDecoder>();
+
+    auto request = oatpp::web::protocol::http::incoming::Request::createShared(
+        nullptr,
+        startingLine,
+        headers,
+        bodyStream,
+        decoder);
+
+    request->putHeader(oatpp::String("Content-Type"), oatpp::String(contentType.c_str()));
+    if (accept.has_value()) {
+        request->putHeader(oatpp::String("Accept"), oatpp::String(accept->c_str()));
+    }
+    const auto lengthStr = std::to_string(body.size());
+    request->putHeader(oatpp::String("Content-Length"), oatpp::String(lengthStr.c_str()));
+
+    return request;
+}
+
+std::shared_ptr<oatpp::web::protocol::http::outgoing::Response> executeIndicators(
+    const std::shared_ptr<varlor::controllers::AnalysisController>& controller,
+    const std::string& body,
+    const std::string& contentType,
+    const std::optional<std::string>& accept = std::nullopt) {
+    return controller->indicators(makeIndicatorsRequest(body, contentType, accept));
+}
+
 oatpp::String readBody(const std::shared_ptr<oatpp::web::protocol::http::outgoing::Response>& response) {
     oatpp::data::stream::BufferOutputStream headersBuffer;
     oatpp::data::stream::BufferOutputStream bodyBuffer;
@@ -192,6 +233,48 @@ const char* kEmptyDatasetJson = "{\n"
 "    \"drop_outliers_percent\": 1.5\n"
 "  },\n"
 "  \"data\": []\n"
+"}";
+
+const char* kIndicatorsJsonPayload = "{\n"
+"  \"data\": [\n"
+"    { \"price\": 100.0, \"duration\": 8.2 },\n"
+"    { \"price\": 120.0, \"duration\": 9.0 },\n"
+"    { \"price\": 150.0, \"duration\": 9.7 }\n"
+"  ],\n"
+"  \"operations\": [\n"
+"    { \"expr\": \"mean(price)\" },\n"
+"    { \"expr\": \"(max(price) - min(price)) / mean(price)\" }\n"
+"  ]\n"
+"}";
+
+const auto kIndicatorsYamlPayload = R"YAML(operations:
+  - expr: mean(price)
+  - expr: correlation(price, duration)
+data:
+  - price: 100.0
+    duration: 8.2
+  - price: 120.0
+    duration: 9.0
+  - price: 150.0
+    duration: 9.7
+)YAML";
+
+const char* kIndicatorsMissingColumnJson = "{\n"
+"  \"data\": [\n"
+"    { \"price\": 100.0 }\n"
+"  ],\n"
+"  \"operations\": [\n"
+"    { \"expr\": \"mean(duration)\" }\n"
+"  ]\n"
+"}";
+
+const char* kIndicatorsInvalidExpressionJson = "{\n"
+"  \"data\": [\n"
+"    { \"price\": 10.0 }\n"
+"  ],\n"
+"  \"operations\": [\n"
+"    { \"expr\": \"mean()\" }\n"
+"  ]\n"
 "}";
 
 } // namespace
@@ -413,4 +496,103 @@ TEST_CASE("POST /api/analyses/preprocess - dataset vide", "[AnalysisController][
     REQUIRE(dto->cleaned_dataset);
     REQUIRE(dto->cleaned_dataset->rows);
     REQUIRE((*dto->cleaned_dataset->rows).empty());
+}
+
+TEST_CASE("POST /api/analyses/indicators - JSON succès", "[AnalysisController][Indicators]") {
+    auto jsonMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
+    auto controller = varlor::controllers::AnalysisController::createShared(jsonMapper);
+
+    auto response = executeIndicators(controller, kIndicatorsJsonPayload, "application/json", "application/json");
+    REQUIRE(response);
+    REQUIRE(response->getStatus().code == oatpp::web::protocol::http::Status::CODE_200.code);
+
+    auto contentType = response->getHeaders().get(oatpp::web::protocol::http::Header::CONTENT_TYPE);
+    REQUIRE(contentType);
+    REQUIRE(contentType->find("application/json") != std::string::npos);
+
+    auto body = readBody(response);
+    REQUIRE(body);
+
+    auto dto = jsonMapper->readFromString<oatpp::Object<varlor::controllers::AnalysisIndicatorResponseDto>>(body);
+    REQUIRE(dto);
+    REQUIRE(dto->results);
+    REQUIRE(dto->results->size() == 2);
+    REQUIRE(dto->executedAt);
+    REQUIRE_FALSE(std::string(*dto->executedAt).empty());
+
+    const auto yaml = YAML::Load(body->c_str());
+    REQUIRE(yaml["results"]);
+    REQUIRE(yaml["results"].IsSequence());
+    REQUIRE(yaml["results"].size() == 2);
+
+    const auto first = yaml["results"][0];
+    REQUIRE(first["expr"].as<std::string>() == "mean(price)");
+    REQUIRE(first["status"].as<std::string>() == "success");
+    REQUIRE(first["result"].as<double>() == Catch::Approx(123.333).margin(0.01));
+
+    const auto second = yaml["results"][1];
+    REQUIRE(second["expr"].as<std::string>() == "(max(price) - min(price)) / mean(price)");
+    REQUIRE(second["status"].as<std::string>() == "success");
+    REQUIRE(second["result"].as<double>() == Catch::Approx(0.4054).margin(0.001));
+
+    REQUIRE(yaml["executedAt"].as<std::string>().size() > 0);
+}
+
+TEST_CASE("POST /api/analyses/indicators - YAML succès", "[AnalysisController][Indicators]") {
+    auto jsonMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
+    auto controller = varlor::controllers::AnalysisController::createShared(jsonMapper);
+
+    auto response = executeIndicators(controller, kIndicatorsYamlPayload, "application/x-yaml", "application/x-yaml");
+    REQUIRE(response);
+    REQUIRE(response->getStatus().code == oatpp::web::protocol::http::Status::CODE_200.code);
+
+    auto contentType = response->getHeaders().get(oatpp::web::protocol::http::Header::CONTENT_TYPE);
+    REQUIRE(contentType);
+    REQUIRE(contentType->find("application/x-yaml") != std::string::npos);
+
+    auto body = readBody(response);
+    REQUIRE(body);
+
+    const auto yaml = YAML::Load(body->c_str());
+    REQUIRE(yaml["results"]);
+    REQUIRE(yaml["results"].IsSequence());
+    REQUIRE(yaml["results"].size() == 2);
+
+    REQUIRE(yaml["results"][0]["result"].as<double>() == Catch::Approx(123.333).margin(0.01));
+    REQUIRE(yaml["results"][1]["status"].as<std::string>() == "success");
+    REQUIRE(yaml["executedAt"].as<std::string>().size() > 0);
+}
+
+TEST_CASE("POST /api/analyses/indicators - colonne manquante", "[AnalysisController][Indicators]") {
+    auto jsonMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
+    auto controller = varlor::controllers::AnalysisController::createShared(jsonMapper);
+
+    auto response = executeIndicators(controller, kIndicatorsMissingColumnJson, "application/json", "application/json");
+    REQUIRE(response);
+    REQUIRE(response->getStatus().code == oatpp::web::protocol::http::Status::CODE_422.code);
+
+    auto body = readBody(response);
+    REQUIRE(body);
+
+    auto dto = jsonMapper->readFromString<oatpp::Object<varlor::controllers::AnalysisErrorResponseDto>>(body);
+    REQUIRE(dto);
+    REQUIRE(dto->error);
+    REQUIRE(std::string(*dto->error) == "unprocessable_entity");
+}
+
+TEST_CASE("POST /api/analyses/indicators - expression invalide", "[AnalysisController][Indicators]") {
+    auto jsonMapper = oatpp::parser::json::mapping::ObjectMapper::createShared();
+    auto controller = varlor::controllers::AnalysisController::createShared(jsonMapper);
+
+    auto response = executeIndicators(controller, kIndicatorsInvalidExpressionJson, "application/json", "application/json");
+    REQUIRE(response);
+    REQUIRE(response->getStatus().code == oatpp::web::protocol::http::Status::CODE_422.code);
+
+    auto body = readBody(response);
+    REQUIRE(body);
+
+    auto dto = jsonMapper->readFromString<oatpp::Object<varlor::controllers::AnalysisErrorResponseDto>>(body);
+    REQUIRE(dto);
+    REQUIRE(dto->error);
+    REQUIRE(std::string(*dto->error) == "unprocessable_entity");
 }

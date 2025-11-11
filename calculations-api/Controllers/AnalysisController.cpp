@@ -77,6 +77,11 @@ struct ParsedRequest {
     std::vector<varlor::models::OperationDefinition> operations;
 };
 
+struct IndicatorRequest {
+    Dataset dataset;
+    std::vector<varlor::models::OperationDefinition> operations;
+};
+
 struct ColumnCollector {
     void registerColumn(const std::string& name) {
         if (name.empty()) {
@@ -657,6 +662,51 @@ ParsedRequest parseYamlRequest(const oatpp::String& body) {
     return request;
 }
 
+IndicatorRequest parseIndicatorJsonRequest(
+    const oatpp::String& body,
+    const std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>& mapper) {
+    oatpp::Object<AnalysisIndicatorRequestDto> requestDto;
+    try {
+        requestDto = mapper->readFromString<oatpp::Object<AnalysisIndicatorRequestDto>>(body);
+    } catch (const std::exception& ex) {
+        throw BadRequestError(std::string("Le corps JSON est invalide : ") + ex.what());
+    }
+    if (!requestDto) {
+        throw BadRequestError("Le corps JSON est invalide ou vide.");
+    }
+
+    if (requestDto->data == nullptr) {
+        throw RequestValidationError("Le champ `data` est obligatoire.");
+    }
+
+    IndicatorRequest request;
+    request.dataset = buildDatasetFromJson(requestDto->data);
+    request.operations = parseOperationsFromJson(requestDto->operations);
+    return request;
+}
+
+IndicatorRequest parseIndicatorYamlRequest(const oatpp::String& body) {
+    const std::string payload = toStdString(body);
+    YAML::Node root;
+    try {
+        root = YAML::Load(payload);
+    } catch (const YAML::ParserException& ex) {
+        throw BadRequestError(std::string("Le corps YAML est invalide : ") + ex.what());
+    }
+
+    if (!root || !root.IsMap()) {
+        throw BadRequestError("Le corps YAML doit être un mapping.");
+    }
+
+    IndicatorRequest request;
+    if (!root["data"]) {
+        throw RequestValidationError("Le champ `data` est obligatoire.");
+    }
+    request.dataset = buildDatasetFromYaml(root["data"]);
+    request.operations = parseOperationsFromYaml(root);
+    return request;
+}
+
 oatpp::Object<AnalysisDatasetDto> datasetToDto(const Dataset& dataset) {
     auto dto = AnalysisDatasetDto::createShared();
 
@@ -973,6 +1023,141 @@ std::shared_ptr<AnalysisController::OutgoingResponse> AnalysisController::handle
         auto response = createDtoResponse(oatpp::web::protocol::http::Status::CODE_500, dto);
         response->putHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE, std::string(kMimeJson));
         return response;
+    }
+}
+
+std::shared_ptr<AnalysisController::OutgoingResponse> AnalysisController::handleIndicators(const std::shared_ptr<IncomingRequest>& request) {
+    const ResponseFormat responseFormat =
+        selectResponseFormat(request->getHeader(oatpp::web::protocol::http::Header::ACCEPT));
+
+    const auto contentTypeHeader = request->getHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE);
+    const auto makeErrorResponse = [&](const oatpp::web::protocol::http::Status& status,
+                                       const std::string& code,
+                                       const std::string& details) {
+        const std::string timestamp = isoTimestampUtc();
+        if (responseFormat == ResponseFormat::Yaml) {
+            YAML::Node yaml = errorToYaml(code, details, timestamp);
+            const std::string serialized = YAML::Dump(yaml);
+            auto response = createResponse(status, oatpp::String(serialized));
+            response->putHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE, std::string(kMimeYamlPrimary));
+            return response;
+        }
+        auto dto = AnalysisErrorResponseDto::createShared();
+        dto->error = code.c_str();
+        dto->details = details.c_str();
+        dto->timestamp = timestamp.c_str();
+        auto response = createDtoResponse(status, dto);
+        response->putHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE, std::string(kMimeJson));
+        return response;
+    };
+
+    if (contentTypeHeader == nullptr || contentTypeHeader->empty()) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_400,
+            "invalid_request",
+            "Le header Content-Type est obligatoire.");
+    }
+
+    const std::string normalizedMime = normalizeMime(toStdString(contentTypeHeader));
+
+    oatpp::String body;
+    try {
+        body = request->readBodyToString();
+    } catch (const std::exception& ex) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_400,
+            "invalid_request",
+            ex.what());
+    }
+
+    if (body == nullptr || body->empty()) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_400,
+            "invalid_request",
+            "Le corps de la requête est vide.");
+    }
+
+    try {
+        const BodyFormat bodyFormat = detectBodyFormat(normalizedMime);
+
+        IndicatorRequest parsed;
+        if (bodyFormat == BodyFormat::Json) {
+            auto jsonMapper = std::dynamic_pointer_cast<oatpp::parser::json::mapping::ObjectMapper>(getDefaultObjectMapper());
+            if (!jsonMapper) {
+                throw std::runtime_error("Failed to cast ObjectMapper to JsonObjectMapper.");
+            }
+            parsed = parseIndicatorJsonRequest(body, jsonMapper);
+        } else {
+            parsed = parseIndicatorYamlRequest(body);
+        }
+
+        IndicatorEngine engine;
+        auto results = engine.execute(parsed.dataset, parsed.operations);
+        const std::string executedAt = isoTimestampUtc();
+
+        const auto firstErrorIt = std::find_if(
+            results.begin(),
+            results.end(),
+            [](const varlor::models::OperationResult& result) {
+                return result.status == varlor::models::OperationStatus::Error;
+            });
+        if (firstErrorIt != results.end()) {
+            std::string details = "L'opération \"" + firstErrorIt->expr + "\" a échoué.";
+            if (firstErrorIt->errorMessage.has_value() && !firstErrorIt->errorMessage->empty()) {
+                details += " Raison : " + firstErrorIt->errorMessage.value();
+            }
+            return makeErrorResponse(
+                oatpp::web::protocol::http::Status::CODE_422,
+                "unprocessable_entity",
+                details);
+        }
+
+        if (responseFormat == ResponseFormat::Yaml) {
+            YAML::Node yaml(YAML::NodeType::Map);
+            yaml["results"] = operationsResultToYaml(results);
+            yaml["executedAt"] = executedAt;
+            const std::string serialized = YAML::Dump(yaml);
+            auto response = createResponse(oatpp::web::protocol::http::Status::CODE_200, oatpp::String(serialized));
+            response->putHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE, std::string(kMimeYamlPrimary));
+            return response;
+        }
+
+        auto dto = AnalysisIndicatorResponseDto::createShared();
+        if (auto list = operationsResultToDto(results); list) {
+            dto->results = list;
+        } else {
+            dto->results = oatpp::List<oatpp::Object<AnalysisOperationResultDto>>::createShared();
+        }
+        dto->executedAt = oatpp::String(executedAt.c_str());
+
+        auto response = createDtoResponse(oatpp::web::protocol::http::Status::CODE_200, dto);
+        response->putHeader(oatpp::web::protocol::http::Header::CONTENT_TYPE, std::string(kMimeJson));
+        return response;
+    } catch (const BadRequestError& badRequest) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_400,
+            "invalid_request",
+            badRequest.what());
+    } catch (const RequestValidationError& validationError) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_422,
+            "unprocessable_entity",
+            validationError.what());
+    } catch (const std::invalid_argument& invalidArgument) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_422,
+            "unprocessable_entity",
+            invalidArgument.what());
+    } catch (const std::runtime_error& runtimeError) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_422,
+            "unprocessable_entity",
+            runtimeError.what());
+    } catch (const std::exception& ex) {
+        return makeErrorResponse(
+            oatpp::web::protocol::http::Status::CODE_500,
+            "internal_error",
+            ex.what());
     }
 }
 

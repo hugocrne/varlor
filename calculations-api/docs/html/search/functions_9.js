@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['removedatapoint_0',['removeDataPoint',['../classvarlor_1_1models_1_1_dataset.html#a020abc9da2d6dc74f1249f6845059012',1,'varlor::models::Dataset']]],
-  ['removefield_1',['removeField',['../classvarlor_1_1models_1_1_data_point.html#af80555274a3bb9df3ebd0ce7cd46ce57',1,'varlor::models::DataPoint']]],
-  ['reset_2',['reset',['../classvarlor_1_1models_1_1_preprocessing_report.html#af14c9ad8b3b55e38c4244fb18ed59ff6',1,'varlor::models::PreprocessingReport']]]
+  ['operator_3d_0',['operator=',['../structvarlor_1_1core_1_1_math_operation_parser_1_1_parsed_expression.html#a8259469505a3bb956bd24d53ce01219b',1,'varlor::core::MathOperationParser::ParsedExpression::operator=(const ParsedExpression &amp;)=delete'],['../structvarlor_1_1core_1_1_math_operation_parser_1_1_parsed_expression.html#a12f43079adf219822cca7561cc394f05',1,'varlor::core::MathOperationParser::ParsedExpression::operator=(ParsedExpression &amp;&amp;) noexcept=default']]]
 ];

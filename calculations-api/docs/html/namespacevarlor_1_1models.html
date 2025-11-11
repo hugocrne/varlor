@@ -101,6 +101,10 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Représente l'ensemble complet des données à analyser.  <a href="classvarlor_1_1models_1_1_dataset.html#details">More...</a><br /></td></tr>
 <tr class="memitem:MetaInfo" id="r_MetaInfo"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvarlor_1_1models_1_1_meta_info.html">MetaInfo</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contient les informations de traçabilité d'un <a class="el" href="classvarlor_1_1models_1_1_data_point.html" title="Représente une ligne individuelle du jeu de données.">DataPoint</a>.  <a href="classvarlor_1_1models_1_1_meta_info.html#details">More...</a><br /></td></tr>
+<tr class="memitem:OperationDefinition" id="r_OperationDefinition"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvarlor_1_1models_1_1_operation_definition.html">OperationDefinition</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paramètres déclaratifs d'une opération du moteur d'indicateurs.  <a href="structvarlor_1_1models_1_1_operation_definition.html#details">More...</a><br /></td></tr>
+<tr class="memitem:OperationResult" id="r_OperationResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvarlor_1_1models_1_1_operation_result.html">OperationResult</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Résultat détaillé retourné par l'IndicatorEngine pour chaque opération.  <a href="structvarlor_1_1models_1_1_operation_result.html#details">More...</a><br /></td></tr>
 <tr class="memitem:PreprocessingReport" id="r_PreprocessingReport"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html">PreprocessingReport</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rapport détaillé des opérations de pré-traitement effectuées.  <a href="classvarlor_1_1models_1_1_preprocessing_report.html#details">More...</a><br /></td></tr>
 <tr class="memitem:PreprocessingResult" id="r_PreprocessingResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structvarlor_1_1models_1_1_preprocessing_result.html">PreprocessingResult</a></td></tr>
@@ -119,6 +123,10 @@ Enumerations</h2></td></tr>
 , <a class="el" href="#a879fb031d00ddacbde043b7e1e8120eea88183b946cc5f0e8c96b2e66e1c74a7e">Unknown</a>
  }</td></tr>
 <tr class="memdesc:a879fb031d00ddacbde043b7e1e8120ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Énumération des types de données supportés pour les champs.  <a href="#a879fb031d00ddacbde043b7e1e8120ee">More...</a><br /></td></tr>
+<tr class="memitem:a05d674bb1d22b48457e430bba95ffdd2" id="r_a05d674bb1d22b48457e430bba95ffdd2"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05d674bb1d22b48457e430bba95ffdd2">OperationStatus</a> { <a class="el" href="#a05d674bb1d22b48457e430bba95ffdd2a505a83f220c02df2f85c3810cd9ceb38">Success</a>
+, <a class="el" href="#a05d674bb1d22b48457e430bba95ffdd2a902b0d55fddef6f8d651fe1035b7d4bd">Error</a>
+ }</td></tr>
+<tr class="memdesc:a05d674bb1d22b48457e430bba95ffdd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indique l'issue de l'exécution d'une opération.  <a href="#a05d674bb1d22b48457e430bba95ffdd2">More...</a><br /></td></tr>
 </table>
 <a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
 <a id="add5ae268b094f9160e8e0717b7c7a295" name="add5ae268b094f9160e8e0717b7c7a295"></a>
@@ -178,6 +186,36 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a879fb031d00ddacbde043b7e1e8120eea27226c864bac7454a8504f8edb15d95b" name="a879fb031d00ddacbde043b7e1e8120eea27226c864bac7454a8504f8edb15d95b"></a>Boolean&#160;</td><td class="fielddoc"><p>Type booléen (vrai/faux) </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a879fb031d00ddacbde043b7e1e8120eea88183b946cc5f0e8c96b2e66e1c74a7e" name="a879fb031d00ddacbde043b7e1e8120eea88183b946cc5f0e8c96b2e66e1c74a7e"></a>Unknown&#160;</td><td class="fielddoc"><p>Type inconnu ou non détecté </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="a05d674bb1d22b48457e430bba95ffdd2" name="a05d674bb1d22b48457e430bba95ffdd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05d674bb1d22b48457e430bba95ffdd2">&#9670;&#160;</a></span>OperationStatus</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="#a05d674bb1d22b48457e430bba95ffdd2">varlor::models::OperationStatus</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel strong">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Indique l'issue de l'exécution d'une opération. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a05d674bb1d22b48457e430bba95ffdd2a505a83f220c02df2f85c3810cd9ceb38" name="a05d674bb1d22b48457e430bba95ffdd2a505a83f220c02df2f85c3810cd9ceb38"></a>Success&#160;</td><td class="fielddoc"><p>L'opération s'est exécutée correctement. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a05d674bb1d22b48457e430bba95ffdd2a902b0d55fddef6f8d651fe1035b7d4bd" name="a05d674bb1d22b48457e430bba95ffdd2a902b0d55fddef6f8d651fe1035b7d4bd"></a>Error&#160;</td><td class="fielddoc"><p>L'opération a échoué (erreur de validation ou d'exécution). </p>
 </td></tr>
 </table>
 

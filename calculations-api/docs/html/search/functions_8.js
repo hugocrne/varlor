@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['preprocessingreport_0',['PreprocessingReport',['../classvarlor_1_1models_1_1_preprocessing_report.html#a482bc142ef852591c622a8f33b85e017',1,'varlor::models::PreprocessingReport::PreprocessingReport()'],['../classvarlor_1_1models_1_1_preprocessing_report.html#ab2d985b09f5f23dd36a724ec153ad3e1',1,'varlor::models::PreprocessingReport::PreprocessingReport(std::size_t inputRowCount, std::size_t outputRowCount)']]],
-  ['process_1',['process',['../classvarlor_1_1core_1_1_data_preprocessor.html#ad5d2774f3949ed76f944b40e9cc1e747',1,'varlor::core::DataPreprocessor']]]
+  ['max_0',['max',['../classvarlor_1_1core_1_1_builtin_operations.html#a53351b8f5e97e52d749ed32f1d4db0f1',1,'varlor::core::BuiltinOperations']]],
+  ['mean_1',['mean',['../classvarlor_1_1core_1_1_builtin_operations.html#a3935d1116b4311a04fb2b7b29a5bf050',1,'varlor::core::BuiltinOperations']]],
+  ['median_2',['median',['../classvarlor_1_1core_1_1_builtin_operations.html#a87d29bf4400414e29e2ccc158b320143',1,'varlor::core::BuiltinOperations']]],
+  ['min_3',['min',['../classvarlor_1_1core_1_1_builtin_operations.html#a277af5a9f18daadad20cb9b1e2c6a4ad',1,'varlor::core::BuiltinOperations']]]
 ];

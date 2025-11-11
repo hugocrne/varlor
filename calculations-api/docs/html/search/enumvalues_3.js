@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['unknown_0',['Unknown',['../namespacevarlor_1_1models.html#a879fb031d00ddacbde043b7e1e8120eea88183b946cc5f0e8c96b2e66e1c74a7e',1,'varlor::models']]]
+  ['success_0',['Success',['../namespacevarlor_1_1models.html#a05d674bb1d22b48457e430bba95ffdd2a505a83f220c02df2f85c3810cd9ceb38',1,'varlor::models']]]
 ];

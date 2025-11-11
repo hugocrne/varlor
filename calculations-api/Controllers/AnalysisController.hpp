@@ -111,6 +111,29 @@ class AnalysisOperationResultDto : public oatpp::DTO {
 };
 
 /**
+ * @class AnalysisIndicatorRequestDto
+ * @brief Payload attendu par l'endpoint d'indicateurs dynamiques.
+ */
+class AnalysisIndicatorRequestDto : public oatpp::DTO {
+    DTO_INIT(AnalysisIndicatorRequestDto, DTO)
+
+    DTO_FIELD(oatpp::String, type);
+    DTO_FIELD(oatpp::Any, data);
+    DTO_FIELD(oatpp::List<oatpp::Object<AnalysisOperationDefinitionDto>>, operations);
+};
+
+/**
+ * @class AnalysisIndicatorResponseDto
+ * @brief Structure retournée par l'endpoint d'indicateurs.
+ */
+class AnalysisIndicatorResponseDto : public oatpp::DTO {
+    DTO_INIT(AnalysisIndicatorResponseDto, DTO)
+
+    DTO_FIELD(oatpp::List<oatpp::Object<AnalysisOperationResultDto>>, results);
+    DTO_FIELD(oatpp::String, executedAt);
+};
+
+/**
  * @class AnalysisPreprocessResponseDto
  * @brief Payload retourné lors d'un prétraitement réussi.
  */
@@ -161,6 +184,16 @@ public:
         info->addResponse<oatpp::Object<AnalysisErrorResponseDto>>(oatpp::web::protocol::http::Status::CODE_500, "application/json");
     }
 
+    ENDPOINT_INFO(indicators) {
+        info->summary = "Exécution dynamique d'indicateurs statistiques";
+        info->addConsumes<oatpp::String>("application/json");
+        info->addConsumes<oatpp::String>("application/x-yaml");
+        info->addResponse<oatpp::Object<AnalysisIndicatorResponseDto>>(oatpp::web::protocol::http::Status::CODE_200, "application/json");
+        info->addResponse<oatpp::Object<AnalysisErrorResponseDto>>(oatpp::web::protocol::http::Status::CODE_400, "application/json");
+        info->addResponse<oatpp::Object<AnalysisErrorResponseDto>>(oatpp::web::protocol::http::Status::CODE_422, "application/json");
+        info->addResponse<oatpp::Object<AnalysisErrorResponseDto>>(oatpp::web::protocol::http::Status::CODE_500, "application/json");
+    }
+
     /**
      * @brief Traite le prétraitement d'un dataset semi-structuré.
      * @details
@@ -186,8 +219,18 @@ public:
         return handlePreprocess(request);
     }
 
+    /**
+     * @brief Exécute des opérations analytiques dynamiques sur un dataset.
+     * @route POST /api/analyses/indicators
+     * @return Liste de `OperationResult` enrichie de métadonnées d'exécution.
+     */
+    ENDPOINT("POST", "/api/analyses/indicators", indicators, REQUEST(std::shared_ptr<oatpp::web::protocol::http::incoming::Request>, request)) {
+        return handleIndicators(request);
+    }
+
 private:
     std::shared_ptr<OutgoingResponse> handlePreprocess(const std::shared_ptr<IncomingRequest>& request);
+    std::shared_ptr<OutgoingResponse> handleIndicators(const std::shared_ptr<IncomingRequest>& request);
 };
 
 #include OATPP_CODEGEN_END(ApiController)

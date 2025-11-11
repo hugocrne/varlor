@@ -143,6 +143,96 @@ data:
 }
 ```
 
+## Endpoint `/api/analyses/indicators`
+
+- **Méthode** : `POST`
+- **Route** : `/api/analyses/indicators`
+- **Content-Type supportés** : `application/json`, `application/x-yaml`
+- **Accept** : JSON par défaut (`application/json`), YAML (`application/x-yaml`) si explicitement demandé
+- **Réponse** : liste d'`OperationResult` accompagnée d'un timestamp global `executedAt`
+
+Cet endpoint permet d'exposer directement le moteur `IndicatorEngine` sans passer par l'étape de prétraitement. Le client fournit un dataset et une liste d'expressions/indicateurs à calculer. Le contrôleur se charge :
+
+1. D'interpréter le corps (JSON ou YAML) et de construire un `Dataset`.
+2. D'exécuter chaque opération via `IndicatorEngine::execute`.
+3. De restituer les résultats en conservant le statut (`success`/`error`), la valeur calculée et l'instant d'exécution individuel pour chaque opération.
+
+### Exemple de requête (JSON)
+
+```http
+POST /api/analyses/indicators HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "data": [
+    { "price": 100.0, "duration": 8.2 },
+    { "price": 120.0, "duration": 9.0 },
+    { "price": 150.0, "duration": 9.7 }
+  ],
+  "operations": [
+    { "expr": "mean(price)" },
+    { "expr": "(max(price) - min(price)) / mean(price)" }
+  ]
+}
+```
+
+### Exemple de réponse (JSON)
+
+```json
+{
+  "results": [
+    { "expr": "mean(price)", "status": "success", "result": 123.33, "executed_at": "2025-11-10T23:00:00.000Z" },
+    { "expr": "(max(price) - min(price)) / mean(price)", "status": "success", "result": 0.406, "executed_at": "2025-11-10T23:00:00.000Z" }
+  ],
+  "executedAt": "2025-11-10T23:00:00.000Z"
+}
+```
+
+### Exemple de requête (YAML)
+
+```http
+POST /api/analyses/indicators HTTP/1.1
+Content-Type: application/x-yaml
+Accept: application/x-yaml
+
+---
+operations:
+  - expr: mean(price)
+  - expr: correlation(price, duration)
+data:
+  - price: 100.0
+    duration: 8.2
+  - price: 120.0
+    duration: 9.0
+  - price: 150.0
+    duration: 9.7
+```
+
+### Exemple de réponse (YAML)
+
+```yaml
+results:
+  - expr: mean(price)
+    status: success
+    result: 123.33
+    executed_at: "2025-11-10T23:00:00.000Z"
+  - expr: correlation(price, duration)
+    status: success
+    result: 0.99
+    executed_at: "2025-11-10T23:00:00.000Z"
+executedAt: "2025-11-10T23:00:00.000Z"
+```
+
+### Codes de statut HTTP
+
+| Code | Signification | Exemple de message |
+|------|---------------|--------------------|
+| 200  | Calcul réussi | Les résultats sont renvoyés dans `results` |
+| 400  | Requête mal formée | JSON/YAML invalide, header `Content-Type` manquant |
+| 422  | Opération impossible | Colonne absente, expression invalide, arguments incohérents |
+| 500  | Erreur interne | Exception non traitée lors du calcul d'un indicateur |
+
 ## Rôle du champ `content_type`
 
 Le champ `data_descriptor.content_type` est renseigné par le client et validé par la gateway avant d’être envoyé à `calculations-api`. Ce champ doit refléter le format réel du corps de la requête. Si un décalage est détecté (ex. annonce de `text/csv` mais corps JSON), le contrôleur retourne `422 Unprocessable Entity`.
@@ -183,3 +273,4 @@ Retour du PreprocessingResult (cleaned + outliers + report)
 - L’API respecte le header `Accept` pour renvoyer le résultat en JSON ou en YAML.
 - Le traitement est non destructif : le dataset d’entrée n’est jamais modifié directement, toutes les transformations sont réalisées sur des copies.
 - Les tests d’intégration `tests/controllers/test_AnalysisController.cpp` couvrent l’ensemble des scénarios décrits ci-dessus.
+- Pour mettre à jour la documentation Doxygen : exécuter `make docs` à la racine de `calculations-api`.

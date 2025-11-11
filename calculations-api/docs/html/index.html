@@ -116,6 +116,28 @@ Format d’entrée / sortie</h1>
 </li>
 </ul>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+Fonctions supportées</h1>
+<p>Le moteur <span class="tt">IndicatorEngine</span> complète le prétraitement en exposant des opérations analytiques dynamiques. Les fonctions ci-dessous sont injectées dans le DSL supporté par <span class="tt">MathOperationParser</span> et <span class="tt">ExpressionExecutor</span>.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Fonction  </th><th class="markdownTableHeadNone">Description  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">mean(field)</span>  </td><td class="markdownTableBodyNone">Moyenne arithmétique sur la colonne <span class="tt">field</span>.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">median(field)</span>  </td><td class="markdownTableBodyNone">Médiane (avec interpolation) de la colonne numérique.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">variance(field)</span>  </td><td class="markdownTableBodyNone">Variance populationnelle de la colonne.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">stddev(field)</span>  </td><td class="markdownTableBodyNone">Écart-type (racine carrée de la variance).  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">min(field)</span> / <span class="tt">max(field)</span>  </td><td class="markdownTableBodyNone">Valeur minimale / maximale observée.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">percentile(field, p)</span>  </td><td class="markdownTableBodyNone">Percentile <span class="tt">p</span> en pourcentage (0-100) avec interpolation linéaire.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">correlation(fieldA, fieldB)</span>  </td><td class="markdownTableBodyNone">Corrélation de Pearson entre deux colonnes.  </td></tr>
+</table>
+<p>Ces fonctions peuvent être utilisées seules (<span class="tt">mean(price)</span>) ou combinées dans des expressions libres (<span class="tt">(max(price) - min(price)) / mean(price)</span>). Les paramètres additionnels sont passés via <span class="tt">OperationDefinition::params</span> lorsque nécessaire (par exemple <span class="tt">percentile</span> sans second argument).</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
 Métadonnées <span class="tt">_meta</span></h1>
 <p>Le champ <span class="tt">_meta</span> s’appuie sur <span class="tt">MetaInfo</span>, une structure hiérarchique sérialisable en YAML. Les clés standard sont :</p><ul>
 <li><span class="tt">status/outlier</span>, <span class="tt">status/reason</span>, <span class="tt">status/method</span></li>
@@ -125,7 +147,7 @@ Métadonnées <span class="tt">_meta</span></h1>
 <li><span class="tt">columns/&lt;colonne&gt;/imputation/value</span></li>
 </ul>
 <p>Des attributs additionnels (<span class="tt">confidence</span>, <span class="tt">source</span>, etc.) peuvent être ajoutés sans modifier le moteur.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
 Flux de données</h1>
 <div class="fragment"><div class="line">Raw Dataset</div>
 <div class="line">    ↓ analyse &amp; normalisation</div>
@@ -136,7 +158,7 @@ Flux de données</h1>
 <div class="line">Cleaned Dataset (imputed)</div>
 <div class="line">    ↓ agrégation</div>
 <div class="line">PreprocessingResult (cleanedDataset, outliersDataset, report)</div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
 Évolutions prévues</h1>
 <ul>
 <li><b>Parallélisation</b> des phases de normalisation / imputation pour les gros volumes.</li>
