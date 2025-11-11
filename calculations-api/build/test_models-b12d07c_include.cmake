@@ -1,0 +1,5 @@
+if(EXISTS "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models-b12d07c_tests.cmake")
+  include("/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models-b12d07c_tests.cmake")
+else()
+  add_test(test_models_NOT_BUILT-b12d07c test_models_NOT_BUILT-b12d07c)
+endif()

@@ -26,6 +26,25 @@ namespace varlor::models {
  * 
  * Permet de tracer toutes les transformations appliquées aux données
  * et de fournir un retour détaillé à l'utilisateur via l'API.
+ * 
+ * @note Ce rapport est rempli progressivement pendant le traitement
+ *       par le DataPreprocessor. Il doit être initialisé avec le nombre
+ *       de lignes en entrée avant le traitement.
+ * 
+ * @note Le rapport est conçu pour être facilement sérialisable en JSON
+ *       via les DTOs Oat++ pour l'exposition via l'API REST.
+ * 
+ * @note Utilisation typique :
+ *       @code
+ *       PreprocessingReport report;
+ *       report.setInputRowCount(dataset.getRowCount());
+ *       // ... traitement ...
+ *       report.incrementOutliersRemoved(removed);
+ *       report.setOutputRowCount(dataset.getRowCount());
+ *       @endcode
+ * 
+ * @see Dataset pour les données traitées
+ * @see DataPreprocessor pour l'utilisation complète
  */
 class PreprocessingReport {
 public:
@@ -172,6 +191,9 @@ public:
     /**
      * @brief Calcule le nombre de lignes supprimées.
      * @return Différence entre les lignes d'entrée et de sortie
+     * 
+     * @note Retourne 0 si outputRowCount > inputRowCount (cas anormal).
+     *       Cela peut arriver si des lignes sont ajoutées pendant le traitement.
      */
     [[nodiscard]] std::size_t getRowsRemoved() const {
         return (inputRowCount_ > outputRowCount_) 

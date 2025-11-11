@@ -25,6 +25,26 @@ namespace varlor::models {
  * 
  * Permet de stocker et manipuler un jeu de données structuré,
  * avec accès aux colonnes et aux lignes individuelles.
+ * 
+ * @note Complexité temporelle :
+ *       - addDataPoint() : O(1) amorti
+ *       - getDataPoint() : O(1)
+ *       - removeDataPoint() : O(n) où n est le nombre de lignes
+ *       - Itération : O(n) pour n lignes
+ * 
+ * @note Le Dataset est conçu pour être modifié par le DataPreprocessor.
+ *       Les noms de colonnes peuvent être définis avant ou après l'ajout
+ *       des données, mais il est recommandé de les définir en premier.
+ * 
+ * @note Les itérateurs permettent l'utilisation de range-based for loops :
+ *       @code
+ *       for (const auto& point : dataset) {
+ *           // Traiter chaque ligne
+ *       }
+ *       @endcode
+ * 
+ * @see DataPoint pour la structure d'une ligne
+ * @see PreprocessingReport pour tracer les modifications
  */
 class Dataset {
 public:

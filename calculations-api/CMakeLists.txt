@@ -4,11 +4,43 @@ project(calculations_api)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# ✅ Trouver Oat++ automatiquement
-find_package(oatpp 1.3.0 REQUIRED)
+# ✅ Trouver Oat++ automatiquement (optionnel pour permettre les tests sans Oat++)
+find_package(oatpp 1.3.0 QUIET)
+if(oatpp_FOUND)
+    # ✅ Ajoute ton code source principal
+    add_executable(calculations_api main.cpp)
+    # ✅ Lier Oat++ automatiquement
+    target_link_libraries(calculations_api PRIVATE oatpp::oatpp)
+else()
+    message(WARNING "Oat++ not found - main executable will not be built, but tests can still run")
+endif()
 
-# ✅ Ajoute ton code source principal
-add_executable(calculations_api main.cpp)
+# ========== Tests ==========
+enable_testing()
 
-# ✅ Lier Oat++ automatiquement
-target_link_libraries(calculations_api PRIVATE oatpp::oatpp)
+# Télécharger Catch2 via FetchContent
+include(FetchContent)
+FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG        v3.5.2
+)
+FetchContent_MakeAvailable(Catch2)
+
+# Inclure le module Catch2 pour catch_discover_tests
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+include(CTest)
+include(Catch)
+
+# Tests pour les modèles
+add_executable(test_models
+    tests/models/test_FieldType.cpp
+    tests/models/test_DataPoint.cpp
+    tests/models/test_Dataset.cpp
+    tests/models/test_PreprocessingReport.cpp
+)
+
+target_link_libraries(test_models PRIVATE Catch2::Catch2WithMain)
+
+# Enregistrer les tests avec CTest
+catch_discover_tests(test_models)

@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['datapoint_0',['DataPoint',['../classvarlor_1_1models_1_1_data_point.html',1,'varlor::models::DataPoint'],['../classvarlor_1_1models_1_1_data_point.html#a57038f9a58688eb45f5481509ff023ec',1,'varlor::models::DataPoint::DataPoint()=default'],['../classvarlor_1_1models_1_1_data_point.html#acf7fd2e41b65e54d28e0259c99ca4d42',1,'varlor::models::DataPoint::DataPoint(const std::unordered_map&lt; std::string, FieldValue &gt; &amp;fields)'],['../classvarlor_1_1models_1_1_data_point.html#a44b70de46fe88b89247e511dbd4cf622',1,'varlor::models::DataPoint::DataPoint(std::unordered_map&lt; std::string, FieldValue &gt; &amp;&amp;fields)']]],
+  ['datapoint_2ehpp_1',['DataPoint.hpp',['../_data_point_8hpp.html',1,'']]],
+  ['dataset_2',['Dataset',['../classvarlor_1_1models_1_1_dataset.html',1,'varlor::models::Dataset'],['../classvarlor_1_1models_1_1_dataset.html#a00b22c5b2f0d6f889c3f7db6cd2558a6',1,'varlor::models::Dataset::Dataset()=default'],['../classvarlor_1_1models_1_1_dataset.html#a64ad0dfc81e31ce31d14fb51f304a090',1,'varlor::models::Dataset::Dataset(const std::vector&lt; std::string &gt; &amp;columnNames)'],['../classvarlor_1_1models_1_1_dataset.html#aaf984e2127b3e6e31a50f677a16deef3',1,'varlor::models::Dataset::Dataset(std::vector&lt; std::string &gt; &amp;&amp;columnNames)']]],
+  ['dataset_2ehpp_3',['Dataset.hpp',['../_dataset_8hpp.html',1,'']]]
+];

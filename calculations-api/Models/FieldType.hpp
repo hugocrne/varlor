@@ -12,7 +12,14 @@ namespace varlor::models {
  * @brief Énumération des types de données supportés pour les champs.
  * 
  * Utilisée pour identifier automatiquement le type de chaque colonne
- * lors de la phase de détection de schéma.
+ * lors de la phase de détection de schéma par le DataPreprocessor.
+ * 
+ * @note Cette énumération est utilisée pour la détection de schéma et
+ *       peut être étendue à l'avenir pour supporter d'autres types
+ *       (dates, catégories, etc.).
+ * 
+ * @see DataPoint pour voir comment les valeurs sont stockées
+ * @see Dataset pour voir comment les types sont associés aux colonnes
  */
 enum class FieldType {
     /// Type numérique (entier ou décimal)

@@ -34,6 +34,19 @@ using FieldValue = std::variant<double, std::string, bool, std::nullptr_t>;
  * 
  * Permet un accès rapide aux champs par leur nom via une table de hachage.
  * Chaque champ peut contenir une valeur de type variant (numérique, texte, booléen, null).
+ * 
+ * @note Complexité temporelle :
+ *       - getField(), hasField(), setField() : O(1) en moyenne
+ *       - removeField() : O(1) en moyenne
+ * 
+ * @note Les valeurs sont stockées dans un std::variant, permettant
+ *       un stockage type-safe sans overhead de pointeurs.
+ * 
+ * @note Pour vérifier l'existence d'un champ avant accès, utiliser
+ *       hasField() ou vérifier que getField() retourne une valeur.
+ * 
+ * @see FieldValue pour les types de valeurs supportés
+ * @see Dataset pour voir comment les DataPoint sont organisés
  */
 class DataPoint {
 public:
@@ -60,6 +73,14 @@ public:
      * @brief Récupère la valeur d'un champ par son nom.
      * @param fieldName Nom de la colonne
      * @return Option contenant la valeur si le champ existe, std::nullopt sinon
+     * 
+     * @note Utiliser std::get<T>() pour extraire la valeur du variant :
+     *       @code
+     *       auto value = point.getField("age");
+     *       if (value.has_value() && std::holds_alternative<double>(value.value())) {
+     *           double age = std::get<double>(value.value());
+     *       }
+     *       @endcode
      */
     [[nodiscard]] std::optional<FieldValue> getField(const std::string& fieldName) const {
         auto it = fields_.find(fieldName);

@@ -1,0 +1,383 @@
+Start testing: Nov 10 23:56 CET
+----------------------------------------------------------
+1/19 Testing: FieldType enum values
+1/19 Test: FieldType enum values
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "FieldType enum values"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"FieldType enum values" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "FieldType enum values"
+Randomness seeded to: 1496083993
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"FieldType enum values" end time: Nov 10 23:56 CET
+"FieldType enum values" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/19 Testing: DataPoint construction
+2/19 Test: DataPoint construction
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "DataPoint construction"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"DataPoint construction" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint construction"
+Randomness seeded to: 292064284
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint construction" end time: Nov 10 23:56 CET
+"DataPoint construction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/19 Testing: DataPoint field operations
+3/19 Test: DataPoint field operations
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "DataPoint field operations"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"DataPoint field operations" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint field operations"
+Randomness seeded to: 8466315
+===============================================================================
+All tests passed (25 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint field operations" end time: Nov 10 23:56 CET
+"DataPoint field operations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/19 Testing: DataPoint with multiple field types
+4/19 Test: DataPoint with multiple field types
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "DataPoint with multiple field types"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"DataPoint with multiple field types" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint with multiple field types"
+Randomness seeded to: 3773560551
+===============================================================================
+All tests passed (5 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint with multiple field types" end time: Nov 10 23:56 CET
+"DataPoint with multiple field types" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/19 Testing: DataPoint field access
+5/19 Test: DataPoint field access
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "DataPoint field access"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"DataPoint field access" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint field access"
+Randomness seeded to: 3772924102
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint field access" end time: Nov 10 23:56 CET
+"DataPoint field access" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/19 Testing: DataPoint move semantics
+6/19 Test: DataPoint move semantics
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "DataPoint move semantics"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"DataPoint move semantics" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "DataPoint move semantics"
+Randomness seeded to: 987861970
+===============================================================================
+All tests passed (2 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"DataPoint move semantics" end time: Nov 10 23:56 CET
+"DataPoint move semantics" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/19 Testing: Dataset construction
+7/19 Test: Dataset construction
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "Dataset construction"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"Dataset construction" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset construction"
+Randomness seeded to: 1130248353
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset construction" end time: Nov 10 23:56 CET
+"Dataset construction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/19 Testing: Dataset column management
+8/19 Test: Dataset column management
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "Dataset column management"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"Dataset column management" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset column management"
+Randomness seeded to: 1714269938
+===============================================================================
+All tests passed (10 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset column management" end time: Nov 10 23:56 CET
+"Dataset column management" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/19 Testing: Dataset data point management
+9/19 Test: Dataset data point management
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "Dataset data point management"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"Dataset data point management" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset data point management"
+Randomness seeded to: 3846791890
+===============================================================================
+All tests passed (14 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset data point management" end time: Nov 10 23:56 CET
+"Dataset data point management" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/19 Testing: Dataset iteration
+10/19 Test: Dataset iteration
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "Dataset iteration"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"Dataset iteration" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset iteration"
+Randomness seeded to: 4101976114
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset iteration" end time: Nov 10 23:56 CET
+"Dataset iteration" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/19 Testing: Dataset clear and access
+11/19 Test: Dataset clear and access
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "Dataset clear and access"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"Dataset clear and access" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset clear and access"
+Randomness seeded to: 234513021
+===============================================================================
+All tests passed (9 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset clear and access" end time: Nov 10 23:56 CET
+"Dataset clear and access" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/19 Testing: Dataset complex scenario
+12/19 Test: Dataset complex scenario
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "Dataset complex scenario"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"Dataset complex scenario" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "Dataset complex scenario"
+Randomness seeded to: 4289897056
+===============================================================================
+All tests passed (32 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"Dataset complex scenario" end time: Nov 10 23:56 CET
+"Dataset complex scenario" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/19 Testing: PreprocessingReport construction
+13/19 Test: PreprocessingReport construction
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "PreprocessingReport construction"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"PreprocessingReport construction" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport construction"
+Randomness seeded to: 2675950588
+===============================================================================
+All tests passed (9 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport construction" end time: Nov 10 23:56 CET
+"PreprocessingReport construction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/19 Testing: PreprocessingReport setters and getters
+14/19 Test: PreprocessingReport setters and getters
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "PreprocessingReport setters and getters"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"PreprocessingReport setters and getters" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport setters and getters"
+Randomness seeded to: 3342221829
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport setters and getters" end time: Nov 10 23:56 CET
+"PreprocessingReport setters and getters" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/19 Testing: PreprocessingReport increment operations
+15/19 Test: PreprocessingReport increment operations
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "PreprocessingReport increment operations"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"PreprocessingReport increment operations" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport increment operations"
+Randomness seeded to: 2199229910
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport increment operations" end time: Nov 10 23:56 CET
+"PreprocessingReport increment operations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/19 Testing: PreprocessingReport normalized fields
+16/19 Test: PreprocessingReport normalized fields
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "PreprocessingReport normalized fields"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"PreprocessingReport normalized fields" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport normalized fields"
+Randomness seeded to: 3287800798
+===============================================================================
+All tests passed (10 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport normalized fields" end time: Nov 10 23:56 CET
+"PreprocessingReport normalized fields" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/19 Testing: PreprocessingReport rows removed calculation
+17/19 Test: PreprocessingReport rows removed calculation
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "PreprocessingReport rows removed calculation"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"PreprocessingReport rows removed calculation" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport rows removed calculation"
+Randomness seeded to: 2587961380
+===============================================================================
+All tests passed (4 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport rows removed calculation" end time: Nov 10 23:56 CET
+"PreprocessingReport rows removed calculation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/19 Testing: PreprocessingReport reset
+18/19 Test: PreprocessingReport reset
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "PreprocessingReport reset"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"PreprocessingReport reset" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport reset"
+Randomness seeded to: 1449137288
+===============================================================================
+All tests passed (8 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport reset" end time: Nov 10 23:56 CET
+"PreprocessingReport reset" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/19 Testing: PreprocessingReport complete scenario
+19/19 Test: PreprocessingReport complete scenario
+Command: "/Users/hugo/Perso/Projets/varlor/calculations-api/build/test_models" "PreprocessingReport complete scenario"
+Directory: /Users/hugo/Perso/Projets/varlor/calculations-api/build
+"PreprocessingReport complete scenario" start time: Nov 10 23:56 CET
+Output:
+----------------------------------------------------------
+Filters: "PreprocessingReport complete scenario"
+Randomness seeded to: 3651729214
+===============================================================================
+All tests passed (6 assertions in 1 test case)
+
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PreprocessingReport complete scenario" end time: Nov 10 23:56 CET
+"PreprocessingReport complete scenario" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 10 23:56 CET
