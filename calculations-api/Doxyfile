@@ -9,7 +9,7 @@ GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
 HTML_OUTPUT            = html
 
-INPUT                  = Core/ Models/ Core/README.md Models/README.md
+INPUT                  = Core/ Models/ Controllers/ Core/README.md Models/README.md Controllers/README.md
 FILE_PATTERNS          = *.hpp *.md
 RECURSIVE              = YES
 
@@ -20,6 +20,7 @@ EXTRACT_STATIC         = YES
 MARKDOWN_SUPPORT       = YES
 AUTOLINK_SUPPORT       = YES
 USE_MDFILE_AS_MAINPAGE = Core/README.md
+ALIASES                += route="\\par Route:"
 
 QUIET                  = NO
 WARNINGS               = YES

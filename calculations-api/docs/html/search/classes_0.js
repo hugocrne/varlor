@@ -1,6 +1,12 @@
 var searchData=
 [
-  ['datapoint_0',['DataPoint',['../classvarlor_1_1models_1_1_data_point.html',1,'varlor::models']]],
-  ['datapreprocessor_1',['DataPreprocessor',['../classvarlor_1_1core_1_1_data_preprocessor.html',1,'varlor::core']]],
-  ['dataset_2',['Dataset',['../classvarlor_1_1models_1_1_dataset.html',1,'varlor::models']]]
+  ['analysiscontroller_0',['AnalysisController',['../classvarlor_1_1controllers_1_1_analysis_controller.html',1,'varlor::controllers']]],
+  ['analysisdatadescriptordto_1',['AnalysisDataDescriptorDto',['../classvarlor_1_1controllers_1_1_analysis_data_descriptor_dto.html',1,'varlor::controllers']]],
+  ['analysisdatapointdto_2',['AnalysisDataPointDto',['../classvarlor_1_1controllers_1_1_analysis_data_point_dto.html',1,'varlor::controllers']]],
+  ['analysisdatasetdto_3',['AnalysisDatasetDto',['../classvarlor_1_1controllers_1_1_analysis_dataset_dto.html',1,'varlor::controllers']]],
+  ['analysiserrorresponsedto_4',['AnalysisErrorResponseDto',['../classvarlor_1_1controllers_1_1_analysis_error_response_dto.html',1,'varlor::controllers']]],
+  ['analysisoptionsdto_5',['AnalysisOptionsDto',['../classvarlor_1_1controllers_1_1_analysis_options_dto.html',1,'varlor::controllers']]],
+  ['analysispreprocessingreportdto_6',['AnalysisPreprocessingReportDto',['../classvarlor_1_1controllers_1_1_analysis_preprocessing_report_dto.html',1,'varlor::controllers']]],
+  ['analysispreprocessrequestdto_7',['AnalysisPreprocessRequestDto',['../classvarlor_1_1controllers_1_1_analysis_preprocess_request_dto.html',1,'varlor::controllers']]],
+  ['analysispreprocessresponsedto_8',['AnalysisPreprocessResponseDto',['../classvarlor_1_1controllers_1_1_analysis_preprocess_response_dto.html',1,'varlor::controllers']]]
 ];

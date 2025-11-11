@@ -112,8 +112,10 @@ class AnalysisErrorResponseDto : public oatpp::DTO {
 
 #include OATPP_CODEGEN_BEGIN(ApiController)
 /**
- * @class AnalysisController
- * @brief Contrôleur REST exposant le pipeline de prétraitement des données.
+ * @brief Endpoint REST pour le prétraitement des données.
+ * @details Gère les formats JSON et YAML, appelle `DataPreprocessor` et renvoie un `PreprocessingResult` complet.
+ * @route /api/analyses/preprocess
+ * @since v1.0
  */
 class AnalysisController : public oatpp::web::server::api::ApiController {
 public:
@@ -131,6 +133,27 @@ public:
         info->addResponse<oatpp::Object<AnalysisErrorResponseDto>>(oatpp::web::protocol::http::Status::CODE_500, "application/json");
     }
 
+    /**
+     * @brief Traite le prétraitement d'un dataset semi-structuré.
+     * @details
+     * **Paramètres**
+     * - `request` : requête HTTP entrante contenant les données, les métadonnées et les options de nettoyage.
+     *
+     * @return Réponse HTTP sérialisée en JSON ou YAML selon le header `Accept`.
+     * @par Codes de retour
+     * - 200 : succès, la réponse contient `AnalysisPreprocessResponseDto` (datasets nettoyé et outliers + rapport).
+     * - 400 : requête invalide (JSON/YAML mal formé, header manquant) sous la forme `AnalysisErrorResponseDto`.
+     * - 422 : incohérence de format déclarée/détectée (`AnalysisErrorResponseDto`).
+     * - 500 : erreur interne lors de `DataPreprocessor::process` (`AnalysisErrorResponseDto`).
+     * @par Exemple de réponse
+     * @code{.json}
+     * {
+     *   "cleaned_dataset": { "columns": ["temperature"], "rows": [...] },
+     *   "outliers_dataset": { ... },
+     *   "report": { "input_row_count": 3, "output_row_count": 2, "outliers_removed": 1 }
+     * }
+     * @endcode
+     */
     ENDPOINT("POST", "/api/analyses/preprocess", preprocess, REQUEST(std::shared_ptr<oatpp::web::protocol::http::incoming::Request>, request)) {
         return handlePreprocess(request);
     }
