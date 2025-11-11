@@ -504,6 +504,19 @@ test_models/fast:
 .PHONY : test_models/fast
 
 #=============================================================================
+# Target rules for targets named test_core
+
+# Build rule for target.
+test_core: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_core
+.PHONY : test_core
+
+# fast build rule for target.
+test_core/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_core.dir/build.make CMakeFiles/test_core.dir/build
+.PHONY : test_core/fast
+
+#=============================================================================
 # Target rules for targets named Catch2
 
 # Build rule for target.
@@ -528,6 +541,54 @@ Catch2WithMain: cmake_check_build_system
 Catch2WithMain/fast:
 	$(MAKE) $(MAKESILENT) -f _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/build.make _deps/catch2-build/src/CMakeFiles/Catch2WithMain.dir/build
 .PHONY : Catch2WithMain/fast
+
+Core/DataPreprocessor.o: Core/DataPreprocessor.cpp.o
+.PHONY : Core/DataPreprocessor.o
+
+# target to build an object file
+Core/DataPreprocessor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_core.dir/build.make CMakeFiles/test_core.dir/Core/DataPreprocessor.cpp.o
+.PHONY : Core/DataPreprocessor.cpp.o
+
+Core/DataPreprocessor.i: Core/DataPreprocessor.cpp.i
+.PHONY : Core/DataPreprocessor.i
+
+# target to preprocess a source file
+Core/DataPreprocessor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_core.dir/build.make CMakeFiles/test_core.dir/Core/DataPreprocessor.cpp.i
+.PHONY : Core/DataPreprocessor.cpp.i
+
+Core/DataPreprocessor.s: Core/DataPreprocessor.cpp.s
+.PHONY : Core/DataPreprocessor.s
+
+# target to generate assembly for a file
+Core/DataPreprocessor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_core.dir/build.make CMakeFiles/test_core.dir/Core/DataPreprocessor.cpp.s
+.PHONY : Core/DataPreprocessor.cpp.s
+
+tests/core/test_DataPreprocessor.o: tests/core/test_DataPreprocessor.cpp.o
+.PHONY : tests/core/test_DataPreprocessor.o
+
+# target to build an object file
+tests/core/test_DataPreprocessor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_core.dir/build.make CMakeFiles/test_core.dir/tests/core/test_DataPreprocessor.cpp.o
+.PHONY : tests/core/test_DataPreprocessor.cpp.o
+
+tests/core/test_DataPreprocessor.i: tests/core/test_DataPreprocessor.cpp.i
+.PHONY : tests/core/test_DataPreprocessor.i
+
+# target to preprocess a source file
+tests/core/test_DataPreprocessor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_core.dir/build.make CMakeFiles/test_core.dir/tests/core/test_DataPreprocessor.cpp.i
+.PHONY : tests/core/test_DataPreprocessor.cpp.i
+
+tests/core/test_DataPreprocessor.s: tests/core/test_DataPreprocessor.cpp.s
+.PHONY : tests/core/test_DataPreprocessor.s
+
+# target to generate assembly for a file
+tests/core/test_DataPreprocessor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_core.dir/build.make CMakeFiles/test_core.dir/tests/core/test_DataPreprocessor.cpp.s
+.PHONY : tests/core/test_DataPreprocessor.cpp.s
 
 tests/models/test_DataPoint.o: tests/models/test_DataPoint.cpp.o
 .PHONY : tests/models/test_DataPoint.o
@@ -664,7 +725,14 @@ help:
 	@echo "... NightlyUpdate"
 	@echo "... Catch2"
 	@echo "... Catch2WithMain"
+	@echo "... test_core"
 	@echo "... test_models"
+	@echo "... Core/DataPreprocessor.o"
+	@echo "... Core/DataPreprocessor.i"
+	@echo "... Core/DataPreprocessor.s"
+	@echo "... tests/core/test_DataPreprocessor.o"
+	@echo "... tests/core/test_DataPreprocessor.i"
+	@echo "... tests/core/test_DataPreprocessor.s"
 	@echo "... tests/models/test_DataPoint.o"
 	@echo "... tests/models/test_DataPoint.i"
 	@echo "... tests/models/test_DataPoint.s"

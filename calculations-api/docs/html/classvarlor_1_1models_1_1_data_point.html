@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.14.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Varlor Calculations API - Models: varlor::models::DataPoint Class Reference</title>
+<title>Varlor Calculations API: varlor::models::DataPoint Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,9 +26,9 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Varlor Calculations API - Models<span id="projectnumber">&#160;1.0</span>
+   <div id="projectname">Varlor Calculations API
    </div>
-   <div id="projectbrief">Documentation des modèles de données pour le moteur de pré-analyse</div>
+   <div id="projectbrief">Documentation technique du pipeline de pré-analyse</div>
   </td>
  </tr>
  </tbody>
@@ -124,10 +124,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a25d3ac53a9cbd2e56b611fb10a7f79c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accès direct à la map des champs (lecture seule).  <br /></td></tr>
 <tr class="memitem:adac72f315bcfe5c755a4dab687331004" id="r_adac72f315bcfe5c755a4dab687331004"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, <a class="el" href="namespacevarlor_1_1models.html#add5ae268b094f9160e8e0717b7c7a295">FieldValue</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adac72f315bcfe5c755a4dab687331004">getFields</a> ()</td></tr>
 <tr class="memdesc:adac72f315bcfe5c755a4dab687331004"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accès direct à la map des champs (modifiable).  <br /></td></tr>
+<tr class="memitem:a67430c391bcedfa7afd59ab265d03dc2" id="r_a67430c391bcedfa7afd59ab265d03dc2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classvarlor_1_1models_1_1_meta_info.html">MetaInfo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a67430c391bcedfa7afd59ab265d03dc2">getMeta</a> () noexcept</td></tr>
+<tr class="memdesc:a67430c391bcedfa7afd59ab265d03dc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accède aux informations de traçabilité (<span class="tt">_meta</span>).  <br /></td></tr>
+<tr class="memitem:ac3831ff2c6f1c9542539ba4b7a5d9649" id="r_ac3831ff2c6f1c9542539ba4b7a5d9649"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classvarlor_1_1models_1_1_meta_info.html">MetaInfo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3831ff2c6f1c9542539ba4b7a5d9649">getMeta</a> () const noexcept</td></tr>
+<tr class="memdesc:ac3831ff2c6f1c9542539ba4b7a5d9649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accède aux informations de traçabilité (<span class="tt">_meta</span>) en lecture seule.  <br /></td></tr>
+<tr class="memitem:a58933a0ae5b7e926a119b31082fa96a4" id="r_a58933a0ae5b7e926a119b31082fa96a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58933a0ae5b7e926a119b31082fa96a4">clearMeta</a> ()</td></tr>
+<tr class="memdesc:a58933a0ae5b7e926a119b31082fa96a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Réinitialise entièrement les métadonnées <span class="tt">_meta</span> de ce point.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Représente une ligne individuelle du jeu de données. </p>
-<p>Permet un accès rapide aux champs par leur nom via une table de hachage. Chaque champ peut contenir une valeur de type variant (numérique, texte, booléen, null).</p>
+<p>Permet un accès rapide aux champs par leur nom via une table de hachage. Chaque champ peut contenir une valeur de type variant (numérique, texte, booléen, null). Un conteneur <a class="el" href="classvarlor_1_1models_1_1_meta_info.html" title="Contient les informations de traçabilité d&#39;un DataPoint.">MetaInfo</a> associé permet de tracer les opérations via la section <span class="tt">_meta</span>.</p>
 <dl class="section note"><dt>Note</dt><dd>Complexité temporelle :<ul>
 <li><a class="el" href="#af8ca933133ef24c66e372ff9e1662f3c" title="Récupère la valeur d&#39;un champ par son nom.">getField()</a>, <a class="el" href="#a38148fb2537793b3d403f345c496384d" title="Vérifie si un champ existe.">hasField()</a>, <a class="el" href="#a90c6676ae105a0c7556abb60307bf2aa" title="Définit ou met à jour la valeur d&#39;un champ.">setField()</a> : O(1) en moyenne</li>
 <li><a class="el" href="#af80555274a3bb9df3ebd0ce7cd46ce57" title="Supprime un champ.">removeField()</a> : O(1) en moyenne</li>
@@ -235,6 +241,33 @@ Pour vérifier l'existence d'un champ avant accès, utiliser <a class="el" href=
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a58933a0ae5b7e926a119b31082fa96a4" name="a58933a0ae5b7e926a119b31082fa96a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58933a0ae5b7e926a119b31082fa96a4">&#9670;&#160;</a></span>clearMeta()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void varlor::models::DataPoint::clearMeta </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Réinitialise entièrement les métadonnées <span class="tt">_meta</span> de ce point. </p>
+
+</div>
+</div>
 <a id="a2bdf343b61c42cb68b8f7159005bc1be" name="a2bdf343b61c42cb68b8f7159005bc1be"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2bdf343b61c42cb68b8f7159005bc1be">&#9670;&#160;</a></span>empty()</h2>
 
@@ -355,6 +388,63 @@ Pour vérifier l'existence d'un champ avant accès, utiliser <a class="el" href=
 
 <p>Accès direct à la map des champs (lecture seule). </p>
 <dl class="section return"><dt>Returns</dt><dd>Référence constante à la map des champs </dd></dl>
+
+</div>
+</div>
+<a id="ac3831ff2c6f1c9542539ba4b7a5d9649" name="ac3831ff2c6f1c9542539ba4b7a5d9649"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3831ff2c6f1c9542539ba4b7a5d9649">&#9670;&#160;</a></span>getMeta() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classvarlor_1_1models_1_1_meta_info.html">MetaInfo</a> &amp; varlor::models::DataPoint::getMeta </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Accède aux informations de traçabilité (<span class="tt">_meta</span>) en lecture seule. </p>
+<dl class="section return"><dt>Returns</dt><dd>Référence constante vers <a class="el" href="classvarlor_1_1models_1_1_meta_info.html" title="Contient les informations de traçabilité d&#39;un DataPoint.">MetaInfo</a> </dd></dl>
+
+</div>
+</div>
+<a id="a67430c391bcedfa7afd59ab265d03dc2" name="a67430c391bcedfa7afd59ab265d03dc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67430c391bcedfa7afd59ab265d03dc2">&#9670;&#160;</a></span>getMeta() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classvarlor_1_1models_1_1_meta_info.html">MetaInfo</a> &amp; varlor::models::DataPoint::getMeta </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel noexcept">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Accède aux informations de traçabilité (<span class="tt">_meta</span>). </p>
+<p>La structure retournée permet d'ajouter des sections hiérarchiques décrivant les transformations appliquées au point de données. Les clés courantes sont <span class="tt">status</span> pour les outliers et <span class="tt">columns.&lt;nom&gt;.imputation</span> pour les imputations.</p>
+<dl class="section return"><dt>Returns</dt><dd>Référence modifiable vers <a class="el" href="classvarlor_1_1models_1_1_meta_info.html" title="Contient les informations de traçabilité d&#39;un DataPoint.">MetaInfo</a> </dd></dl>
 
 </div>
 </div>
@@ -547,7 +637,7 @@ Pour vérifier l'existence d'un champ avant accès, utiliser <a class="el" href=
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a href="namespacevarlor.html">varlor</a></li><li class="navelem"><a href="namespacevarlor_1_1models.html">models</a></li><li class="navelem"><a href="classvarlor_1_1models_1_1_data_point.html">DataPoint</a></li>
-    <li class="footer">Generated on <span class="timestamp"></span> for Varlor Calculations API - Models by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
   </ul>
 </div>
 </body>

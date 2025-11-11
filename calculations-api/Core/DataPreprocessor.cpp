@@ -110,6 +110,11 @@ DataPreprocessor::ColumnProfile DataPreprocessor::analyseAndNormalizeColumn(
         return profile;
     }
 
+    if (textOnly > 0U && (numericConvertible > 0U || booleanConvertible > 0U)) {
+        profile.type = models::FieldType::Unknown;
+        return profile;
+    }
+
     if (numericConvertible >= booleanConvertible && numericConvertible >= textOnly) {
         profile.type = models::FieldType::Numeric;
     } else if (booleanConvertible >= numericConvertible && booleanConvertible >= textOnly) {
@@ -385,7 +390,7 @@ void DataPreprocessor::annotateImputation(
     auto& columnSection = columnsSection.ensureSection(columnName);
     auto& imputationSection = columnSection.ensureSection(kImputationSection);
 
-    imputationSection.setLeaf("applied", true);
+    imputationSection.setLeaf("imputed", true);
     imputationSection.setLeaf("reason", std::string(kImputationReason));
     imputationSection.setLeaf("strategy", strategy);
     imputationSection.setLeaf("value", imputedValue);
@@ -437,10 +442,6 @@ std::pair<double, double> DataPreprocessor::computeQuartiles(std::vector<double>
 bool DataPreprocessor::tryParseDouble(const models::FieldValue& value, double& out) const {
     if (std::holds_alternative<double>(value)) {
         out = std::get<double>(value);
-        return true;
-    }
-    if (std::holds_alternative<bool>(value)) {
-        out = std::get<bool>(value) ? 1.0 : 0.0;
         return true;
     }
     if (std::holds_alternative<std::string>(value)) {

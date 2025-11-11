@@ -22,13 +22,28 @@ namespace varlor::models {
  * peuvent être exploités conjointement par les couches supérieures.
  */
 struct PreprocessingResult {
-    /// Jeu de données nettoyé et prêt pour les analyses statistiques
+    /**
+     * @brief Jeu de données nettoyé et prêt pour les analyses statistiques.
+     *
+     * Contient toutes les lignes non considérées comme outliers, avec les
+     * valeurs normalisées et imputées lorsqu'approprié.
+     */
     Dataset cleanedDataset;
 
-    /// Jeu de données contenant uniquement les outliers identifiés
+    /**
+     * @brief Jeu de données contenant uniquement les outliers identifiés.
+     *
+     * Chaque `DataPoint` y est annoté dans `_meta.status` afin de permettre
+     * l'audit ou une réintégration manuelle ultérieure.
+     */
     Dataset outliersDataset;
 
-    /// Rapport détaillé retraçant l'intégralité du prétraitement
+    /**
+     * @brief Rapport détaillé retraçant l'intégralité du prétraitement.
+     *
+     * Synthétise le nombre de lignes en entrée/sortie, les imputations,
+     * les normalisations et la quantité d'outliers déplacés.
+     */
     PreprocessingReport report;
 };
 

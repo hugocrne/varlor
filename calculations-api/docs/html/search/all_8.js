@@ -1,5 +1,25 @@
 var searchData=
 [
-  ['incrementmissingvaluesreplaced_0',['incrementMissingValuesReplaced',['../classvarlor_1_1models_1_1_preprocessing_report.html#ac5842a4577bb91683ed7e03a50902e71',1,'varlor::models::PreprocessingReport']]],
-  ['incrementoutliersremoved_1',['incrementOutliersRemoved',['../classvarlor_1_1models_1_1_preprocessing_report.html#a3ebb95cdc1bb22e76386088abe2d3522',1,'varlor::models::PreprocessingReport']]]
+  ['détaillés_0',['Modèles détaillés',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md12',1,'']]],
+  ['d’entrée_20sortie_1',['Format d’entrée / sortie',['../index.html#autotoc_md3',1,'']]],
+  ['d_20ensemble_2',['Vue d&apos;ensemble',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md8',1,'']]],
+  ['d_20implémentation_3',['Notes d&apos;implémentation',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md37',1,'']]],
+  ['d_20intégration_4',['Points d&apos;intégration',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md28',1,'']]],
+  ['d_20utilisation_20future_5',['Exemple d&apos;utilisation future',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md29',1,'']]],
+  ['dans_20calculations_20api_6',['Rôle dans &lt;span class=&quot;tt&quot;&gt;calculations-api&lt;/span&gt;',['../index.html#autotoc_md1',1,'']]],
+  ['datapoint_7',['DataPoint',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md15',1,'2. DataPoint'],['../classvarlor_1_1models_1_1_data_point.html',1,'varlor::models::DataPoint'],['../classvarlor_1_1models_1_1_data_point.html#a57038f9a58688eb45f5481509ff023ec',1,'varlor::models::DataPoint::DataPoint()=default'],['../classvarlor_1_1models_1_1_data_point.html#acf7fd2e41b65e54d28e0259c99ca4d42',1,'varlor::models::DataPoint::DataPoint(const std::unordered_map&lt; std::string, FieldValue &gt; &amp;fields)'],['../classvarlor_1_1models_1_1_data_point.html#a44b70de46fe88b89247e511dbd4cf622',1,'varlor::models::DataPoint::DataPoint(std::unordered_map&lt; std::string, FieldValue &gt; &amp;&amp;fields)']]],
+  ['datapoint_2ehpp_8',['DataPoint.hpp',['../_data_point_8hpp.html',1,'']]],
+  ['datapreprocessor_9',['DataPreprocessor',['../classvarlor_1_1core_1_1_data_preprocessor.html',1,'varlor::core::DataPreprocessor'],['../index.html',1,'DataPreprocessor'],['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md26',1,'Intégration avec DataPreprocessor']]],
+  ['datapreprocessor_2ehpp_10',['DataPreprocessor.hpp',['../_data_preprocessor_8hpp.html',1,'']]],
+  ['dataset_11',['Dataset',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md17',1,'3. Dataset'],['../classvarlor_1_1models_1_1_dataset.html',1,'varlor::models::Dataset'],['../classvarlor_1_1models_1_1_dataset.html#a00b22c5b2f0d6f889c3f7db6cd2558a6',1,'varlor::models::Dataset::Dataset()=default'],['../classvarlor_1_1models_1_1_dataset.html#a64ad0dfc81e31ce31d14fb51f304a090',1,'varlor::models::Dataset::Dataset(const std::vector&lt; std::string &gt; &amp;columnNames)'],['../classvarlor_1_1models_1_1_dataset.html#aaf984e2127b3e6e31a50f677a16deef3',1,'varlor::models::Dataset::Dataset(std::vector&lt; std::string &gt; &amp;&amp;columnNames)']]],
+  ['dataset_2ehpp_12',['Dataset.hpp',['../_dataset_8hpp.html',1,'']]],
+  ['de_20données_13',['Flux de données',['../index.html#autotoc_md5',1,'']]],
+  ['de_20données_20moteur_20de_20pré_20analyse_14',['Modèles de données - Moteur de pré-analyse',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md7',1,'']]],
+  ['de_20pré_20analyse_15',['Modèles de données - Moteur de pré-analyse',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md7',1,'']]],
+  ['de_20traitement_16',['Flux de traitement',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md27',1,'']]],
+  ['des_20modèles_17',['des modèles',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md9',1,'Architecture des modèles'],['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md10',1,'Hiérarchie des modèles']]],
+  ['des_20tests_18',['Exécution des tests',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md32',1,'']]],
+  ['destructif_19',['Principe non destructif',['../index.html#autotoc_md2',1,'']]],
+  ['données_20',['Flux de données',['../index.html#autotoc_md5',1,'']]],
+  ['données_20moteur_20de_20pré_20analyse_21',['Modèles de données - Moteur de pré-analyse',['..//Users/hugo/Perso/Projets/varlor/calculations-api/Models/README.md#autotoc_md7',1,'']]]
 ];

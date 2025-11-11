@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.14.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Varlor Calculations API - Models: Class Members - Functions</title>
+<title>Varlor Calculations API: Class Members - Functions</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,9 +26,9 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Varlor Calculations API - Models<span id="projectnumber">&#160;1.0</span>
+   <div id="projectname">Varlor Calculations API
    </div>
-   <div id="projectbrief">Documentation des modèles de données pour le moteur de pré-analyse</div>
+   <div id="projectbrief">Documentation technique du pipeline de pré-analyse</div>
   </td>
  </tr>
  </tbody>
@@ -104,7 +104,8 @@ $(function(){initNavTree('functions_func.html','',''); });
 
 
 <h3 class="doxsection"><a id="index_c" name="index_c"></a>- c -</h3><ul>
-<li>clear()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_dataset.html#af927f7dbfdc61b0eb7ca6f200ec765f9">varlor::models::Dataset</a></li>
+<li>clear()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_dataset.html#af927f7dbfdc61b0eb7ca6f200ec765f9">varlor::models::Dataset</a>, <a class="el" href="classvarlor_1_1models_1_1_meta_info.html#a8bdb36e5809e3c79e74d9a7b04590222">varlor::models::MetaInfo</a></li>
+<li>clearMeta()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_data_point.html#a58933a0ae5b7e926a119b31082fa96a4">varlor::models::DataPoint</a></li>
 <li>clearNormalizedFields()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a047c9c8c184c6ab99fcfd0fba2c458ca">varlor::models::PreprocessingReport</a></li>
 </ul>
 
@@ -118,6 +119,8 @@ $(function(){initNavTree('functions_func.html','',''); });
 <h3 class="doxsection"><a id="index_e" name="index_e"></a>- e -</h3><ul>
 <li>empty()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_data_point.html#a2bdf343b61c42cb68b8f7159005bc1be">varlor::models::DataPoint</a>, <a class="el" href="classvarlor_1_1models_1_1_dataset.html#a2a008a6c99eb423d40acd6bd7d34d19f">varlor::models::Dataset</a></li>
 <li>end()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_dataset.html#a799ebd9d66fed48f07fedcfda8e6b46b">varlor::models::Dataset</a></li>
+<li>ensureSection()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_meta_info.html#adcf0664c7533c83020ecd443609e5357">varlor::models::MetaInfo</a></li>
+<li>entries()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_meta_info.html#a2b6c6d2ec958b6ea1984efe0ea0e8fea">varlor::models::MetaInfo</a></li>
 </ul>
 
 
@@ -129,17 +132,21 @@ $(function(){initNavTree('functions_func.html','',''); });
 <li>getField()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_data_point.html#af8ca933133ef24c66e372ff9e1662f3c">varlor::models::DataPoint</a></li>
 <li>getFields()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_data_point.html#a25d3ac53a9cbd2e56b611fb10a7f79c6">varlor::models::DataPoint</a></li>
 <li>getInputRowCount()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#accdcc035e38bac093db851c280b85083">varlor::models::PreprocessingReport</a></li>
+<li>getLeaf()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_meta_info.html#a09350156ebfcace9429438988b2f30e2">varlor::models::MetaInfo</a></li>
+<li>getMeta()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_data_point.html#a67430c391bcedfa7afd59ab265d03dc2">varlor::models::DataPoint</a></li>
 <li>getMissingValuesReplaced()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a489e8e9cbd9dae484dffe17f7cc0c62f">varlor::models::PreprocessingReport</a></li>
 <li>getNormalizedFields()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#ab83443d47454c449fb61c48324e09890">varlor::models::PreprocessingReport</a></li>
 <li>getOutliersRemoved()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#adbca84faf0d424091ba3627e2575c562">varlor::models::PreprocessingReport</a></li>
 <li>getOutputRowCount()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a6c3e881b6d3b3dd1a76dd9da33f8b12d">varlor::models::PreprocessingReport</a></li>
 <li>getRowCount()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_dataset.html#aeddf24c7c448c120c8dd55c7fabc007d">varlor::models::Dataset</a></li>
 <li>getRowsRemoved()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#aa1778b8b742dc55ebdd7bb75e167df33">varlor::models::PreprocessingReport</a></li>
+<li>getSection()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_meta_info.html#afac751c5c414ddf5ec4ec29d59a91000">varlor::models::MetaInfo</a></li>
 </ul>
 
 
 <h3 class="doxsection"><a id="index_h" name="index_h"></a>- h -</h3><ul>
 <li>hasField()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_data_point.html#a38148fb2537793b3d403f345c496384d">varlor::models::DataPoint</a></li>
+<li>hasKey()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_meta_info.html#aa9c7e0bd96bf8a5f8492d2d129d55b70">varlor::models::MetaInfo</a></li>
 </ul>
 
 
@@ -151,6 +158,7 @@ $(function(){initNavTree('functions_func.html','',''); });
 
 <h3 class="doxsection"><a id="index_p" name="index_p"></a>- p -</h3><ul>
 <li>PreprocessingReport()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a482bc142ef852591c622a8f33b85e017">varlor::models::PreprocessingReport</a></li>
+<li>process()&#160;:&#160;<a class="el" href="classvarlor_1_1core_1_1_data_preprocessor.html#ad5d2774f3949ed76f944b40e9cc1e747">varlor::core::DataPreprocessor</a></li>
 </ul>
 
 
@@ -165,6 +173,7 @@ $(function(){initNavTree('functions_func.html','',''); });
 <li>setColumnNames()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_dataset.html#acd4c7100dfa2ec4e6b16a6bf5a704d2f">varlor::models::Dataset</a></li>
 <li>setField()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_data_point.html#a90c6676ae105a0c7556abb60307bf2aa">varlor::models::DataPoint</a></li>
 <li>setInputRowCount()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a36d2fe932d67572e6d35200961667953">varlor::models::PreprocessingReport</a></li>
+<li>setLeaf()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_meta_info.html#a1f2f7fe6195fe4277dc52ed68cbc3d8c">varlor::models::MetaInfo</a></li>
 <li>setMissingValuesReplaced()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a3235a2e3ec71f6b1faaf6a2612eb88f5">varlor::models::PreprocessingReport</a></li>
 <li>setOutliersRemoved()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a84bbad80554e780633583edc80dedd9a">varlor::models::PreprocessingReport</a></li>
 <li>setOutputRowCount()&#160;:&#160;<a class="el" href="classvarlor_1_1models_1_1_preprocessing_report.html#a65ac480834751ed6c40c728ef825f999">varlor::models::PreprocessingReport</a></li>
@@ -176,7 +185,7 @@ $(function(){initNavTree('functions_func.html','',''); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on <span class="timestamp"></span> for Varlor Calculations API - Models by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
   </ul>
 </div>
 </body>

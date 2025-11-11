@@ -2,7 +2,9 @@ var namespacevarlor_1_1models =
 [
     [ "DataPoint", "classvarlor_1_1models_1_1_data_point.html", "classvarlor_1_1models_1_1_data_point" ],
     [ "Dataset", "classvarlor_1_1models_1_1_dataset.html", "classvarlor_1_1models_1_1_dataset" ],
+    [ "MetaInfo", "classvarlor_1_1models_1_1_meta_info.html", "classvarlor_1_1models_1_1_meta_info" ],
     [ "PreprocessingReport", "classvarlor_1_1models_1_1_preprocessing_report.html", "classvarlor_1_1models_1_1_preprocessing_report" ],
+    [ "PreprocessingResult", "structvarlor_1_1models_1_1_preprocessing_result.html", "structvarlor_1_1models_1_1_preprocessing_result" ],
     [ "FieldValue", "namespacevarlor_1_1models.html#add5ae268b094f9160e8e0717b7c7a295", null ],
     [ "FieldType", "namespacevarlor_1_1models.html#a879fb031d00ddacbde043b7e1e8120ee", [
       [ "Numeric", "namespacevarlor_1_1models.html#a879fb031d00ddacbde043b7e1e8120eea87322391cc6e8948ce9fd5d6cb84fced", null ],

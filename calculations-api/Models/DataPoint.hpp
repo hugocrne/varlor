@@ -37,6 +37,16 @@ using FieldValue = std::variant<double, std::string, bool, std::nullptr_t>;
  * Cette structure hiérarchique est conçue pour une représentation YAML lisible.
  * Elle permet de stocker des valeurs scalaires (`FieldValue`) ou des sous-sections
  * afin de conserver les détails des transformations appliquées.
+ *
+ * Le pipeline de prétraitement tire parti des conventions suivantes :
+ * - `status/outlier` : signale les enregistrements déplacés dans le dataset des outliers
+ * - `columns/<colonne>/imputation/imputed` : indique qu'une imputation a été appliquée
+ * - `columns/<colonne>/imputation/reason` : précise le motif (`missing_value_replacement`, ...)
+ * - `columns/<colonne>/imputation/strategy` : détaille la stratégie (`median`, `mode_text`, ...)
+ * - `columns/<colonne>/imputation/value` : stocke la valeur imputée
+ *
+ * Des champs additionnels tels que `confidence` peuvent être introduits sans
+ * contrainte pour enrichir la traçabilité.
  */
 class MetaInfo {
 public:
@@ -184,7 +194,7 @@ inline MetaInfo& MetaInfo::emplaceSection(const std::string& key) {
  * 
  * Permet un accès rapide aux champs par leur nom via une table de hachage.
  * Chaque champ peut contenir une valeur de type variant (numérique, texte, booléen, null).
- * Un conteneur MetaInfo associé permet de tracer les opérations (_meta).
+ * Un conteneur MetaInfo associé permet de tracer les opérations via la section `_meta`.
  * 
  * @note Complexité temporelle :
  *       - getField(), hasField(), setField() : O(1) en moyenne
@@ -310,7 +320,13 @@ public:
     }
 
     /**
-     * @brief Accède aux informations de traçabilité (_meta).
+     * @brief Accède aux informations de traçabilité (`_meta`).
+     *
+     * La structure retournée permet d'ajouter des sections hiérarchiques
+     * décrivant les transformations appliquées au point de données. Les clés
+     * courantes sont `status` pour les outliers et `columns.<nom>.imputation`
+     * pour les imputations.
+     *
      * @return Référence modifiable vers MetaInfo
      */
     MetaInfo& getMeta() noexcept {
@@ -318,7 +334,7 @@ public:
     }
 
     /**
-     * @brief Accède aux informations de traçabilité (_meta) en lecture seule.
+     * @brief Accède aux informations de traçabilité (`_meta`) en lecture seule.
      * @return Référence constante vers MetaInfo
      */
     [[nodiscard]] const MetaInfo& getMeta() const noexcept {
@@ -326,7 +342,7 @@ public:
     }
 
     /**
-     * @brief Réinitialise entièrement les métadonnées de ce point.
+     * @brief Réinitialise entièrement les métadonnées `_meta` de ce point.
      */
     void clearMeta() {
         metaInfo_.clear();

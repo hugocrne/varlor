@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.14.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Varlor Calculations API - Models: Main Page</title>
+<title>Varlor Calculations API: DataPreprocessor</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,9 +26,9 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Varlor Calculations API - Models<span id="projectnumber">&#160;1.0</span>
+   <div id="projectname">Varlor Calculations API
    </div>
-   <div id="projectbrief">Documentation des modèles de données pour le moteur de pré-analyse</div>
+   <div id="projectbrief">Documentation technique du pipeline de pré-analyse</div>
   </td>
  </tr>
  </tbody>
@@ -88,10 +88,63 @@ $(function(){initNavTree('index.html','',''); });
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">Varlor Calculations API - Models Documentation</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">DataPreprocessor </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md__core_2_r_e_a_d_m_e"></a></p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
+Rôle dans <span class="tt">calculations-api</span></h1>
+<p>Le <span class="tt">DataPreprocessor</span> constitue la brique centrale du moteur de pré-analyse : il consolide, normalise et documente l’état du jeu de données avant toute analyse statistique ou modélisation. Chaque étape est effectuée de manière <b>non destructive</b> : le dataset d’origine n’est jamais modifié, et toutes les décisions sont traçables.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
+Principe non destructif</h1>
+<ul>
+<li><em>Entrée immuable</em> : le <span class="tt">Dataset</span> fourni à <span class="tt">process()</span> est copié avant tout traitement.</li>
+<li><em>Séparation des outliers</em> : aucune ligne n’est supprimée ; les valeurs extrêmes sont déplacées dans <span class="tt">PreprocessingResult::outliersDataset</span>.</li>
+<li><em>Traçabilité <span class="tt">_meta</span></em> : chaque <span class="tt">DataPoint</span> modifié contient une section <span class="tt">_meta</span> décrivant précisément les ajustements effectués.</li>
+<li><em>Rapport exhaustif</em> : <span class="tt">PreprocessingReport</span> résume l’intégralité des actions (normalisations, imputations, outliers, lignes en entrée/sortie).</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+Format d’entrée / sortie</h1>
+<ul>
+<li><b>Entrée</b> : <span class="tt">models::Dataset</span> brut (valeurs hétérogènes, champs manquants, types ambigus).</li>
+<li><b>Sortie</b> : <span class="tt">models::PreprocessingResult</span> contenant :<ul>
+<li><span class="tt">cleanedDataset</span> : données normalisées, valeurs imputées.</li>
+<li><span class="tt">outliersDataset</span> : lignes marquées comme outliers, conservées pour audit.</li>
+<li><span class="tt">report</span> : métriques agrégées (lignes, outliers, valeurs imputées, champs normalisés).</li>
+</ul>
+</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+Métadonnées <span class="tt">_meta</span></h1>
+<p>Le champ <span class="tt">_meta</span> s’appuie sur <span class="tt">MetaInfo</span>, une structure hiérarchique sérialisable en YAML. Les clés standard sont :</p><ul>
+<li><span class="tt">status/outlier</span>, <span class="tt">status/reason</span>, <span class="tt">status/method</span></li>
+<li><span class="tt">columns/&lt;colonne&gt;/imputation/imputed</span></li>
+<li><span class="tt">columns/&lt;colonne&gt;/imputation/reason</span></li>
+<li><span class="tt">columns/&lt;colonne&gt;/imputation/strategy</span></li>
+<li><span class="tt">columns/&lt;colonne&gt;/imputation/value</span></li>
+</ul>
+<p>Des attributs additionnels (<span class="tt">confidence</span>, <span class="tt">source</span>, etc.) peuvent être ajoutés sans modifier le moteur.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+Flux de données</h1>
+<div class="fragment"><div class="line">Raw Dataset</div>
+<div class="line">    ↓ analyse &amp; normalisation</div>
+<div class="line">Normalized Dataset + Column Profiles</div>
+<div class="line">    ↓ séparation IQR</div>
+<div class="line">Cleaned Dataset      Outliers Dataset</div>
+<div class="line">    ↓ imputation</div>
+<div class="line">Cleaned Dataset (imputed)</div>
+<div class="line">    ↓ agrégation</div>
+<div class="line">PreprocessingResult (cleanedDataset, outliersDataset, report)</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+Évolutions prévues</h1>
+<ul>
+<li><b>Parallélisation</b> des phases de normalisation / imputation pour les gros volumes.</li>
+<li><b>Nettoyage adaptatif</b> : stratégies d’imputation conditionnées par le profil statistique.</li>
+<li><b>Règles métier configurables</b> : surcharges dédiées pour les colonnes sensibles.</li>
+<li><b>Export YAML dédié</b> : sérialisation directe du <span class="tt">_meta</span> pour audit externe. </li>
+</ul>
+</div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -99,7 +152,7 @@ $(function(){initNavTree('index.html','',''); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on <span class="timestamp"></span> for Varlor Calculations API - Models by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
   </ul>
 </div>
 </body>

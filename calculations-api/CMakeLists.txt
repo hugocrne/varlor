@@ -44,3 +44,13 @@ target_link_libraries(test_models PRIVATE Catch2::Catch2WithMain)
 
 # Enregistrer les tests avec CTest
 catch_discover_tests(test_models)
+
+# Tests pour le cœur de logique
+add_executable(test_core
+    tests/core/test_DataPreprocessor.cpp
+    Core/DataPreprocessor.cpp
+)
+
+target_link_libraries(test_core PRIVATE Catch2::Catch2WithMain)
+
+catch_discover_tests(test_core)

@@ -27,6 +27,7 @@
 /Users/hugo/Perso/Projets/varlor/calculations-api/build/CMakeFiles/ContinuousMemCheck.dir
 /Users/hugo/Perso/Projets/varlor/calculations-api/build/CMakeFiles/ContinuousSubmit.dir
 /Users/hugo/Perso/Projets/varlor/calculations-api/build/CMakeFiles/test_models.dir
+/Users/hugo/Perso/Projets/varlor/calculations-api/build/CMakeFiles/test_core.dir
 /Users/hugo/Perso/Projets/varlor/calculations-api/build/CMakeFiles/test.dir
 /Users/hugo/Perso/Projets/varlor/calculations-api/build/CMakeFiles/edit_cache.dir
 /Users/hugo/Perso/Projets/varlor/calculations-api/build/CMakeFiles/rebuild_cache.dir
