@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <variant>
 #include <optional>
+#include <memory>
+#include <functional>
 
 /**
  * @file DataPoint.hpp
@@ -29,11 +31,160 @@ namespace varlor::models {
 using FieldValue = std::variant<double, std::string, bool, std::nullptr_t>;
 
 /**
+ * @class MetaInfo
+ * @brief Contient les informations de traçabilité d'un DataPoint.
+ *
+ * Cette structure hiérarchique est conçue pour une représentation YAML lisible.
+ * Elle permet de stocker des valeurs scalaires (`FieldValue`) ou des sous-sections
+ * afin de conserver les détails des transformations appliquées.
+ */
+class MetaInfo {
+public:
+    /// Type pour les valeurs feuilles des métadonnées
+    using LeafValue = FieldValue;
+
+    /// Type variant pour stocker une feuille ou une sous-section
+    using NodeValue = std::variant<LeafValue, std::shared_ptr<MetaInfo>>;
+
+    /**
+     * @brief Vérifie la présence d'une clé.
+     * @param key Nom de la clé recherchée
+     * @return true si la clé existe, false sinon
+     */
+    [[nodiscard]] bool hasKey(const std::string& key) const;
+
+    /**
+     * @brief Récupère une section existante ou la crée si nécessaire.
+     * @param key Nom de la section
+     * @return Référence vers la section
+     */
+    MetaInfo& ensureSection(const std::string& key);
+
+    /**
+     * @brief Récupère une section en écriture si elle existe.
+     * @param key Nom de la section
+     * @return Option contenant une référence vers la section
+     */
+    [[nodiscard]] std::optional<std::reference_wrapper<MetaInfo>> getSection(const std::string& key);
+
+    /**
+     * @brief Récupère une section en lecture seule si elle existe.
+     * @param key Nom de la section
+     * @return Option contenant une référence constante vers la section
+     */
+    [[nodiscard]] std::optional<std::reference_wrapper<const MetaInfo>> getSection(const std::string& key) const;
+
+    /**
+     * @brief Définit une valeur feuille.
+     * @param key Nom de la clé
+     * @param value Valeur à stocker
+     */
+    void setLeaf(const std::string& key, const LeafValue& value);
+
+    /**
+     * @brief Définit une valeur feuille (par déplacement).
+     * @param key Nom de la clé
+     * @param value Valeur à stocker (move)
+     */
+    void setLeaf(const std::string& key, LeafValue&& value);
+
+    /**
+     * @brief Lit une valeur feuille si elle existe.
+     * @param key Nom de la clé
+     * @return Option contenant la valeur si elle est présente et de type feuille
+     */
+    [[nodiscard]] std::optional<LeafValue> getLeaf(const std::string& key) const;
+
+    /**
+     * @brief Expose la map sous-jacente.
+     * @return Référence constante vers la map
+     */
+    [[nodiscard]] const std::unordered_map<std::string, NodeValue>& entries() const noexcept {
+        return entries_;
+    }
+
+    /**
+     * @brief Efface toutes les métadonnées.
+     */
+    void clear() noexcept {
+        entries_.clear();
+    }
+
+private:
+    MetaInfo& emplaceSection(const std::string& key);
+
+    std::unordered_map<std::string, NodeValue> entries_;
+};
+
+inline bool MetaInfo::hasKey(const std::string& key) const {
+    return entries_.find(key) != entries_.end();
+}
+
+inline MetaInfo& MetaInfo::ensureSection(const std::string& key) {
+    return emplaceSection(key);
+}
+
+inline std::optional<std::reference_wrapper<MetaInfo>> MetaInfo::getSection(const std::string& key) {
+    auto it = entries_.find(key);
+    if (it == entries_.end()) {
+        return std::nullopt;
+    }
+    if (auto section = std::get_if<std::shared_ptr<MetaInfo>>(&it->second); section != nullptr && *section != nullptr) {
+        return std::optional<std::reference_wrapper<MetaInfo>>{*(*section)};
+    }
+    return std::nullopt;
+}
+
+inline std::optional<std::reference_wrapper<const MetaInfo>> MetaInfo::getSection(const std::string& key) const {
+    auto it = entries_.find(key);
+    if (it == entries_.end()) {
+        return std::nullopt;
+    }
+    if (auto section = std::get_if<std::shared_ptr<MetaInfo>>(&it->second); section != nullptr && *section != nullptr) {
+        return std::optional<std::reference_wrapper<const MetaInfo>>{*(*section)};
+    }
+    return std::nullopt;
+}
+
+inline void MetaInfo::setLeaf(const std::string& key, const LeafValue& value) {
+    entries_[key] = value;
+}
+
+inline void MetaInfo::setLeaf(const std::string& key, LeafValue&& value) {
+    entries_[key] = std::move(value);
+}
+
+inline std::optional<MetaInfo::LeafValue> MetaInfo::getLeaf(const std::string& key) const {
+    auto it = entries_.find(key);
+    if (it == entries_.end()) {
+        return std::nullopt;
+    }
+    if (auto leaf = std::get_if<LeafValue>(&it->second); leaf != nullptr) {
+        return *leaf;
+    }
+    return std::nullopt;
+}
+
+inline MetaInfo& MetaInfo::emplaceSection(const std::string& key) {
+    auto it = entries_.find(key);
+    if (it != entries_.end()) {
+        if (auto section = std::get_if<std::shared_ptr<MetaInfo>>(&it->second); section != nullptr && *section != nullptr) {
+            return *(*section);
+        }
+    }
+    auto& slot = entries_[key];
+    auto section = std::make_shared<MetaInfo>();
+    slot = section;
+    return *section;
+}
+
+/**
  * @class DataPoint
  * @brief Représente une ligne individuelle du jeu de données.
  * 
  * Permet un accès rapide aux champs par leur nom via une table de hachage.
  * Chaque champ peut contenir une valeur de type variant (numérique, texte, booléen, null).
+ * Un conteneur MetaInfo associé permet de tracer les opérations (_meta).
  * 
  * @note Complexité temporelle :
  *       - getField(), hasField(), setField() : O(1) en moyenne
@@ -158,9 +309,35 @@ public:
         return fields_;
     }
 
+    /**
+     * @brief Accède aux informations de traçabilité (_meta).
+     * @return Référence modifiable vers MetaInfo
+     */
+    MetaInfo& getMeta() noexcept {
+        return metaInfo_;
+    }
+
+    /**
+     * @brief Accède aux informations de traçabilité (_meta) en lecture seule.
+     * @return Référence constante vers MetaInfo
+     */
+    [[nodiscard]] const MetaInfo& getMeta() const noexcept {
+        return metaInfo_;
+    }
+
+    /**
+     * @brief Réinitialise entièrement les métadonnées de ce point.
+     */
+    void clearMeta() {
+        metaInfo_.clear();
+    }
+
 private:
     /// Map des champs : nom de colonne → valeur
     std::unordered_map<std::string, FieldValue> fields_;
+
+    /// Métadonnées hiérarchiques associées à ce point
+    MetaInfo metaInfo_;
 };
 
 } // namespace varlor::models

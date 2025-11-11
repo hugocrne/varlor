@@ -6,7 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/hugo/Perso/Projets/varlor/calculations-api/build/_deps/catch2-src/src/catch2/.. -I/Users/hugo/Perso/Projets/varlor/calculations-api/build/_deps/catch2-build/generated-includes
 
-CXX_FLAGSarm64 = -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX26.0.sdk
-
-CXX_FLAGS = -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX26.0.sdk
+CXX_FLAGS = -std=gnu++20 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX26.0.sdk
 
