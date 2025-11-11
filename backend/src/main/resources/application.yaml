@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: Varlor Backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:varlor}}
+    username: ${SPRING_DATASOURCE_USERNAME:varlor}
+    password: ${SPRING_DATASOURCE_PASSWORD:varlor}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  main:
+    web-application-type: servlet
+
+jwt:
+  issuer: ${JWT_ISSUER:Varlor}
+  audience: ${JWT_AUDIENCE:VarlorClients}
+  private-key-path: ${JWT_PRIVATE_KEY_PATH:classpath:keys/private_key.pem}
+  public-key-path: ${JWT_PUBLIC_KEY_PATH:classpath:keys/public_key.pem}
+  access-token:
+    expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:PT15M}
+  refresh-token:
+    expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:P7D}
