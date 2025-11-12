@@ -1,5 +1,6 @@
 package com.varlor.backend.product.model.dto
 
+import com.varlor.backend.common.model.BaseDto
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
@@ -57,15 +58,16 @@ data class UpdateUserSessionDto(
 )
 
 data class UserSessionDto(
-    val id: UUID,
+    override val id: UUID,
     val userId: UUID,
     val tokenId: String,
     val ipAddress: String,
     val userAgent: String,
-    val createdAt: Instant?,
+    override val createdAt: Instant?,
+    override val updatedAt: Instant?,
     val expiresAt: Instant,
     val revokedAt: Instant?,
     val replacedByTokenId: String?,
     val revocationReason: String?
-)
+) : BaseDto<UUID>
 

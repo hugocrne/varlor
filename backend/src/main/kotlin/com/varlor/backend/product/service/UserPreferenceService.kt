@@ -1,5 +1,8 @@
 package com.varlor.backend.product.service
 
+import com.varlor.backend.common.extensions.requireAtLeastOneField
+import com.varlor.backend.common.extensions.requireExists
+import com.varlor.backend.common.repository.SoftDeleteRepositoryMethods
 import com.varlor.backend.common.service.BaseCrudService
 import com.varlor.backend.product.model.dto.CreateUserPreferenceDto
 import com.varlor.backend.product.model.dto.UpdateUserPreferenceDto
@@ -62,9 +65,8 @@ class UserPreferenceService(
     }
 
     override fun validateBeforeCreate(dto: CreateUserPreferenceDto) {
-        if (!userRepository.existsByIdAndDeletedAtIsNull(dto.userId)) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur associé introuvable ou supprimé.")
-        }
+        (userRepository as SoftDeleteRepositoryMethods<*, UUID>)
+            .requireExists(dto.userId, "Utilisateur")
 
         if ((repository as UserPreferenceRepository).existsByUserId(dto.userId)) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Une préférence existe déjà pour cet utilisateur.")
@@ -72,9 +74,7 @@ class UserPreferenceService(
     }
 
     override fun validateBeforeUpdate(id: UUID, dto: UpdateUserPreferenceDto, entity: UserPreference) {
-        if (dto.theme == null && dto.language == null && dto.notificationsEnabled == null) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Aucune donnée de mise à jour fournie.")
-        }
+        dto.requireAtLeastOneField()
     }
 
     override fun notFoundException(id: UUID): ResponseStatusException =

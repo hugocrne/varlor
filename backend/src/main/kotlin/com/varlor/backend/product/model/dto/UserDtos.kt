@@ -1,11 +1,13 @@
 package com.varlor.backend.product.model.dto
 
+import com.varlor.backend.common.model.SoftDeletableDto
 import com.varlor.backend.product.model.entity.UserRole
 import com.varlor.backend.product.model.entity.UserStatus
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import java.time.Instant
 import java.util.UUID
@@ -20,7 +22,11 @@ data class CreateUserDto(
     val email: String,
 
     @field:NotBlank
-    @field:Size(max = 255)
+    @field:Size(min = 8, max = 255)
+    @field:Pattern(
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+        message = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial (@$!%*?&)"
+    )
     @field:Schema(
         description = "Mot de passe en clair soumis par l'utilisateur, haché côté serveur avant stockage.",
         example = "Secret123!"
@@ -49,7 +55,11 @@ data class UpdateUserDto(
     @field:Size(max = 255)
     val email: String? = null,
 
-    @field:Size(max = 255)
+    @field:Size(min = 8, max = 255)
+    @field:Pattern(
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+        message = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial (@$!%*?&)"
+    )
     @field:Schema(
         description = "Nouveau mot de passe en clair, haché côté serveur avant stockage.",
         example = "Secret123!",
@@ -73,7 +83,7 @@ data class UpdateUserDto(
 )
 
 data class UserDto(
-    val id: UUID,
+    override val id: UUID,
     val clientId: UUID,
     val email: String,
     val firstName: String,
@@ -81,8 +91,8 @@ data class UserDto(
     val role: UserRole,
     val status: UserStatus,
     val lastLoginAt: Instant?,
-    val createdAt: Instant?,
-    val updatedAt: Instant?,
-    val deletedAt: Instant?
-)
+    override val createdAt: Instant?,
+    override val updatedAt: Instant?,
+    override val deletedAt: Instant?
+) : SoftDeletableDto<UUID>
 

@@ -1,5 +1,7 @@
 package com.varlor.backend.product.controller
 
+import com.varlor.backend.common.extensions.extractBearerToken
+import com.varlor.backend.common.extensions.extractClientInfo
 import com.varlor.backend.product.model.dto.LoginRequestDto
 import com.varlor.backend.product.model.dto.LoginResponseDto
 import com.varlor.backend.product.model.dto.LogoutRequestDto
@@ -16,14 +18,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 
 @RestController
@@ -102,9 +102,8 @@ class AuthController(
         @Valid @RequestBody request: LoginRequestDto,
         httpRequest: HttpServletRequest
     ): ResponseEntity<LoginResponseDto> {
-        val ipAddress = httpRequest.remoteAddr ?: "unknown"
-        val userAgent = httpRequest.getHeader("User-Agent") ?: "unknown"
-        val response = authService.login(request, ipAddress, userAgent)
+        val clientInfo = httpRequest.extractClientInfo()
+        val response = authService.login(request, clientInfo.ipAddress, clientInfo.userAgent)
         return ResponseEntity.ok(response)
     }
 
@@ -122,9 +121,8 @@ class AuthController(
         @Valid @RequestBody request: RefreshTokenRequestDto,
         httpRequest: HttpServletRequest
     ): ResponseEntity<TokenPairResponseDto> {
-        val ipAddress = httpRequest.remoteAddr ?: "unknown"
-        val userAgent = httpRequest.getHeader("User-Agent") ?: "unknown"
-        val response = authService.refreshToken(request, ipAddress, userAgent)
+        val clientInfo = httpRequest.extractClientInfo()
+        val response = authService.refreshToken(request, clientInfo.ipAddress, clientInfo.userAgent)
         return ResponseEntity.ok(response)
     }
 
@@ -152,15 +150,7 @@ class AuthController(
         ]
     )
     fun validate(request: HttpServletRequest): ResponseEntity<ValidateTokenResponseDto> {
-        val authorization = request.getHeader("Authorization")
-            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "En-tête Authorization manquant.")
-        if (!authorization.startsWith("Bearer ")) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Le jeton doit être fourni avec le préfixe Bearer.")
-        }
-        val token = authorization.removePrefix("Bearer ").trim()
-        if (token.isEmpty()) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Le jeton ne peut pas être vide.")
-        }
+        val token = request.extractBearerToken()
         val response = authService.validateToken(token)
         return ResponseEntity.ok(response)
     }

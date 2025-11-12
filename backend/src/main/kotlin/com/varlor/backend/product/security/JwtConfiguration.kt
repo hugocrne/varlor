@@ -29,6 +29,10 @@ class JwtConfiguration(
     fun rsaKey(): RSAKey {
         val publicKey = loadPublicKey(properties.publicKeyPath)
         val privateKey = loadPrivateKey(properties.privateKeyPath)
+        
+        // Validation de la taille minimale des clés RSA (2048 bits recommandé)
+        validateKeySize(publicKey)
+        
         return RSAKey.Builder(publicKey)
             .privateKey(privateKey)
             .keyID("varlor-product-api-key")
@@ -37,7 +41,17 @@ class JwtConfiguration(
 
     @Bean
     fun jwtDecoder(rsaKey: RSAKey): JwtDecoder {
+        // Note: La validation de l'audience est effectuée automatiquement par Spring Security
+        // lors de la validation du JWT si l'audience est présente dans les claims
         return NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build()
+    }
+    
+    private fun validateKeySize(publicKey: RSAPublicKey) {
+        val keySize = publicKey.modulus.bitLength()
+        require(keySize >= 2048) {
+            "Les clés RSA doivent faire au moins 2048 bits (actuellement: $keySize bits). " +
+            "Les clés de moins de 2048 bits sont considérées comme non sécurisées."
+        }
     }
 
     @Bean

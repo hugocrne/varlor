@@ -1,5 +1,6 @@
 package com.varlor.backend.product.service
 
+import com.varlor.backend.common.extensions.requireAtLeastOneField
 import com.varlor.backend.common.service.BaseCrudService
 import com.varlor.backend.product.model.dto.ClientDto
 import com.varlor.backend.product.model.dto.CreateClientDto
@@ -60,9 +61,7 @@ class ClientService(
     }
 
     override fun validateBeforeUpdate(id: UUID, dto: UpdateClientDto, entity: Client) {
-        if (dto.name == null && dto.type == null && dto.status == null) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Aucune donnée de mise à jour fournie.")
-        }
+        dto.requireAtLeastOneField()
     }
 
     override fun notFoundException(id: UUID): ResponseStatusException =

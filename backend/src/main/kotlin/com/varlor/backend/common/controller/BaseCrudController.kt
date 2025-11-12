@@ -1,5 +1,6 @@
 package com.varlor.backend.common.controller
 
+import com.varlor.backend.common.model.IdentifiableDto
 import com.varlor.backend.common.service.CrudService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 
 abstract class BaseCrudController<
-    DTO : Any,
+    DTO : IdentifiableDto<ID>,
     CREATE_DTO : Any,
     UPDATE_DTO : Any,
     ID : Serializable
@@ -69,9 +70,9 @@ abstract class BaseCrudController<
             ApiResponse(responseCode = "400", description = "Requête invalide")
         ]
     )
-    fun create(@Valid @RequestBody dto: CREATE_DTO): ResponseEntity<DTO> {
+    open fun create(@Valid @RequestBody dto: CREATE_DTO): ResponseEntity<DTO> {
         val entity = service.create(dto)
-        return ResponseEntity.created(URI.create("$basePath/${getId(entity)}")).body(entity)
+        return ResponseEntity.created(URI.create("$basePath/${entity.id}")).body(entity)
     }
 
     @PatchMapping("/{id}")
@@ -87,7 +88,7 @@ abstract class BaseCrudController<
             ApiResponse(responseCode = "404", description = "Entité introuvable")
         ]
     )
-    fun update(
+    open fun update(
         @PathVariable id: ID,
         @Valid @RequestBody dto: UPDATE_DTO
     ): ResponseEntity<DTO> = ResponseEntity.ok(service.update(id, dto))
@@ -104,7 +105,5 @@ abstract class BaseCrudController<
         service.delete(id)
         return ResponseEntity.noContent().build()
     }
-
-    protected abstract fun getId(entity: DTO): ID
 }
 

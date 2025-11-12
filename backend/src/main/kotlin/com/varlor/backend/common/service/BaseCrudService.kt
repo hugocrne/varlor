@@ -82,7 +82,7 @@ abstract class BaseCrudService<
         }
     }
 
-    protected abstract fun toDto(entity: ENTITY): DTO
+    abstract fun toDto(entity: ENTITY): DTO
     protected abstract fun toEntity(dto: CREATE_DTO, createdAt: Instant): ENTITY
     protected abstract fun updateEntity(entity: ENTITY, dto: UPDATE_DTO)
     protected abstract fun validateBeforeCreate(dto: CREATE_DTO)

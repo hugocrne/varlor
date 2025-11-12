@@ -1,5 +1,9 @@
 package com.varlor.backend.product.service
 
+import com.varlor.backend.common.extensions.normalizeEmail
+import com.varlor.backend.common.extensions.requireAtLeastOneField
+import com.varlor.backend.common.extensions.requireExists
+import com.varlor.backend.common.repository.SoftDeleteRepositoryMethods
 import com.varlor.backend.common.service.BaseCrudService
 import com.varlor.backend.product.model.dto.CreateUserDto
 import com.varlor.backend.product.model.dto.UpdateUserDto
@@ -11,7 +15,6 @@ import com.varlor.backend.product.repository.UserRepository
 import java.time.Clock
 import java.time.Instant
 import java.util.UUID
-import java.util.Locale
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -49,7 +52,7 @@ class UserService(
     override fun toEntity(dto: CreateUserDto, createdAt: Instant): User {
         return User(
             clientId = dto.clientId,
-            email = dto.email.lowercase(Locale.getDefault()),
+            email = dto.email.normalizeEmail(),
             passwordHash = passwordEncoder.encode(dto.password),
             firstName = dto.firstName,
             lastName = dto.lastName,
@@ -69,8 +72,7 @@ class UserService(
         }
 
         dto.email?.let {
-            val normalized = it.lowercase(Locale.getDefault())
-            entity.email = normalized
+            entity.email = it.normalizeEmail()
         }
 
         dto.password?.let {
@@ -86,32 +88,26 @@ class UserService(
     }
 
     override fun validateBeforeCreate(dto: CreateUserDto) {
-        ensureClientExists(dto.clientId)
+        (clientRepository as SoftDeleteRepositoryMethods<*, UUID>)
+            .requireExists(dto.clientId, "Client")
 
-        val existing = (repository as UserRepository).findByEmailAndDeletedAtIsNull(dto.email)
+        val normalizedEmail = dto.email.normalizeEmail()
+        val existing = (repository as UserRepository).findByEmailAndDeletedAtIsNull(normalizedEmail)
         if (existing != null) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Un utilisateur avec cet email existe déjà.")
         }
     }
 
     override fun validateBeforeUpdate(id: UUID, dto: UpdateUserDto, entity: User) {
-        if (dto.clientId == null &&
-            dto.email == null &&
-            dto.password == null &&
-            dto.firstName == null &&
-            dto.lastName == null &&
-            dto.role == null &&
-            dto.status == null &&
-            dto.lastLoginAt == null &&
-            dto.deletedAt == null
-        ) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Aucune donnée de mise à jour fournie.")
+        dto.requireAtLeastOneField()
+
+        dto.clientId?.let {
+            (clientRepository as SoftDeleteRepositoryMethods<*, UUID>)
+                .requireExists(it, "Client")
         }
 
-        dto.clientId?.let { ensureClientExists(it) }
-
         dto.email?.let {
-            val normalized = it.lowercase(Locale.getDefault())
+            val normalized = it.normalizeEmail()
             val conflict = (repository as UserRepository).findByEmailAndDeletedAtIsNull(normalized)
             if (conflict != null && conflict.id != entity.id) {
                 throw ResponseStatusException(HttpStatus.CONFLICT, "Un utilisateur avec cet email existe déjà.")
@@ -125,12 +121,6 @@ class UserService(
     override fun performSoftDelete(entity: User) {
         super.performSoftDelete(entity)
         entity.status = UserStatus.INACTIVE
-    }
-
-    private fun ensureClientExists(clientId: UUID) {
-        if (!clientRepository.existsByIdAndDeletedAtIsNull(clientId)) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Client associé introuvable ou supprimé.")
-        }
     }
 }
 

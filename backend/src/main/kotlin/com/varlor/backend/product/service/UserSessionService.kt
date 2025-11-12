@@ -1,5 +1,8 @@
 package com.varlor.backend.product.service
 
+import com.varlor.backend.common.extensions.requireAtLeastOneField
+import com.varlor.backend.common.extensions.requireExists
+import com.varlor.backend.common.repository.SoftDeleteRepositoryMethods
 import com.varlor.backend.common.service.BaseCrudService
 import com.varlor.backend.product.model.dto.CreateUserSessionDto
 import com.varlor.backend.product.model.dto.UpdateUserSessionDto
@@ -39,6 +42,7 @@ class UserSessionService(
             ipAddress = entity.ipAddress,
             userAgent = entity.userAgent,
             createdAt = entity.createdAt,
+            updatedAt = entity.updatedAt,
             expiresAt = entity.expiresAt,
             revokedAt = entity.revokedAt,
             replacedByTokenId = entity.replacedByTokenId,
@@ -80,7 +84,8 @@ class UserSessionService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "La date d'expiration doit être dans le futur.")
         }
 
-        ensureUserExists(dto.userId)
+        (userRepository as SoftDeleteRepositoryMethods<*, UUID>)
+            .requireExists(dto.userId, "Utilisateur")
 
         val sessionRepo = repository as UserSessionRepository
         if (sessionRepo.findByTokenId(dto.tokenId).isPresent) {
@@ -93,20 +98,12 @@ class UserSessionService(
     }
 
     override fun validateBeforeUpdate(id: UUID, dto: UpdateUserSessionDto, entity: UserSession) {
-        if (dto.userId == null &&
-            dto.tokenId == null &&
-            dto.tokenHash == null &&
-            dto.ipAddress == null &&
-            dto.userAgent == null &&
-            dto.expiresAt == null &&
-            dto.revokedAt == null &&
-            dto.replacedByTokenId == null &&
-            dto.revocationReason == null
-        ) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Aucune donnée de mise à jour fournie.")
-        }
+        dto.requireAtLeastOneField()
 
-        dto.userId?.let { ensureUserExists(it) }
+        dto.userId?.let {
+            (userRepository as SoftDeleteRepositoryMethods<*, UUID>)
+                .requireExists(it, "Utilisateur")
+        }
 
         val sessionRepo = repository as UserSessionRepository
         dto.tokenId?.let { tokenId ->
@@ -132,11 +129,5 @@ class UserSessionService(
 
     override fun notFoundException(id: UUID): ResponseStatusException =
         ResponseStatusException(HttpStatus.NOT_FOUND, "Session utilisateur introuvable.")
-
-    private fun ensureUserExists(userId: UUID) {
-        if (!userRepository.existsByIdAndDeletedAtIsNull(userId)) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur associé introuvable ou supprimé.")
-        }
-    }
 }
 

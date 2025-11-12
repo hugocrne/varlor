@@ -6,6 +6,7 @@ import com.varlor.backend.analysis.model.OperationDefinition
 import com.varlor.backend.analysis.model.OperationResult
 import com.varlor.backend.analysis.model.OperationStatus
 import com.varlor.backend.analysis.util.MathUtils
+import com.varlor.backend.common.util.toBigDecimalOrThrow
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.Instant
@@ -91,13 +92,7 @@ class IndicatorEngineService {
     }
 
     private fun toBigDecimal(column: String, value: Any?): BigDecimal {
-        return when (value) {
-            null -> throw IllegalArgumentException("Valeur manquante pour la colonne \"$column\".")
-            is Number -> BigDecimal.valueOf(value.toDouble())
-            is String -> value.trim().takeIf { it.isNotEmpty() }?.toDoubleOrNull()
-                ?.let { BigDecimal.valueOf(it) }
-            else -> null
-        } ?: throw IllegalArgumentException("Valeur non numérique dans la colonne \"$column\" : $value")
+        return value.toBigDecimalOrThrow(column)
     }
 
     private object BuiltinOperations {

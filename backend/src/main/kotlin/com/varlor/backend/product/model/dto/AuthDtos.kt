@@ -5,6 +5,7 @@ import com.varlor.backend.product.model.entity.UserStatus
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import java.time.Instant
 import java.util.UUID
@@ -19,7 +20,11 @@ data class RegisterRequestDto(
     val email: String,
 
     @field:NotBlank
-    @field:Size(max = 255)
+    @field:Size(min = 8, max = 255)
+    @field:Pattern(
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+        message = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial (@$!%*?&)"
+    )
     val password: String,
 
     @field:NotBlank

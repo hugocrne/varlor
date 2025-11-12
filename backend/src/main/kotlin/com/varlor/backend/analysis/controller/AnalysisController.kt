@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import io.swagger.v3.oas.annotations.parameters.RequestBody as OpenApiRequestBody
+import org.springframework.security.access.prepost.PreAuthorize
 
 @RestController
 @RequestMapping("/api/analyses")
 @Tag(name = "Analysis", description = "Opérations d'analyse de données (prétraitement, indicateurs, expressions dynamiques)")
+@PreAuthorize("hasAnyRole('MEMBER', 'ADMIN', 'OWNER', 'SERVICE')")
 class AnalysisController(
     private val dataPreprocessorService: DataPreprocessorService,
     private val indicatorEngineService: IndicatorEngineService,

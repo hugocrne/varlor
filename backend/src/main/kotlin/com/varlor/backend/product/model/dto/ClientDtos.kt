@@ -1,5 +1,6 @@
 package com.varlor.backend.product.model.dto
 
+import com.varlor.backend.common.model.SoftDeletableDto
 import com.varlor.backend.product.model.entity.ClientStatus
 import com.varlor.backend.product.model.entity.ClientType
 import jakarta.validation.constraints.NotBlank
@@ -28,12 +29,12 @@ data class UpdateClientDto(
 )
 
 data class ClientDto(
-    val id: UUID,
+    override val id: UUID,
     val name: String,
     val type: ClientType,
     val status: ClientStatus,
-    val createdAt: Instant?,
-    val updatedAt: Instant?,
-    val deletedAt: Instant?
-)
+    override val createdAt: Instant?,
+    override val updatedAt: Instant?,
+    override val deletedAt: Instant?
+) : SoftDeletableDto<UUID>
 

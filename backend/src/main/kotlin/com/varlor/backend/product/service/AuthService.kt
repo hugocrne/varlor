@@ -19,9 +19,12 @@ import com.varlor.backend.product.security.JwtProvider
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.SecureRandom
+import com.varlor.backend.common.extensions.normalizeEmail
+import com.varlor.backend.common.extensions.requireExists
+import com.varlor.backend.common.repository.SoftDeleteRepositoryMethods
+import com.varlor.backend.common.util.ErrorMessages
 import java.time.Clock
 import java.time.Instant
-import java.util.Locale
 import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -38,6 +41,7 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val jwtProvider: JwtProvider,
     private val jwtProperties: JwtProperties,
+    private val userService: UserService,
     private val clock: Clock = Clock.systemUTC()
 ) {
 
@@ -46,20 +50,19 @@ class AuthService(
 
     @Transactional
     fun register(request: RegisterRequestDto): UserDto {
-        val clientExists = clientRepository.existsByIdAndDeletedAtIsNull(request.clientId)
-        if (!clientExists) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Client associé introuvable ou supprimé.")
-        }
+        (clientRepository as SoftDeleteRepositoryMethods<*, UUID>)
+            .requireExists(request.clientId, "Client")
 
-        val existingUser = userRepository.findByEmailAndDeletedAtIsNull(request.email)
+        val normalizedEmail = request.email.normalizeEmail()
+        val existingUser = userRepository.findByEmailAndDeletedAtIsNull(normalizedEmail)
         if (existingUser != null) {
-            throw ResponseStatusException(HttpStatus.CONFLICT, "Un utilisateur avec cet email existe déjà.")
+            throw ResponseStatusException(HttpStatus.CONFLICT, ErrorMessages.CONFLICT)
         }
 
         val now = Instant.now(clock)
         val user = User(
             clientId = request.clientId,
-            email = request.email.lowercase(Locale.getDefault()),
+            email = normalizedEmail,
             passwordHash = passwordEncoder.encode(request.password),
             firstName = request.firstName,
             lastName = request.lastName,
@@ -71,21 +74,25 @@ class AuthService(
         }
 
         val saved = userRepository.save(user)
-        return mapToUserDto(saved)
+        return userService.toDto(saved)
     }
 
     @Transactional
     fun login(request: LoginRequestDto, ipAddress: String, userAgent: String): TokenPairResponseDto {
         val now = Instant.now(clock)
-        val user = userRepository.findByEmailAndDeletedAtIsNull(request.email)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.")
-
-        if (!passwordEncoder.matches(request.password, user.passwordHash)) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides.")
-        }
-
-        if (user.status != UserStatus.ACTIVE || user.deletedAt != null) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Le compte utilisateur est inactif.")
+        val normalizedEmail = request.email.normalizeEmail()
+        val user = userRepository.findByEmailAndDeletedAtIsNull(normalizedEmail)
+        
+        // Protection contre user enumeration : toujours utiliser le même message d'erreur
+        // et toujours exécuter passwordEncoder.matches() pour éviter les attaques de timing
+        val dummyHash = "\$2a\$10\$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy" // Hash BCrypt factice
+        val userHash = user?.passwordHash ?: dummyHash
+        val passwordMatches = passwordEncoder.matches(request.password, userHash)
+        
+        // Vérifier toutes les conditions d'échec avec le même message
+        if (user == null || !passwordMatches || user.status != UserStatus.ACTIVE || user.deletedAt != null) {
+            logger.warn("Échec d'authentification pour email: {}, IP: {}", normalizedEmail, ipAddress)
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessages.INVALID_CREDENTIALS)
         }
 
         cleanupExpiredSessions(user.id!!, now)
@@ -94,6 +101,8 @@ class AuthService(
 
         user.lastLoginAt = now
         user.updatedAt = now
+        
+        logger.info("Connexion réussie pour utilisateur: {}, IP: {}", user.id, ipAddress)
 
         return LoginResponseDto(
             accessToken = tokenPair.accessToken,
@@ -109,17 +118,17 @@ class AuthService(
         val hashed = hashRefreshToken(request.refreshToken)
 
         val session = userSessionRepository.findByTokenHash(hashed)
-            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token invalide.") }
+            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessages.INVALID_TOKEN) }
 
         if (session.revokedAt != null || session.expiresAt <= now) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token expiré ou révoqué.")
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessages.TOKEN_EXPIRED)
         }
 
         val user = session.user ?: userRepository.findById(session.userId!!)
-            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur invalide.") }
+            .orElseThrow { ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessages.INVALID_TOKEN) }
 
         if (user.deletedAt != null || user.status != UserStatus.ACTIVE) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur invalide.")
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, ErrorMessages.INVALID_TOKEN)
         }
 
         cleanupExpiredSessions(user.id!!, now)
@@ -250,22 +259,6 @@ class AuthService(
         } else {
             value
         }
-    }
-
-    private fun mapToUserDto(user: User): UserDto {
-        return UserDto(
-            id = user.id!!,
-            clientId = user.clientId!!,
-            email = user.email,
-            firstName = user.firstName,
-            lastName = user.lastName,
-            role = user.role,
-            status = user.status,
-            lastLoginAt = user.lastLoginAt,
-            createdAt = user.createdAt,
-            updatedAt = user.updatedAt,
-            deletedAt = user.deletedAt
-        )
     }
 
     companion object {

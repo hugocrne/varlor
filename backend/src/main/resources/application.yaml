@@ -24,3 +24,13 @@ jwt:
     expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:PT15M}
   refresh-token:
     expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:P7D}
+
+app:
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
+  swagger:
+    enabled: ${APP_SWAGGER_ENABLED:true}
+  rate-limiting:
+    enabled: ${APP_RATE_LIMITING_ENABLED:true}
+    max-requests: ${APP_RATE_LIMITING_MAX_REQUESTS:5}
+    window-seconds: ${APP_RATE_LIMITING_WINDOW_SECONDS:60}

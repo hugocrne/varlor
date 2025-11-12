@@ -5,6 +5,7 @@ import com.varlor.backend.analysis.model.Dataset
 import com.varlor.backend.analysis.model.PreprocessingReport
 import com.varlor.backend.analysis.model.PreprocessingResult
 import com.varlor.backend.analysis.util.MathUtils
+import com.varlor.backend.common.util.toDoubleOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -71,13 +72,7 @@ class DataPreprocessorService {
         return normalized
     }
 
-    private fun normalizeNumeric(value: Any?): Double? = when (value) {
-        null -> null
-        is Number -> value.toDouble()
-        is String -> value.trim().takeIf { it.isNotEmpty() }?.toDoubleOrNull()
-        is Boolean -> if (value) 1.0 else 0.0
-        else -> null
-    }
+    private fun normalizeNumeric(value: Any?): Double? = value.toDoubleOrNull()
 
     private fun normalizeBoolean(value: Any?): Boolean? = when (value) {
         null -> null

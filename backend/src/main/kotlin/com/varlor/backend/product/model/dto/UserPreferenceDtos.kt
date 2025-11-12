@@ -1,5 +1,6 @@
 package com.varlor.backend.product.model.dto
 
+import com.varlor.backend.common.model.BaseDto
 import com.varlor.backend.product.model.entity.Theme
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -32,12 +33,12 @@ data class UpdateUserPreferenceDto(
 )
 
 data class UserPreferenceDto(
-    val id: UUID,
+    override val id: UUID,
     val userId: UUID,
     val theme: Theme,
     val language: String,
     val notificationsEnabled: Boolean,
-    val createdAt: Instant?,
-    val updatedAt: Instant?
-)
+    override val createdAt: Instant?,
+    override val updatedAt: Instant?
+) : BaseDto<UUID>
 

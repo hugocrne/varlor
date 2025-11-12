@@ -32,7 +32,8 @@ class JwtProvider(
             .expiresAt(expiresAt)
             .claim("client_id", clientId.toString())
             .claim("role", user.role.name)
-            .claim("email", user.email)
+            // Email retiré pour réduire les données sensibles dans le token
+            // L'email peut être récupéré depuis la base de données via le subject (user.id)
             .build()
 
         val token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).tokenValue
