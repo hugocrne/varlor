@@ -1,5 +1,6 @@
 package com.varlor.backend.product.service
 
+import com.varlor.backend.common.service.BaseCrudService
 import com.varlor.backend.product.model.dto.ClientDto
 import com.varlor.backend.product.model.dto.CreateClientDto
 import com.varlor.backend.product.model.dto.UpdateClientDto
@@ -11,84 +12,65 @@ import java.time.Instant
 import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 @Service
 class ClientService(
-    private val clientRepository: ClientRepository,
-    private val clock: Clock = Clock.systemUTC()
+    clientRepository: ClientRepository,
+    clock: Clock = Clock.systemUTC()
+) : BaseCrudService<Client, ClientDto, CreateClientDto, UpdateClientDto, UUID>(
+    repository = clientRepository,
+    clock = clock
 ) {
 
-    fun findAll(): List<ClientDto> {
-        return clientRepository.findAllByDeletedAtIsNull().map(::toDto)
+    override fun supportsSoftDelete(): Boolean = true
+
+    override fun toDto(entity: Client): ClientDto {
+        return ClientDto(
+            id = entity.id!!,
+            name = entity.name,
+            type = entity.type,
+            status = entity.status,
+            createdAt = entity.createdAt,
+            updatedAt = entity.updatedAt,
+            deletedAt = entity.deletedAt
+        )
     }
 
-    fun findById(id: UUID): ClientDto {
-        val client = clientRepository.findByIdAndDeletedAtIsNull(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Client introuvable.") }
-        return toDto(client)
-    }
-
-    @Transactional
-    fun create(dto: CreateClientDto): ClientDto {
-        val now = Instant.now(clock)
-        val client = Client(
+    override fun toEntity(dto: CreateClientDto, createdAt: Instant): Client {
+        return Client(
             name = dto.name,
             type = dto.type,
             status = dto.status
         ).apply {
-            createdAt = now
-            updatedAt = now
-            deletedAt = null
+            this.createdAt = createdAt
+            this.updatedAt = createdAt
+            this.deletedAt = null
         }
-
-        val saved = clientRepository.save(client)
-        return toDto(saved)
     }
 
-    @Transactional
-    fun update(id: UUID, dto: UpdateClientDto): ClientDto {
+    override fun updateEntity(entity: Client, dto: UpdateClientDto) {
+        dto.name?.let { entity.name = it }
+        dto.type?.let { entity.type = it }
+        dto.status?.let { entity.status = it }
+    }
+
+    override fun validateBeforeCreate(dto: CreateClientDto) {
+        // Aucune validation spécifique nécessaire
+    }
+
+    override fun validateBeforeUpdate(id: UUID, dto: UpdateClientDto, entity: Client) {
         if (dto.name == null && dto.type == null && dto.status == null) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Aucune donnée de mise à jour fournie.")
         }
-
-        val client = clientRepository.findByIdAndDeletedAtIsNull(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Client introuvable.") }
-
-        dto.name?.let { client.name = it }
-        dto.type?.let { client.type = it }
-        dto.status?.let { client.status = it }
-
-        client.updatedAt = Instant.now(clock)
-
-        return toDto(client)
     }
 
-    /**
-     * Applique un soft delete : le client est marqué INACTIVE et conservé en base.
-     */
-    @Transactional
-    fun delete(id: UUID) {
-        val client = clientRepository.findByIdAndDeletedAtIsNull(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Client introuvable.") }
+    override fun notFoundException(id: UUID): ResponseStatusException =
+        ResponseStatusException(HttpStatus.NOT_FOUND, "Client introuvable.")
 
-        val now = Instant.now(clock)
-        client.status = ClientStatus.INACTIVE
-        client.deletedAt = now
-        client.updatedAt = now
-    }
-
-    private fun toDto(client: Client): ClientDto {
-        return ClientDto(
-            id = client.id!!,
-            name = client.name,
-            type = client.type,
-            status = client.status,
-            createdAt = client.createdAt,
-            updatedAt = client.updatedAt,
-            deletedAt = client.deletedAt
-        )
+    override fun performSoftDelete(entity: Client) {
+        super.performSoftDelete(entity)
+        entity.status = ClientStatus.INACTIVE
     }
 }
 

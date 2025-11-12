@@ -1,5 +1,6 @@
 package com.varlor.backend.product.service
 
+import com.varlor.backend.common.service.BaseCrudService
 import com.varlor.backend.product.model.dto.CreateUserDto
 import com.varlor.backend.product.model.dto.UpdateUserDto
 import com.varlor.backend.product.model.dto.UserDto
@@ -14,38 +15,39 @@ import java.util.Locale
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 @Service
 class UserService(
-    private val userRepository: UserRepository,
+    userRepository: UserRepository,
     private val clientRepository: ClientRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val clock: Clock = Clock.systemUTC()
+    clock: Clock = Clock.systemUTC()
+) : BaseCrudService<User, UserDto, CreateUserDto, UpdateUserDto, UUID>(
+    repository = userRepository,
+    clock = clock
 ) {
 
-    fun findAll(): List<UserDto> {
-        return userRepository.findAllByDeletedAtIsNull().map(::toDto)
+    override fun supportsSoftDelete(): Boolean = true
+
+    override fun toDto(entity: User): UserDto {
+        return UserDto(
+            id = entity.id!!,
+            clientId = entity.clientId!!,
+            email = entity.email,
+            firstName = entity.firstName,
+            lastName = entity.lastName,
+            role = entity.role,
+            status = entity.status,
+            lastLoginAt = entity.lastLoginAt,
+            createdAt = entity.createdAt,
+            updatedAt = entity.updatedAt,
+            deletedAt = entity.deletedAt
+        )
     }
 
-    fun findById(id: UUID): UserDto {
-        val user = userRepository.findByIdAndDeletedAtIsNull(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.") }
-        return toDto(user)
-    }
-
-    @Transactional
-    fun create(dto: CreateUserDto): UserDto {
-        ensureClientExists(dto.clientId)
-
-        val existing = userRepository.findByEmailAndDeletedAtIsNull(dto.email)
-        if (existing != null) {
-            throw ResponseStatusException(HttpStatus.CONFLICT, "Un utilisateur avec cet email existe déjà.")
-        }
-
-        val now = Instant.now(clock)
-        val user = User(
+    override fun toEntity(dto: CreateUserDto, createdAt: Instant): User {
+        return User(
             clientId = dto.clientId,
             email = dto.email.lowercase(Locale.getDefault()),
             passwordHash = passwordEncoder.encode(dto.password),
@@ -54,18 +56,45 @@ class UserService(
             role = dto.role,
             status = dto.status
         ).apply {
-            createdAt = now
-            updatedAt = now
-            lastLoginAt = null
-            deletedAt = null
+            this.createdAt = createdAt
+            this.updatedAt = createdAt
+            this.lastLoginAt = null
+            this.deletedAt = null
         }
-
-        val saved = userRepository.save(user)
-        return toDto(saved)
     }
 
-    @Transactional
-    fun update(id: UUID, dto: UpdateUserDto): UserDto {
+    override fun updateEntity(entity: User, dto: UpdateUserDto) {
+        dto.clientId?.let {
+            entity.clientId = it
+        }
+
+        dto.email?.let {
+            val normalized = it.lowercase(Locale.getDefault())
+            entity.email = normalized
+        }
+
+        dto.password?.let {
+            entity.passwordHash = passwordEncoder.encode(it)
+        }
+
+        dto.firstName?.let { entity.firstName = it }
+        dto.lastName?.let { entity.lastName = it }
+        dto.role?.let { entity.role = it }
+        dto.status?.let { entity.status = it }
+        dto.lastLoginAt?.let { entity.lastLoginAt = it }
+        dto.deletedAt?.let { entity.deletedAt = it }
+    }
+
+    override fun validateBeforeCreate(dto: CreateUserDto) {
+        ensureClientExists(dto.clientId)
+
+        val existing = (repository as UserRepository).findByEmailAndDeletedAtIsNull(dto.email)
+        if (existing != null) {
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Un utilisateur avec cet email existe déjà.")
+        }
+    }
+
+    override fun validateBeforeUpdate(id: UUID, dto: UpdateUserDto, entity: User) {
         if (dto.clientId == null &&
             dto.email == null &&
             dto.password == null &&
@@ -79,73 +108,29 @@ class UserService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Aucune donnée de mise à jour fournie.")
         }
 
-        val user = userRepository.findByIdAndDeletedAtIsNull(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.") }
-
-        dto.clientId?.let {
-            ensureClientExists(it)
-            user.clientId = it
-        }
+        dto.clientId?.let { ensureClientExists(it) }
 
         dto.email?.let {
             val normalized = it.lowercase(Locale.getDefault())
-            val conflict = userRepository.findByEmailAndDeletedAtIsNull(normalized)
-            if (conflict != null && conflict.id != user.id) {
+            val conflict = (repository as UserRepository).findByEmailAndDeletedAtIsNull(normalized)
+            if (conflict != null && conflict.id != entity.id) {
                 throw ResponseStatusException(HttpStatus.CONFLICT, "Un utilisateur avec cet email existe déjà.")
             }
-            user.email = normalized
         }
-
-        dto.password?.let {
-            user.passwordHash = passwordEncoder.encode(it)
-        }
-
-        dto.firstName?.let { user.firstName = it }
-        dto.lastName?.let { user.lastName = it }
-        dto.role?.let { user.role = it }
-        dto.status?.let { user.status = it }
-        dto.lastLoginAt?.let { user.lastLoginAt = it }
-        dto.deletedAt?.let { user.deletedAt = it }
-
-        user.updatedAt = Instant.now(clock)
-
-        return toDto(user)
     }
 
-    /**
-     * Applique un soft delete : l'utilisateur est marqué INACTIVE et conservé en base.
-     */
-    @Transactional
-    fun delete(id: UUID) {
-        val user = userRepository.findByIdAndDeletedAtIsNull(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.") }
+    override fun notFoundException(id: UUID): ResponseStatusException =
+        ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable.")
 
-        val now = Instant.now(clock)
-        user.status = UserStatus.INACTIVE
-        user.deletedAt = now
-        user.updatedAt = now
+    override fun performSoftDelete(entity: User) {
+        super.performSoftDelete(entity)
+        entity.status = UserStatus.INACTIVE
     }
 
     private fun ensureClientExists(clientId: UUID) {
         if (!clientRepository.existsByIdAndDeletedAtIsNull(clientId)) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Client associé introuvable ou supprimé.")
         }
-    }
-
-    private fun toDto(user: User): UserDto {
-        return UserDto(
-            id = user.id!!,
-            clientId = user.clientId!!,
-            email = user.email,
-            firstName = user.firstName,
-            lastName = user.lastName,
-            role = user.role,
-            status = user.status,
-            lastLoginAt = user.lastLoginAt,
-            createdAt = user.createdAt,
-            updatedAt = user.updatedAt,
-            deletedAt = user.deletedAt
-        )
     }
 }
 

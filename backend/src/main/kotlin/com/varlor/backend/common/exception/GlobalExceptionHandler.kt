@@ -1,4 +1,4 @@
-package com.varlor.backend.product.controller
+package com.varlor.backend.common.exception
 
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -12,14 +12,19 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 import jakarta.validation.ConstraintViolationException
 
-@RestControllerAdvice(basePackages = ["com.varlor.backend.product"])
-class ProductExceptionHandler {
+@RestControllerAdvice
+class GlobalExceptionHandler {
 
-    private val logger = LoggerFactory.getLogger(ProductExceptionHandler::class.java)
+    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleValidation(ex: MethodArgumentNotValidException, request: WebRequest): ResponseEntity<ErrorResponse> {
-        val details = ex.bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "Invalide") }
+    fun handleValidation(
+        ex: MethodArgumentNotValidException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        val details = ex.bindingResult.fieldErrors.associate { 
+            it.field to (it.defaultMessage ?: "Invalide") 
+        }
         return buildResponse(
             status = HttpStatus.BAD_REQUEST,
             error = "ValidationFailed",
@@ -30,7 +35,10 @@ class ProductExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
-    fun handleConstraintViolation(ex: ConstraintViolationException, request: WebRequest): ResponseEntity<ErrorResponse> {
+    fun handleConstraintViolation(
+        ex: ConstraintViolationException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
         val details = ex.constraintViolations.associate { violation ->
             violation.propertyPath.toString() to (violation.message ?: "Invalide")
         }
@@ -44,7 +52,10 @@ class ProductExceptionHandler {
     }
 
     @ExceptionHandler(ResponseStatusException::class)
-    fun handleResponseStatus(ex: ResponseStatusException, request: WebRequest): ResponseEntity<ErrorResponse> {
+    fun handleResponseStatus(
+        ex: ResponseStatusException,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
         val status = ex.statusCode
         val reason = ex.reason ?: status.toString()
         return buildResponse(
@@ -55,11 +66,11 @@ class ProductExceptionHandler {
         )
     }
 
-    @ExceptionHandler(
-        IllegalArgumentException::class,
-        IllegalStateException::class
-    )
-    fun handleClientErrors(ex: Exception, request: WebRequest): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(IllegalArgumentException::class, IllegalStateException::class)
+    fun handleClientErrors(
+        ex: Exception,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
         return buildResponse(
             status = HttpStatus.UNPROCESSABLE_ENTITY,
             error = ex.javaClass.simpleName,
@@ -69,8 +80,11 @@ class ProductExceptionHandler {
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleServerErrors(ex: Exception, request: WebRequest): ResponseEntity<ErrorResponse> {
-        logger.error("Erreur interne lors du traitement d'une requête product.", ex)
+    fun handleServerErrors(
+        ex: Exception,
+        request: WebRequest
+    ): ResponseEntity<ErrorResponse> {
+        logger.error("Erreur interne lors du traitement d'une requête.", ex)
         return buildResponse(
             status = HttpStatus.INTERNAL_SERVER_ERROR,
             error = "InternalServerError",

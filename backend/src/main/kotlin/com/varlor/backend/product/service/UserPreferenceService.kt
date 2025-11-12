@@ -1,5 +1,6 @@
 package com.varlor.backend.product.service
 
+import com.varlor.backend.common.service.BaseCrudService
 import com.varlor.backend.product.model.dto.CreateUserPreferenceDto
 import com.varlor.backend.product.model.dto.UpdateUserPreferenceDto
 import com.varlor.backend.product.model.dto.UserPreferenceDto
@@ -12,86 +13,71 @@ import java.util.UUID
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
 @Service
 class UserPreferenceService(
-    private val userPreferenceRepository: UserPreferenceRepository,
+    userPreferenceRepository: UserPreferenceRepository,
     private val userRepository: UserRepository,
-    private val clock: Clock = Clock.systemUTC()
+    clock: Clock = Clock.systemUTC()
+) : BaseCrudService<UserPreference, UserPreferenceDto, CreateUserPreferenceDto, UpdateUserPreferenceDto, UUID>(
+    repository = userPreferenceRepository,
+    clock = clock
 ) {
 
-    fun findAll(): List<UserPreferenceDto> {
-        return userPreferenceRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt")).map(::toDto)
+    override fun findAll(): List<UserPreferenceDto> {
+        return (repository as UserPreferenceRepository)
+            .findAll(Sort.by(Sort.Direction.ASC, "createdAt"))
+            .map(::toDto)
     }
 
-    fun findById(id: UUID): UserPreferenceDto {
-        val preference = userPreferenceRepository.findById(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Préférence utilisateur introuvable.") }
-        return toDto(preference)
+    override fun toDto(entity: UserPreference): UserPreferenceDto {
+        return UserPreferenceDto(
+            id = entity.id!!,
+            userId = entity.userId!!,
+            theme = entity.theme,
+            language = entity.language,
+            notificationsEnabled = entity.notificationsEnabled,
+            createdAt = entity.createdAt,
+            updatedAt = entity.updatedAt
+        )
     }
 
-    @Transactional
-    fun create(dto: CreateUserPreferenceDto): UserPreferenceDto {
-        if (!userRepository.existsByIdAndDeletedAtIsNull(dto.userId)) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur associé introuvable ou supprimé.")
-        }
-
-        if (userPreferenceRepository.existsByUserId(dto.userId)) {
-            throw ResponseStatusException(HttpStatus.CONFLICT, "Une préférence existe déjà pour cet utilisateur.")
-        }
-
-        val now = Instant.now(clock)
-        val preference = UserPreference(
+    override fun toEntity(dto: CreateUserPreferenceDto, createdAt: Instant): UserPreference {
+        return UserPreference(
             userId = dto.userId,
             theme = dto.theme,
             language = dto.language,
             notificationsEnabled = dto.notificationsEnabled
         ).apply {
-            createdAt = now
-            updatedAt = now
+            this.createdAt = createdAt
+            this.updatedAt = createdAt
         }
-
-        val saved = userPreferenceRepository.save(preference)
-        return toDto(saved)
     }
 
-    @Transactional
-    fun update(id: UUID, dto: UpdateUserPreferenceDto): UserPreferenceDto {
+    override fun updateEntity(entity: UserPreference, dto: UpdateUserPreferenceDto) {
+        dto.theme?.let { entity.theme = it }
+        dto.language?.let { entity.language = it }
+        dto.notificationsEnabled?.let { entity.notificationsEnabled = it }
+    }
+
+    override fun validateBeforeCreate(dto: CreateUserPreferenceDto) {
+        if (!userRepository.existsByIdAndDeletedAtIsNull(dto.userId)) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilisateur associé introuvable ou supprimé.")
+        }
+
+        if ((repository as UserPreferenceRepository).existsByUserId(dto.userId)) {
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Une préférence existe déjà pour cet utilisateur.")
+        }
+    }
+
+    override fun validateBeforeUpdate(id: UUID, dto: UpdateUserPreferenceDto, entity: UserPreference) {
         if (dto.theme == null && dto.language == null && dto.notificationsEnabled == null) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Aucune donnée de mise à jour fournie.")
         }
-
-        val preference = userPreferenceRepository.findById(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Préférence utilisateur introuvable.") }
-
-        dto.theme?.let { preference.theme = it }
-        dto.language?.let { preference.language = it }
-        dto.notificationsEnabled?.let { preference.notificationsEnabled = it }
-
-        preference.updatedAt = Instant.now(clock)
-
-        return toDto(preference)
     }
 
-    @Transactional
-    fun delete(id: UUID) {
-        val preference = userPreferenceRepository.findById(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Préférence utilisateur introuvable.") }
-        userPreferenceRepository.delete(preference)
-    }
-
-    private fun toDto(preference: UserPreference): UserPreferenceDto {
-        return UserPreferenceDto(
-            id = preference.id!!,
-            userId = preference.userId!!,
-            theme = preference.theme,
-            language = preference.language,
-            notificationsEnabled = preference.notificationsEnabled,
-            createdAt = preference.createdAt,
-            updatedAt = preference.updatedAt
-        )
-    }
+    override fun notFoundException(id: UUID): ResponseStatusException =
+        ResponseStatusException(HttpStatus.NOT_FOUND, "Préférence utilisateur introuvable.")
 }
 

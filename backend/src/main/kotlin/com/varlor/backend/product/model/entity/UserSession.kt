@@ -1,11 +1,9 @@
 package com.varlor.backend.product.model.entity
 
+import com.varlor.backend.common.model.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
@@ -15,11 +13,6 @@ import java.util.UUID
 @Entity
 @Table(name = "user_sessions")
 class UserSession(
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, updatable = false)
-    var id: UUID? = null,
-
     @Column(name = "user_id", nullable = false)
     var userId: UUID? = null,
 
@@ -35,9 +28,6 @@ class UserSession(
     @Column(name = "user_agent", nullable = false, length = 500)
     var userAgent: String = "",
 
-    @Column(name = "created_at", nullable = false)
-    var createdAt: Instant = Instant.now(),
-
     @Column(name = "expires_at", nullable = false)
     var expiresAt: Instant = Instant.now(),
 
@@ -49,7 +39,7 @@ class UserSession(
 
     @Column(name = "revocation_reason", length = 255)
     var revocationReason: String? = null
-) {
+) : BaseEntity<UUID>() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     var user: User? = null

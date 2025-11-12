@@ -1,15 +1,13 @@
 package com.varlor.backend.product.model.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.varlor.backend.common.model.SoftDeletableEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
@@ -21,11 +19,6 @@ import java.util.UUID
 @Entity
 @Table(name = "users")
 class User(
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false, updatable = false)
-    var id: UUID? = null,
-
     @Column(name = "client_id", nullable = false)
     var clientId: UUID? = null,
 
@@ -50,17 +43,8 @@ class User(
     var status: UserStatus = UserStatus.PENDING,
 
     @Column(name = "last_login_at")
-    var lastLoginAt: Instant? = null,
-
-    @Column(name = "created_at", nullable = false)
-    var createdAt: Instant = Instant.now(),
-
-    @Column(name = "updated_at", nullable = false)
-    var updatedAt: Instant = Instant.now(),
-
-    @Column(name = "deleted_at")
-    var deletedAt: Instant? = null
-) {
+    var lastLoginAt: Instant? = null
+) : SoftDeletableEntity<UUID>() {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false, insertable = false, updatable = false)
     var client: Client? = null
