@@ -61,12 +61,10 @@ class User(
     @Column(name = "deleted_at")
     var deletedAt: Instant? = null
 ) {
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false, insertable = false, updatable = false)
     var client: Client? = null
 
-    @JsonIgnore
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     var userPreference: UserPreference? = null
 

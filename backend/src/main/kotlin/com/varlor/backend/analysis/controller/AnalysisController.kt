@@ -1,10 +1,11 @@
 package com.varlor.backend.analysis.controller
 
-import com.varlor.backend.analysis.model.Dataset
 import com.varlor.backend.analysis.model.FullAnalysisResult
-import com.varlor.backend.analysis.model.IndicatorRequest
-import com.varlor.backend.analysis.model.PreprocessingResult
 import com.varlor.backend.analysis.model.OperationResult
+import com.varlor.backend.analysis.model.PreprocessingResult
+import com.varlor.backend.analysis.model.dto.DatasetDto
+import com.varlor.backend.analysis.model.dto.IndicatorRequestDto
+import com.varlor.backend.analysis.service.AnalysisPipelineService
 import com.varlor.backend.analysis.service.DataPreprocessorService
 import com.varlor.backend.analysis.service.IndicatorEngineService
 import io.swagger.v3.oas.annotations.Operation
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,7 +27,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody as OpenApiRequestBod
 @Tag(name = "Analysis", description = "Opérations d'analyse de données (prétraitement, indicateurs, expressions dynamiques)")
 class AnalysisController(
     private val dataPreprocessorService: DataPreprocessorService,
-    private val indicatorEngineService: IndicatorEngineService
+    private val indicatorEngineService: IndicatorEngineService,
+    private val analysisPipelineService: AnalysisPipelineService
 ) {
 
     @PostMapping("/preprocess")
@@ -37,7 +40,7 @@ class AnalysisController(
             content = [
                 Content(
                     mediaType = "application/json",
-                    schema = Schema(implementation = Dataset::class),
+                    schema = Schema(implementation = DatasetDto::class),
                     examples = [
                         ExampleObject(
                             name = "JSON",
@@ -48,7 +51,7 @@ class AnalysisController(
                 ),
                 Content(
                     mediaType = "application/yaml",
-                    schema = Schema(implementation = Dataset::class),
+                    schema = Schema(implementation = DatasetDto::class),
                     examples = [
                         ExampleObject(
                             name = "YAML",
@@ -78,8 +81,8 @@ class AnalysisController(
             )
         ]
     )
-    fun preprocess(@RequestBody dataset: Dataset): PreprocessingResult =
-        dataPreprocessorService.preprocess(dataset)
+    fun preprocess(@Valid @RequestBody dataset: DatasetDto): PreprocessingResult =
+        dataPreprocessorService.preprocess(dataset.toModel())
 
     @PostMapping("/indicators")
     @Operation(
@@ -90,7 +93,7 @@ class AnalysisController(
             content = [
                 Content(
                     mediaType = "application/json",
-                    schema = Schema(implementation = IndicatorRequest::class),
+                    schema = Schema(implementation = IndicatorRequestDto::class),
                     examples = [
                         ExampleObject(
                             name = "JSON",
@@ -120,8 +123,10 @@ class AnalysisController(
             )
         ]
     )
-    fun indicators(@RequestBody request: IndicatorRequest): List<OperationResult> =
-        indicatorEngineService.execute(request.operations, request.dataset)
+    fun indicators(@Valid @RequestBody request: IndicatorRequestDto): List<OperationResult> {
+        val model = request.toModel()
+        return indicatorEngineService.execute(model.operations, model.dataset)
+    }
 
     @PostMapping("/full")
     @Operation(
@@ -132,7 +137,7 @@ class AnalysisController(
             content = [
                 Content(
                     mediaType = "application/json",
-                    schema = Schema(implementation = IndicatorRequest::class),
+                    schema = Schema(implementation = IndicatorRequestDto::class),
                     examples = [
                         ExampleObject(
                             name = "JSON",
@@ -162,13 +167,8 @@ class AnalysisController(
             )
         ]
     )
-    fun full(@RequestBody request: IndicatorRequest): FullAnalysisResult {
-        val preprocessing = dataPreprocessorService.preprocess(request.dataset)
-        val operationResults = indicatorEngineService.execute(request.operations, preprocessing.cleanedDataset)
-        return FullAnalysisResult(
-            preprocessing = preprocessing,
-            operations = operationResults
-        )
+    fun full(@Valid @RequestBody request: IndicatorRequestDto): FullAnalysisResult {
+        return analysisPipelineService.executeFullAnalysis(request.toModel())
     }
 
     companion object {

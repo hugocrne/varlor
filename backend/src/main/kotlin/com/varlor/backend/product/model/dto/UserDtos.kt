@@ -2,6 +2,7 @@ package com.varlor.backend.product.model.dto
 
 import com.varlor.backend.product.model.entity.UserRole
 import com.varlor.backend.product.model.entity.UserStatus
+import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -20,7 +21,11 @@ data class CreateUserDto(
 
     @field:NotBlank
     @field:Size(max = 255)
-    val passwordHash: String,
+    @field:Schema(
+        description = "Mot de passe en clair soumis par l'utilisateur, haché côté serveur avant stockage.",
+        example = "Secret123!"
+    )
+    val password: String,
 
     @field:NotBlank
     @field:Size(max = 100)
@@ -45,7 +50,12 @@ data class UpdateUserDto(
     val email: String? = null,
 
     @field:Size(max = 255)
-    val passwordHash: String? = null,
+    @field:Schema(
+        description = "Nouveau mot de passe en clair, haché côté serveur avant stockage.",
+        example = "Secret123!",
+        nullable = true
+    )
+    val password: String? = null,
 
     @field:Size(max = 100)
     val firstName: String? = null,

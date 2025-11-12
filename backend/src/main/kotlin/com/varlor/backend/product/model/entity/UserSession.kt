@@ -1,6 +1,5 @@
 package com.varlor.backend.product.model.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -51,7 +50,6 @@ class UserSession(
     @Column(name = "revocation_reason", length = 255)
     var revocationReason: String? = null
 ) {
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     var user: User? = null

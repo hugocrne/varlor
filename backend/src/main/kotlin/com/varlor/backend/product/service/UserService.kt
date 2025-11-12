@@ -48,7 +48,7 @@ class UserService(
         val user = User(
             clientId = dto.clientId,
             email = dto.email.lowercase(Locale.getDefault()),
-            passwordHash = passwordEncoder.encode(dto.passwordHash),
+            passwordHash = passwordEncoder.encode(dto.password),
             firstName = dto.firstName,
             lastName = dto.lastName,
             role = dto.role,
@@ -68,7 +68,7 @@ class UserService(
     fun update(id: UUID, dto: UpdateUserDto): UserDto {
         if (dto.clientId == null &&
             dto.email == null &&
-            dto.passwordHash == null &&
+            dto.password == null &&
             dto.firstName == null &&
             dto.lastName == null &&
             dto.role == null &&
@@ -96,7 +96,7 @@ class UserService(
             user.email = normalized
         }
 
-        dto.passwordHash?.let {
+        dto.password?.let {
             user.passwordHash = passwordEncoder.encode(it)
         }
 
@@ -112,6 +112,9 @@ class UserService(
         return toDto(user)
     }
 
+    /**
+     * Applique un soft delete : l'utilisateur est marqué INACTIVE et conservé en base.
+     */
     @Transactional
     fun delete(id: UUID) {
         val user = userRepository.findByIdAndDeletedAtIsNull(id)

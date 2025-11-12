@@ -22,7 +22,7 @@ class OpenApiConfig {
             .info(
                 Info()
                     .title("Varlor Product API")
-                    .description("API de gestion des utilisateurs, clients et sessions de Varlor.")
+                    .description("API de gestion des utilisateurs, clients et sessions de Varlor (Spring MVC).")
                     .version("1.0.0")
             )
             .components(Components().addSecuritySchemes(SECURITY_SCHEME_NAME, securityScheme))

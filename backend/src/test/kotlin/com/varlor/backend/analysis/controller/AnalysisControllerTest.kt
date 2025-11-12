@@ -7,6 +7,7 @@ import com.varlor.backend.analysis.model.OperationResult
 import com.varlor.backend.analysis.model.OperationStatus
 import com.varlor.backend.analysis.model.PreprocessingReport
 import com.varlor.backend.analysis.model.PreprocessingResult
+import com.varlor.backend.analysis.service.AnalysisPipelineService
 import com.varlor.backend.analysis.service.DataPreprocessorService
 import com.varlor.backend.analysis.service.IndicatorEngineService
 import java.time.Instant
@@ -42,6 +43,9 @@ class AnalysisControllerTest {
 
     @MockBean
     lateinit var indicatorEngineService: IndicatorEngineService
+
+    @MockBean
+    lateinit var analysisPipelineService: AnalysisPipelineService
 
     @Test
     fun `should preprocess dataset in json`() {

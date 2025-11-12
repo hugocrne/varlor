@@ -218,7 +218,7 @@ class ProductApiIntegrationTest(
         val createRequest = CreateUserDto(
             clientId = defaultClient.id!!,
             email = "member@varlor.io",
-            passwordHash = "Password123!",
+            password = "Password123!",
             firstName = "Varlor",
             lastName = "Member",
             role = UserRole.MEMBER,

@@ -65,6 +65,9 @@ class ClientService(
         return toDto(client)
     }
 
+    /**
+     * Applique un soft delete : le client est marqué INACTIVE et conservé en base.
+     */
     @Transactional
     fun delete(id: UUID) {
         val client = clientRepository.findByIdAndDeletedAtIsNull(id)

@@ -57,14 +57,16 @@ class SecurityConfig(
 
     @Bean
     fun jwtAuthenticationConverter(): Converter<Jwt, AbstractAuthenticationToken> =
-        Converter { jwt ->
-            val roleClaim = jwt.getClaimAsString("role")
-            val authorities = if (StringUtils.hasText(roleClaim)) {
-                listOf(SimpleGrantedAuthority("ROLE_${roleClaim.uppercase(Locale.getDefault())}"))
-            } else {
-                emptyList()
+        object : Converter<Jwt, AbstractAuthenticationToken> {
+            override fun convert(jwt: Jwt): AbstractAuthenticationToken {
+                val roleClaim = jwt.getClaimAsString("role")
+                val authorities = if (StringUtils.hasText(roleClaim)) {
+                    listOf(SimpleGrantedAuthority("ROLE_${roleClaim.uppercase(Locale.getDefault())}"))
+                } else {
+                    emptyList()
+                }
+                return JwtAuthenticationToken(jwt, authorities, jwt.subject)
             }
-            JwtAuthenticationToken(jwt, authorities, jwt.subject)
         }
 }
 

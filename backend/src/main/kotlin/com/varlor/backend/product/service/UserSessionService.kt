@@ -125,6 +125,9 @@ class UserSessionService(
         return toDto(session)
     }
 
+    /**
+     * Supprime physiquement la session (hard delete) conformément au MVP.
+     */
     @Transactional
     fun delete(id: UUID) {
         val session = userSessionRepository.findById(id)
