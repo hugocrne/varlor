@@ -3,7 +3,7 @@ spring:
     name: Varlor Backend
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:varlor}}
-    username: ${SPRING_DATASOURCE_USERNAME:varlor}
+    username: ${SPRING_DATASOURCE_USERNAME:hugo}
     password: ${SPRING_DATASOURCE_PASSWORD:varlor}
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -12,6 +12,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baseline-on-migrate: true
   main:
     web-application-type: servlet
 
