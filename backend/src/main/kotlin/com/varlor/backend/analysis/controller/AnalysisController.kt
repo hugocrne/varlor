@@ -8,6 +8,7 @@ import com.varlor.backend.analysis.model.dto.IndicatorRequestDto
 import com.varlor.backend.analysis.service.AnalysisPipelineService
 import com.varlor.backend.analysis.service.DataPreprocessorService
 import com.varlor.backend.analysis.service.IndicatorEngineService
+import com.varlor.backend.common.exception.GlobalExceptionHandler
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
@@ -80,6 +81,38 @@ class AnalysisController(
                         ]
                     )
                 ]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Requête invalide",
+                content = [Content(
+                    schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Validation échouée",
+                            value = """{
+  "timestamp": "2025-01-27T10:00:00Z",
+  "status": 400,
+  "error": "ValidationFailed",
+  "message": "La requête est invalide.",
+  "path": "/api/analyses/preprocess",
+  "details": {
+    "columns": "La liste des colonnes ne peut pas être vide"
+  }
+}"""
+                        )
+                    ]
+                )]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Non authentifié",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
             )
         ]
     )
@@ -122,6 +155,40 @@ class AnalysisController(
                         ]
                     )
                 ]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Requête invalide",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Non authentifié",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "422",
+                description = "Erreur de traitement (ex: expression invalide)",
+                content = [Content(
+                    schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Expression invalide",
+                            value = """{
+  "timestamp": "2025-01-27T10:00:00Z",
+  "status": 422,
+  "error": "IllegalArgumentException",
+  "message": "Expression invalide: fonction inconnue",
+  "path": "/api/analyses/indicators"
+}"""
+                        )
+                    ]
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
             )
         ]
     )
@@ -166,6 +233,26 @@ class AnalysisController(
                         ]
                     )
                 ]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Requête invalide",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Non authentifié",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "422",
+                description = "Erreur de traitement",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
             )
         ]
     )

@@ -1,5 +1,6 @@
 package com.varlor.backend.product.controller
 
+import com.varlor.backend.common.exception.GlobalExceptionHandler
 import com.varlor.backend.common.extensions.extractBearerToken
 import com.varlor.backend.common.extensions.extractClientInfo
 import com.varlor.backend.product.model.dto.LoginRequestDto
@@ -13,6 +14,7 @@ import com.varlor.backend.product.model.dto.ValidateTokenResponseDto
 import com.varlor.backend.product.service.AuthService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -60,9 +62,58 @@ class AuthController(
             ]
         ),
         responses = [
-            ApiResponse(responseCode = "201", description = "Utilisateur créé", content = [Content(schema = Schema(implementation = UserDto::class))]),
-            ApiResponse(responseCode = "400", description = "Requête invalide"),
-            ApiResponse(responseCode = "409", description = "Utilisateur déjà existant")
+            ApiResponse(
+                responseCode = "201",
+                description = "Utilisateur créé avec succès",
+                content = [Content(schema = Schema(implementation = UserDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Requête invalide",
+                content = [Content(
+                    schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Validation échouée",
+                            value = """{
+  "timestamp": "2025-01-27T10:00:00Z",
+  "status": 400,
+  "error": "ValidationFailed",
+  "message": "La requête est invalide.",
+  "path": "/api/auth/register",
+  "details": {
+    "email": "L'email doit être valide",
+    "password": "Le mot de passe doit contenir au moins 8 caractères"
+  }
+}"""
+                        )
+                    ]
+                )]
+            ),
+            ApiResponse(
+                responseCode = "409",
+                description = "Utilisateur déjà existant",
+                content = [Content(
+                    schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Conflit",
+                            value = """{
+  "timestamp": "2025-01-27T10:00:00Z",
+  "status": 409,
+  "error": "Conflict",
+  "message": "Un utilisateur avec cet email existe déjà.",
+  "path": "/api/auth/register"
+}"""
+                        )
+                    ]
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            )
         ]
     )
     fun register(@Valid @RequestBody request: RegisterRequestDto): ResponseEntity<UserDto> {
@@ -92,10 +143,40 @@ class AuthController(
             ]
         ),
         responses = [
-            ApiResponse(responseCode = "200", description = "Connexion réussie", content = [Content(schema = Schema(implementation = LoginResponseDto::class))]),
-            ApiResponse(responseCode = "400", description = "Requête invalide"),
-            ApiResponse(responseCode = "401", description = "Identifiants incorrects"),
-            ApiResponse(responseCode = "404", description = "Utilisateur introuvable")
+            ApiResponse(
+                responseCode = "200",
+                description = "Connexion réussie",
+                content = [Content(schema = Schema(implementation = LoginResponseDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Requête invalide",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Identifiants incorrects",
+                content = [Content(
+                    schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Identifiants invalides",
+                            value = """{
+  "timestamp": "2025-01-27T10:00:00Z",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "Identifiants incorrects.",
+  "path": "/api/auth/login"
+}"""
+                        )
+                    ]
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            )
         ]
     )
     fun login(
@@ -110,11 +191,58 @@ class AuthController(
     @PostMapping("/refresh")
     @Operation(
         summary = "Renouveler un jeton",
-        description = "Régénère un couple de jetons à partir d'un refresh token valide.",
+        description = "Régénère un couple de jetons (access token et refresh token) à partir d'un refresh token valide.",
+        requestBody = io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            content = [
+                Content(
+                    schema = Schema(implementation = RefreshTokenRequestDto::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Renouvellement",
+                            value = """{
+  "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+}"""
+                        )
+                    ]
+                )
+            ]
+        ),
         responses = [
-            ApiResponse(responseCode = "200", description = "Jeton régénéré", content = [Content(schema = Schema(implementation = TokenPairResponseDto::class))]),
-            ApiResponse(responseCode = "400", description = "Requête invalide"),
-            ApiResponse(responseCode = "401", description = "Refresh token invalide ou expiré")
+            ApiResponse(
+                responseCode = "200",
+                description = "Jeton régénéré avec succès",
+                content = [Content(schema = Schema(implementation = TokenPairResponseDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Requête invalide",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Refresh token invalide ou expiré",
+                content = [Content(
+                    schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Token invalide",
+                            value = """{
+  "timestamp": "2025-01-27T10:00:00Z",
+  "status": 401,
+  "error": "Unauthorized",
+  "message": "Refresh token invalide ou expiré.",
+  "path": "/api/auth/refresh"
+}"""
+                        )
+                    ]
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            )
         ]
     )
     fun refresh(
@@ -129,10 +257,46 @@ class AuthController(
     @PostMapping("/logout")
     @Operation(
         summary = "Déconnexion",
-        description = "Révoque un refresh token et, optionnellement, toutes les sessions de l'utilisateur.",
+        description = "Révoque un refresh token et, optionnellement, toutes les sessions de l'utilisateur. Si revokeAllSessions est true, toutes les sessions actives de l'utilisateur seront révoquées.",
+        requestBody = io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            content = [
+                Content(
+                    schema = Schema(implementation = LogoutRequestDto::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Déconnexion simple",
+                            value = """{
+  "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "revokeAllSessions": false
+}"""
+                        ),
+                        ExampleObject(
+                            name = "Déconnexion de toutes les sessions",
+                            value = """{
+  "refreshToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "revokeAllSessions": true
+}"""
+                        )
+                    ]
+                )
+            ]
+        ),
         responses = [
-            ApiResponse(responseCode = "204", description = "Déconnexion effectuée"),
-            ApiResponse(responseCode = "400", description = "Requête invalide")
+            ApiResponse(
+                responseCode = "204",
+                description = "Déconnexion effectuée avec succès"
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Requête invalide",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            )
         ]
     )
     fun logout(@Valid @RequestBody request: LogoutRequestDto): ResponseEntity<Void> {
@@ -145,8 +309,35 @@ class AuthController(
         summary = "Valider un jeton d'accès",
         description = "Vérifie la validité d'un jeton JWT fourni dans l'en-tête Authorization.",
         responses = [
-            ApiResponse(responseCode = "200", description = "Jeton valide", content = [Content(schema = Schema(implementation = ValidateTokenResponseDto::class))]),
-            ApiResponse(responseCode = "400", description = "Jeton manquant ou invalide")
+            ApiResponse(
+                responseCode = "200",
+                description = "Jeton valide",
+                content = [Content(schema = Schema(implementation = ValidateTokenResponseDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Jeton manquant ou invalide",
+                content = [Content(
+                    schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class),
+                    examples = [
+                        ExampleObject(
+                            name = "Jeton manquant",
+                            value = """{
+  "timestamp": "2025-01-27T10:00:00Z",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Jeton manquant ou invalide.",
+  "path": "/api/auth/validate"
+}"""
+                        )
+                    ]
+                )]
+            ),
+            ApiResponse(
+                responseCode = "500",
+                description = "Erreur serveur",
+                content = [Content(schema = Schema(implementation = GlobalExceptionHandler.ErrorResponse::class))]
+            )
         ]
     )
     fun validate(request: HttpServletRequest): ResponseEntity<ValidateTokenResponseDto> {

@@ -8,9 +8,33 @@ import com.varlor.backend.analysis.util.MathUtils
 import com.varlor.backend.common.util.toDoubleOrNull
 import org.springframework.stereotype.Service
 
+/**
+ * Service de prétraitement de données.
+ *
+ * Effectue les opérations suivantes sur un dataset :
+ * 1. Inférence des types de colonnes (NUMERIC, BOOLEAN, TEXT)
+ * 2. Normalisation des valeurs selon le type détecté
+ * 3. Détection et retrait des outliers (méthode IQR - Interquartile Range)
+ * 4. Imputation des valeurs manquantes :
+ *    - Médiane pour les colonnes numériques
+ *    - Mode (valeur la plus fréquente) pour les colonnes booléennes et texte
+ *
+ * Le résultat inclut :
+ * - Un dataset nettoyé (sans outliers)
+ * - Un dataset contenant uniquement les outliers
+ * - Un rapport détaillé des transformations effectuées
+ *
+ * @see PreprocessingResult
+ */
 @Service
 class DataPreprocessorService {
 
+    /**
+     * Prétraite un dataset en appliquant toutes les transformations.
+     *
+     * @param dataset Le dataset source à prétraiter
+     * @return Résultat du prétraitement contenant le dataset nettoyé, les outliers et un rapport
+     */
     fun preprocess(dataset: Dataset): PreprocessingResult {
         val columnTypes = inferColumnTypes(dataset)
         val normalizedFields = mutableSetOf<String>()

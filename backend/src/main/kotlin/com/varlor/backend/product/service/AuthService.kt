@@ -33,6 +33,27 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 
+/**
+ * Service d'authentification et de gestion des jetons JWT.
+ *
+ * Gère l'inscription des utilisateurs, la connexion, le renouvellement des jetons,
+ * la déconnexion et la validation des jetons d'accès.
+ *
+ * Sécurité :
+ * - Protection contre l'énumération d'utilisateurs (même message d'erreur)
+ * - Protection contre les attaques de timing (toujours exécuter passwordEncoder.matches)
+ * - Rotation des refresh tokens lors du renouvellement
+ * - Nettoyage automatique des sessions expirées
+ *
+ * @property userRepository Repository des utilisateurs
+ * @property clientRepository Repository des clients
+ * @property userSessionRepository Repository des sessions utilisateur
+ * @property passwordEncoder Encodeur de mots de passe (BCrypt)
+ * @property jwtProvider Générateur et validateur de jetons JWT
+ * @property jwtProperties Propriétés de configuration JWT
+ * @property userService Service de gestion des utilisateurs
+ * @property clock Horloge pour la gestion du temps (injectable pour les tests)
+ */
 @Service
 class AuthService(
     private val userRepository: UserRepository,
@@ -48,6 +69,17 @@ class AuthService(
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
     private val secureRandom = SecureRandom()
 
+    /**
+     * Inscrit un nouvel utilisateur dans le système.
+     *
+     * Crée un utilisateur avec les informations fournies, encode le mot de passe
+     * et retourne les informations de l'utilisateur créé.
+     *
+     * @param request DTO contenant les informations d'inscription
+     * @return DTO de l'utilisateur créé
+     * @throws ResponseStatusException avec code 409 si l'utilisateur existe déjà
+     * @throws ResponseStatusException avec code 404 si le client n'existe pas
+     */
     @Transactional
     fun register(request: RegisterRequestDto): UserDto {
         (clientRepository as SoftDeleteRepositoryMethods<*, UUID>)
@@ -77,6 +109,23 @@ class AuthService(
         return userService.toDto(saved)
     }
 
+    /**
+     * Authentifie un utilisateur et génère un couple de jetons JWT.
+     *
+     * Vérifie les identifiants, l'état de l'utilisateur et génère un access token
+     * et un refresh token. Enregistre également une nouvelle session utilisateur.
+     *
+     * Sécurité :
+     * - Protection contre l'énumération d'utilisateurs (même message d'erreur)
+     * - Protection contre les attaques de timing (toujours exécuter passwordEncoder.matches)
+     * - Nettoyage automatique des sessions expirées avant création
+     *
+     * @param request DTO contenant l'email et le mot de passe
+     * @param ipAddress Adresse IP du client
+     * @param userAgent User-Agent du client
+     * @return DTO contenant les jetons et leurs dates d'expiration
+     * @throws ResponseStatusException avec code 401 si les identifiants sont incorrects
+     */
     @Transactional
     fun login(request: LoginRequestDto, ipAddress: String, userAgent: String): TokenPairResponseDto {
         val now = Instant.now(clock)
@@ -112,6 +161,19 @@ class AuthService(
         )
     }
 
+    /**
+     * Renouvelle un couple de jetons à partir d'un refresh token valide.
+     *
+     * Valide le refresh token, vérifie qu'il n'est pas révoqué ou expiré,
+     * puis génère un nouveau couple de jetons. L'ancien refresh token est révoqué
+     * et remplacé par le nouveau (rotation des tokens).
+     *
+     * @param request DTO contenant le refresh token
+     * @param ipAddress Adresse IP du client
+     * @param userAgent User-Agent du client
+     * @return DTO contenant les nouveaux jetons et leurs dates d'expiration
+     * @throws ResponseStatusException avec code 401 si le token est invalide, expiré ou révoqué
+     */
     @Transactional
     fun refreshToken(request: RefreshTokenRequestDto, ipAddress: String, userAgent: String): TokenPairResponseDto {
         val now = Instant.now(clock)
@@ -138,6 +200,14 @@ class AuthService(
         return tokenPair
     }
 
+    /**
+     * Déconnecte un utilisateur en révoquant ses refresh tokens.
+     *
+     * Révoque le refresh token fourni. Si `revokeAllSessions` est true,
+     * toutes les sessions actives de l'utilisateur sont révoquées.
+     *
+     * @param request DTO contenant le refresh token et l'option de révoquer toutes les sessions
+     */
     @Transactional
     fun logout(request: LogoutRequestDto) {
         val now = Instant.now(clock)
@@ -166,6 +236,14 @@ class AuthService(
         }
     }
 
+    /**
+     * Valide un jeton d'accès JWT.
+     *
+     * Vérifie la signature, l'expiration et la structure du jeton.
+     *
+     * @param token Le jeton JWT à valider
+     * @return DTO contenant le résultat de la validation et les informations du jeton si valide
+     */
     fun validateToken(token: String): ValidateTokenResponseDto {
         val validation = jwtProvider.validate(token)
         return if (validation.valid && validation.jwt != null) {

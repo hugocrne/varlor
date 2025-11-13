@@ -11,9 +11,46 @@ import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.Instant
 
+/**
+ * Service d'exécution d'indicateurs et d'expressions sur des datasets.
+ *
+ * Exécute une liste d'opérations sur un dataset. Chaque opération peut être :
+ * - Une fonction builtin (mean, median, variance, stddev, min, max, correlation, percentile)
+ * - Une expression EvalEx utilisant les colonnes du dataset
+ *
+ * Les opérations sont exécutées dans l'ordre et chaque résultat inclut :
+ * - L'expression ou l'alias utilisé
+ * - Le résultat (scalaire ou liste)
+ * - Le statut (SUCCESS ou ERROR)
+ * - Un message d'erreur si applicable
+ *
+ * Fonctions builtin supportées :
+ * - `mean(column)` : Moyenne
+ * - `median(column)` : Médiane
+ * - `variance(column)` : Variance
+ * - `stddev(column)` : Écart-type
+ * - `min(column)` / `max(column)` : Minimum/Maximum
+ * - `correlation(columnX, columnY)` : Corrélation de Pearson
+ * - `percentile(column, p)` : Percentile (p entre 0 et 100)
+ *
+ * Expressions EvalEx :
+ * - Supportent les opérations mathématiques standard
+ * - Peuvent référencer les colonnes du dataset par leur nom
+ * - Exemple : `(temperature + humidity) / 2`
+ *
+ * @see OperationDefinition
+ * @see OperationResult
+ */
 @Service
 class IndicatorEngineService {
 
+    /**
+     * Exécute une liste d'opérations sur un dataset.
+     *
+     * @param operations Liste des opérations à exécuter
+     * @param dataset Dataset sur lequel exécuter les opérations
+     * @return Liste des résultats d'exécution, dans le même ordre que les opérations
+     */
     fun execute(operations: List<OperationDefinition>, dataset: Dataset): List<OperationResult> {
         return operations.map { definition ->
             val timestamp = Instant.now()

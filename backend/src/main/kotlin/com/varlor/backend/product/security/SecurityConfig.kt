@@ -89,12 +89,13 @@ class SecurityConfig(
                         AntPathRequestMatcher("/actuator/health")
                     ).permitAll()
                     .apply {
-                        // Swagger UI uniquement si activé et en développement
+                        // Swagger UI accessible sans authentification pour permettre de tester les endpoints d'authentification
+                        // En production, désactiver via app.swagger.enabled=false si nécessaire
                         if (swaggerEnabled) {
                             requestMatchers(
                                 AntPathRequestMatcher("/swagger-ui/**"),
                                 AntPathRequestMatcher("/v3/api-docs/**")
-                            ).hasAnyRole("ADMIN", "OWNER")
+                            ).permitAll()
                         } else {
                             requestMatchers(
                                 AntPathRequestMatcher("/swagger-ui/**"),

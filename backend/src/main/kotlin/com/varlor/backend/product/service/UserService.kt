@@ -20,6 +20,23 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 
+/**
+ * Service de gestion des utilisateurs.
+ *
+ * Gère les opérations CRUD sur les utilisateurs, incluant la création,
+ * la mise à jour, la suppression logique et la conversion entre entités et DTOs.
+ *
+ * Fonctionnalités :
+ * - Normalisation des emails (lowercase, trim)
+ * - Encodage des mots de passe avant stockage
+ * - Validation de l'unicité des emails
+ * - Suppression logique avec mise à jour du statut
+ *
+ * @property userRepository Repository des utilisateurs
+ * @property clientRepository Repository des clients (pour validation)
+ * @property passwordEncoder Encodeur de mots de passe (BCrypt)
+ * @property clock Horloge pour la gestion du temps (injectable pour les tests)
+ */
 @Service
 class UserService(
     userRepository: UserRepository,
