@@ -31,8 +31,13 @@ data class ClientInfo(
  * ```
  */
 fun HttpServletRequest.extractClientInfo(): ClientInfo {
+    // Pour les tests MockMvc, vérifier d'abord l'attribut de requête
+    val ipAddress = this.getAttribute("jakarta.servlet.request.remote_addr") as? String
+        ?: this.remoteAddr
+        ?: "unknown"
+    
     return ClientInfo(
-        ipAddress = this.remoteAddr ?: "unknown",
+        ipAddress = ipAddress,
         userAgent = this.getHeader("User-Agent") ?: "unknown"
     )
 }
