@@ -57,10 +57,10 @@ export const Hero: React.FC = () => {
             data-hero-content
           >
             <h1 className={styles.heroTitle}>
-              Plateforme d&rsquo;analyse de données
+            Donnez du sens à vos données
             </h1>
             <p className={styles.heroSubtitle}>
-              Prétraitement intelligent et indicateurs personnalisés pour transformer vos données en insights actionnables.
+            Prétraitement intelligent, indicateurs personnalisés et analyses instantanées pour faire émerger ce qui compte vraiment.
             </p>
             <div className={styles.heroCTA}>
               <a

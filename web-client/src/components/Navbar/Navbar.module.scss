@@ -30,6 +30,10 @@
   position: relative;
   overflow: hidden;
   pointer-events: auto;
+  opacity: 0;
+  transform: translateY(-140%);
+  filter: blur(14px);
+  will-change: transform, opacity, filter;
   transition:
     background 220ms ease,
     border-color 220ms ease,
@@ -50,6 +54,34 @@
       transparent
     );
     pointer-events: none;
+  }
+}
+
+.visible {
+  opacity: 1;
+  animation: navbarEnter 2000ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes navbarEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-140%);
+    filter: blur(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visible {
+    animation: none;
+    opacity: 1;
+    transform: translateY(0);
+    filter: none;
   }
 }
 

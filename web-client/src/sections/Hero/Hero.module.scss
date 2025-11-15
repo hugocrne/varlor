@@ -90,11 +90,22 @@
   gap: 12px;
   width: 100%;
   margin-top: $spacing-hero-cta-top;
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
 
   @include tablet {
     flex-direction: row;
     width: auto;
   }
+}
+
+.heroContent.visible .heroCTA {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 500ms;
 }
 
 // ============================================
@@ -196,6 +207,14 @@
   &:active {
     background: rgba(255, 255, 255, 0.06);
     color: #ffffff !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroCTA {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

@@ -12,6 +12,7 @@ const navLinks = [
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,9 +27,23 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => setIsVisible(true));
+
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
   return (
     <header className={styles.wrapper}>
-      <div className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}>
+      <div
+        className={[
+          styles.navbar,
+          isScrolled ? styles.scrolled : '',
+          isVisible ? styles.visible : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
         <div className={styles.brand}>Varlor</div>
 
         <nav className={styles.nav} aria-label="Navigation principale">
