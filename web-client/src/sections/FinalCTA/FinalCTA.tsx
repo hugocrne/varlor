@@ -13,7 +13,7 @@ export const FinalCTA: React.FC = () => {
             Rejoignez Varlor dès aujourd&rsquo;hui et transformez vos données en insights
           </p>
           <Button variant="primary" as="a" href="#features">
-            Commencer gratuitement
+            Commencer
           </Button>
         </div>
       </Container>

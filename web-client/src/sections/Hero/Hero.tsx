@@ -68,7 +68,7 @@ export const Hero: React.FC = () => {
                 href="#features"
                 className={styles.buttonPrimary}
               >
-                Commencer gratuitement
+                Commencer
                 <svg
                   className={styles.buttonIcon}
                   viewBox="0 0 16 16"
