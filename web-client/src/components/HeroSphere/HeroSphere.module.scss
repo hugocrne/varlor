@@ -16,3 +16,23 @@
   }
 }
 
+.fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 60%);
+}
+
+.fallbackVisual {
+  width: min(420px, 80%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(76, 111, 255, 0.12));
+  opacity: 0.85;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    inset 0 0 40px rgba(255, 255, 255, 0.08);
+}
+

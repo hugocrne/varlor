@@ -6,9 +6,7 @@ import { HeroSphere } from '../../components/HeroSphere/HeroSphere';
 import styles from './Hero.module.scss';
 
 export const Hero: React.FC = () => {
-  // États
   const [scrollY, setScrollY] = useState(0);
-  const [isLoaded] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
 
   // Refs
@@ -41,7 +39,7 @@ export const Hero: React.FC = () => {
 
   // Calcul du parallax pour l'illustration
   const parallaxOffset = scrollY * 0.25;
-  const parallaxOpacity = Math.max(1, 1 - scrollY * 0.0008);
+  const parallaxOpacity = Math.max(0, Math.min(1, 1 - scrollY * 0.0008));
 
   return (
     <section className={styles.hero}>
