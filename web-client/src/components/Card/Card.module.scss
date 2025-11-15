@@ -1,0 +1,17 @@
+@use '../../styles/mixins.module.scss' as *;
+@use '../../styles/variables.module.scss' as *;
+
+.card {
+  @include card;
+}
+
+.title {
+  @include heading-small;
+  margin-bottom: $spacing-base;
+}
+
+.description {
+  @include body-text;
+  margin-bottom: $spacing-lg;
+}
+

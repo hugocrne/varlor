@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.scss";
-import { Navbar } from "@/components/Navbar/Navbar";
+import './globals.scss';
+import { Navbar } from '@/components/Navbar/Navbar';
 
 export const metadata: Metadata = {
   title: "Varlor - Plateforme d&rsquo;analyse de données",

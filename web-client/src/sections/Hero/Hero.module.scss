@@ -1,0 +1,262 @@
+@use 'sass:color';
+@use '../../styles/mixins.module.scss' as *;
+@use '../../styles/variables.module.scss' as *;
+
+// ============================================
+// HERO DARK THEME
+// ============================================
+
+.hero {
+  padding-top: $hero-padding-vertical-mobile;
+  padding-bottom: $hero-padding-vertical-mobile;
+  background: #0A0A0A;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  opacity: 1;
+
+  @include desktop {
+    padding-top: $hero-padding-vertical-desktop;
+    padding-bottom: $hero-padding-vertical-desktop;
+    min-height: 100vh;
+  }
+}
+
+.heroGrid {
+  @include grid-12;
+  align-items: center;
+  min-height: 80vh;
+  gap: $spacing-2xl;
+
+  @include desktop {
+    min-height: 85vh;
+    gap: $spacing-3xl;
+  }
+}
+
+.heroContent {
+  @include grid-col(12);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 500ms ease-out, transform 500ms ease-out;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @include desktop {
+    @include grid-col(6);
+  }
+}
+
+.heroTitle {
+  @include hero-title;
+  color: $color-text-primary;
+  margin-bottom: $spacing-hero-title-bottom;
+  max-width: 100%;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: $font-weight-bold;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, $color-text-primary 0%, rgba(230, 232, 234, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  @include hero-subtitle;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-hero-subtitle-bottom;
+  max-width: 90%;
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  line-height: 1.6;
+  font-weight: $font-weight-normal;
+
+  @include desktop {
+    max-width: 85%;
+  }
+}
+
+.heroCTA {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: $spacing-hero-cta-top;
+
+  @include tablet {
+    flex-direction: row;
+    width: auto;
+  }
+}
+
+// ============================================
+// BOUTONS PREMIUM MINIMALISTE - NOIR & BLANC
+// ============================================
+
+.buttonPrimary {
+  background: #ffffff;
+  color: #0a0a0a !important;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 24px;
+  height: 42px;
+  font-size: clamp(0.875rem, 0.9rem, 1rem);
+  font-weight: $font-weight-semibold;
+  letter-spacing: -0.01em;
+  box-shadow: none;
+  transition: all 220ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+
+  @include tablet {
+    padding: 10px 26px;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    color: #0a0a0a !important;
+  }
+
+  &:hover {
+    background: #e5e5e5;
+    color: #0a0a0a !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  }
+
+  &:active {
+    background: #d4d4d4;
+    color: #0a0a0a !important;
+  }
+
+  .buttonIcon {
+    transform: translateX(0) translateY(1px);
+    transition: transform 220ms ease;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+  }
+
+  &:hover .buttonIcon {
+    transform: translateX(3px) translateY(1px);
+  }
+}
+
+.buttonSecondary {
+  background: transparent;
+  color: #d4d4d4 !important;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  padding: 10px 24px;
+  height: 42px;
+  font-size: clamp(0.875rem, 0.9rem, 1rem);
+  font-weight: $font-weight-semibold;
+  letter-spacing: -0.01em;
+  transition: all 220ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+
+  @include tablet {
+    padding: 10px 26px;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    color: #d4d4d4 !important;
+  }
+
+  &:hover {
+    border-color: #555555;
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff !important;
+  }
+
+  &:active {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff !important;
+  }
+}
+
+.buttonIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 220ms ease;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+// ============================================
+// ILLUSTRATION DATA INTELLIGENCE
+// ============================================
+
+.heroVisual {
+  @include grid-col(12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 400px;
+  margin-top: $spacing-3xl;
+  z-index: 1;
+
+  @include desktop {
+    @include grid-col(6);
+    margin-top: 0;
+    min-height: 600px;
+  }
+}
+
+.abstractIllustration {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  height: 500px;
+  margin: 0 auto;
+  opacity: 1;
+  overflow: hidden;
+
+  @include tablet {
+    max-width: 700px;
+    height: 600px;
+  }
+}
+
+// ============================================
+// HERO SPHERE
+// ============================================
+
+.heroSphere {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+

@@ -1,0 +1,30 @@
+@use '../../styles/mixins.module.scss' as *;
+@use '../../styles/variables.module.scss' as *;
+
+.finalCTA {
+  @include section-padding;
+  background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary-light 100%);
+  color: $color-white;
+}
+
+.content {
+  @include flex-column;
+  align-items: center;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.title {
+  @include heading-medium;
+  color: $color-white;
+  margin-bottom: $spacing-base;
+}
+
+.subtitle {
+  @include body-text;
+  font-size: $font-size-lg;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: $spacing-2xl;
+}
+

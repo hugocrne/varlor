@@ -9,7 +9,7 @@ const nextConfig = {
   },
 
   // Configure trailing slash
-  trailingSlash: true,
+  // trailingSlash: true, // Temporairement désactivé pour debug
 
   // Environment variables
   env: {
@@ -19,14 +19,8 @@ const nextConfig = {
   // React strict mode
   reactStrictMode: true,
 
-  // SWC minification
-  swcMinify: true,
-
-  // Experimental features
-  experimental: {
-    // Enable server components external packages
-    serverComponentsExternalPackages: ['@prisma/client'],
-  },
+  // Server external packages (moved from experimental)
+  serverExternalPackages: ['@prisma/client'],
 
   // Webpack configuration
   webpack: (config, { isServer }) => {

@@ -1,0 +1,73 @@
+@use '../../styles/mixins.module.scss' as *;
+@use '../../styles/variables.module.scss' as *;
+
+.howItWorks {
+  @include section-padding;
+  background-color: $color-bg-secondary;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: $spacing-3xl;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.title {
+  @include heading-medium;
+  margin-bottom: $spacing-base;
+}
+
+.subtitle {
+  @include body-text;
+  font-size: $font-size-lg;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-2xl;
+  position: relative;
+
+  @include tablet {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-xl;
+  }
+
+  @include desktop {
+    gap: $spacing-2xl;
+  }
+}
+
+.step {
+  @include flex-column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.stepNumber {
+  width: 64px;
+  height: 64px;
+  @include flex-center;
+  background: linear-gradient(135deg, $color-primary-light 0%, $color-primary-dark 100%);
+  color: $color-white;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  border-radius: $border-radius-full;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-md;
+}
+
+.stepTitle {
+  @include heading-small;
+  margin-bottom: $spacing-base;
+  font-size: $font-size-lg;
+}
+
+.stepDescription {
+  @include body-text;
+  max-width: 300px;
+}
+
