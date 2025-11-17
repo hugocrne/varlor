@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { Container } from '../../components/Container/Container';
 import styles from './HowItWorks.module.scss';
 
@@ -22,11 +23,33 @@ const steps = [
   },
 ];
 
+const LiquidGlassNumber: React.FC<{ number: number; rotation: MotionValue<number> }> = ({ number, rotation }) => {
+  return (
+    <span className={styles.stepNumber}>
+      <motion.span
+        className={styles.liquidBorder}
+        style={{
+          rotate: rotation,
+        }}
+      />
+      <span className={styles.numberContent}>{number}</span>
+    </span>
+  );
+};
+
 export const HowItWorks: React.FC = () => {
   const [visibleSteps, setVisibleSteps] = useState<boolean[]>(
     steps.map(() => false)
   );
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start 0.8", "end 0.2"],
+  });
+
+  const rotation = useTransform(scrollYProgress, [0, 1], [0, 360]);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
@@ -72,7 +95,7 @@ export const HowItWorks: React.FC = () => {
   }, []);
 
   return (
-    <section id="how-it-works" className={styles.howItWorks}>
+    <section id="how-it-works" className={styles.howItWorks} ref={sectionRef}>
       <Container>
         <div className={styles.timeline}>
           <div className={styles.timelineHeader}>
@@ -96,7 +119,7 @@ export const HowItWorks: React.FC = () => {
                 }`}
               >
                 <div className={styles.stepMeta}>
-                  <span className={styles.stepNumber}>{index + 1}</span>
+                  <LiquidGlassNumber number={index + 1} rotation={rotation} />
                   <span className={styles.stepDash} aria-hidden="true" />
                 </div>
                 <div className={styles.stepContent}>

@@ -79,18 +79,77 @@
 }
 
 .stepNumber {
+  position: relative;
   margin-left: clamp(-24px, -3vw, -36px);
   width: clamp(36px, 4vw, 52px);
   height: clamp(36px, 4vw, 52px);
   flex: 0 0 auto;
   border-radius: 50%;
-  border: 1px solid rgba(229, 229, 229, 0.55);
   color: #e5e5e5;
   font-size: clamp(1rem, 0.95rem + 0.2vw, 1.2rem);
   font-weight: $font-weight-medium;
   display: grid;
   place-items: center;
-  background: rgba(229, 229, 229, 0.05);
+  isolation: isolate;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    padding: 1px;
+    background: rgba(229, 229, 229, 0.3);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(229, 229, 229, 0.05);
+    z-index: -1;
+  }
+}
+
+.liquidBorder {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 60deg,
+    rgba(255, 255, 255, 0.2) 120deg,
+    rgba(255, 255, 255, 0.8) 180deg,
+    rgba(255, 255, 255, 0.2) 240deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.numberContent {
+  position: relative;
+  z-index: 1;
 }
 
 .stepDash {
