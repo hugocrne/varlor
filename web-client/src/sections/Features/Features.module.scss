@@ -2,40 +2,101 @@
 @use '../../styles/variables.module.scss' as *;
 
 .features {
-  @include section-padding;
-  background-color: $color-bg-primary;
+  background: #0a0a0a;
+  padding: clamp(120px, 16vw, 160px) 0;
+  color: #e5e5e5;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(2.5rem, 4vw, 4.5rem);
 }
 
 .header {
-  text-align: center;
-  margin-bottom: $spacing-3xl;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 640px;
+}
+
+.label {
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(229, 229, 229, 0.6);
 }
 
 .title {
-  @include heading-medium;
-  margin-bottom: $spacing-base;
+  font-size: clamp(1.75rem, 1.3rem + 1vw, 2.25rem);
+  font-weight: $font-weight-semibold;
+  color: #e5e5e5;
+  text-wrap: balance;
 }
 
-.subtitle {
-  @include body-text;
-  font-size: $font-size-lg;
+.divider {
+  font-size: 1.125rem;
+  letter-spacing: 0.5rem;
+  color: rgba(229, 229, 229, 0.7);
 }
 
 .grid {
   display: grid;
+  width: 100%;
   grid-template-columns: 1fr;
-  gap: $spacing-xl;
+  gap: clamp(2.5rem, 6vw, 7.5rem);
+  justify-items: center;
 
   @include tablet {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   @include desktop {
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-2xl;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+}
+
+.iconWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(24px, 4vw, 32px);
+  height: clamp(24px, 4vw, 32px);
+  color: #e5e5e5;
+  margin-bottom: 0.5rem;
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+}
+
+.featureTitle {
+  font-size: clamp(1.375rem, 1.8vw, 1.625rem);
+  font-weight: $font-weight-semibold;
+  color: #e5e5e5;
+  letter-spacing: -0.01em;
+}
+
+.featureDescription {
+  font-size: clamp(1rem, 1.15vw, 1.0625rem);
+  color: #a7a7a7;
+  line-height: 1.55;
+  max-width: 340px;
+  margin: 0 auto;
 }
 

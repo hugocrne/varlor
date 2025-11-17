@@ -2,72 +2,131 @@
 @use '../../styles/variables.module.scss' as *;
 
 .howItWorks {
-  @include section-padding;
-  background-color: $color-bg-secondary;
+  padding-block: clamp(140px, 12vw, 180px);
+  background-color: $color-bg-primary;
 }
 
-.header {
+.timeline {
+  max-width: min(760px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+}
+
+.timelineHeader {
   text-align: center;
-  margin-bottom: $spacing-3xl;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: clamp(72px, 11vw, 108px);
+}
+
+.label {
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(229, 229, 229, 0.6);
+  margin-bottom: 16px;
 }
 
 .title {
-  @include heading-medium;
-  margin-bottom: $spacing-base;
-}
-
-.subtitle {
-  @include body-text;
-  font-size: $font-size-lg;
+  font-size: clamp(1.75rem, 1.3rem + 1vw, 2.25rem);
+  font-weight: $font-weight-semibold;
+  color: #e5e5e5;
+  text-wrap: balance;
 }
 
 .steps {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-2xl;
+  --timeline-column: clamp(52px, 5vw, 88px);
+  --timeline-offset: clamp(12px, 2vw, 28px);
+  --timeline-gap: clamp(20px, 4vw, 40px);
   position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(80px, 10vw, 120px);
+  padding-left: var(--timeline-offset);
+}
 
-  @include tablet {
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-xl;
-  }
-
-  @include desktop {
-    gap: $spacing-2xl;
-  }
+.verticalLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--timeline-offset) + (var(--timeline-column) / 2) - 0.5px);
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
 }
 
 .step {
-  @include flex-column;
-  align-items: center;
-  text-align: center;
+  display: grid;
+  grid-template-columns: var(--timeline-column) 1fr;
+  column-gap: var(--timeline-gap);
   position: relative;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+
+.stepVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stepMeta {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.5vw, 24px);
 }
 
 .stepNumber {
-  width: 64px;
-  height: 64px;
-  @include flex-center;
-  background: linear-gradient(135deg, $color-primary-light 0%, $color-primary-dark 100%);
-  color: $color-white;
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  border-radius: $border-radius-full;
-  margin-bottom: $spacing-lg;
-  box-shadow: $shadow-md;
+  margin-left: clamp(-24px, -3vw, -36px);
+  width: clamp(36px, 4vw, 52px);
+  height: clamp(36px, 4vw, 52px);
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1px solid rgba(229, 229, 229, 0.55);
+  color: #e5e5e5;
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.2rem);
+  font-weight: $font-weight-medium;
+  display: grid;
+  place-items: center;
+  background: rgba(229, 229, 229, 0.05);
+}
+
+.stepDash {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(229, 229, 229, 0.4),
+    rgba(229, 229, 229, 0)
+  );
+  min-width: clamp(40px, 6vw, 90px);
+}
+
+.stepContent {
+  color: #e5e5e5;
 }
 
 .stepTitle {
-  @include heading-small;
-  margin-bottom: $spacing-base;
-  font-size: $font-size-lg;
+  font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem);
+  font-weight: $font-weight-semibold;
+  color: #e5e5e5;
+  margin-bottom: 12px;
 }
 
 .stepDescription {
-  @include body-text;
-  max-width: 300px;
+  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
+  color: #a7a7a7;
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none;
+  }
 }
 
