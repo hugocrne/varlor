@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { motion, Variants } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, Variants, useScroll, useTransform } from 'framer-motion';
 import { Container } from '../../components/Container/Container';
 import styles from './Features.module.scss';
 
@@ -92,6 +92,46 @@ const featureVariants: Variants = {
   }),
 };
 
+const AnimatedBorder: React.FC = () => {
+  const borderRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: borderRef,
+    offset: ["start 0.8", "end 0.3"]
+  });
+
+  const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
+  return (
+    <div ref={borderRef} className={styles.borderWrapper}>
+      <svg
+        className={styles.borderSvg}
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <motion.rect
+          x="1"
+          y="1"
+          width="98"
+          height="98"
+          rx="8"
+          ry="8"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          vectorEffect="non-scaling-stroke"
+          style={{
+            pathLength,
+            opacity,
+          }}
+        />
+      </svg>
+    </div>
+  );
+};
+
 export const Features: React.FC = () => {
   return (
     <motion.section
@@ -124,13 +164,16 @@ export const Features: React.FC = () => {
                   custom={index}
                   variants={featureVariants}
                 >
-                  <span className={styles.iconWrapper}>
-                    <Icon className={styles.icon} />
-                  </span>
-                  <h3 className={styles.featureTitle}>{feature.title}</h3>
-                  <p className={styles.featureDescription}>
-                    {feature.description}
-                  </p>
+                  <AnimatedBorder />
+                  <div className={styles.featureContent}>
+                    <span className={styles.iconWrapper}>
+                      <Icon className={styles.icon} />
+                    </span>
+                    <h3 className={styles.featureTitle}>{feature.title}</h3>
+                    <p className={styles.featureDescription}>
+                      {feature.description}
+                    </p>
+                  </div>
                 </motion.div>
               );
             })}
