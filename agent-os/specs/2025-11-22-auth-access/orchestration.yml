@@ -1,0 +1,29 @@
+task_groups:
+  - name: Backend Project Initialization
+    claude_code_subagent: implementer
+  - name: Database Setup & Schema
+    claude_code_subagent: implementer
+  - name: Frontend Foundation & Design System
+    claude_code_subagent: implementer
+  - name: Users Module & Service Layer
+    claude_code_subagent: implementer
+  - name: Token Management Service
+    claude_code_subagent: implementer
+  - name: Authentication Module & Guards
+    claude_code_subagent: implementer
+  - name: Admin Seeding Script
+    claude_code_subagent: implementer
+  - name: API Client & State Management Setup
+    claude_code_subagent: implementer
+  - name: Authentication UI Components
+    claude_code_subagent: implementer
+  - name: Login Page & Protected Routes
+    claude_code_subagent: implementer
+  - name: Comprehensive Testing & Gap Analysis
+    claude_code_subagent: implementer
+  - name: Security Audit & Error Handling
+    claude_code_subagent: implementer
+  - name: Documentation & Developer Experience
+    claude_code_subagent: implementer
+  - name: Performance Optimization & Polish
+    claude_code_subagent: implementer
