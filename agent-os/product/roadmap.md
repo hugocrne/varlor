@@ -33,20 +33,20 @@
   - [x] Detected columns with assumed type: text, number, date
 
 #### C. Simple Automatic Cleaning
-- [ ] For each column:
-  - [ ] Detection of missing values
-  - [ ] Detection of values non-conforming to type (e.g., text in a date column)
-  - [ ] Row duplicate count
+- [x] For each column:
+  - [x] Detection of missing values
+  - [x] Detection of values non-conforming to type (e.g., text in a date column)
+  - [x] Row duplicate count
 
-- [ ] Simple automatic corrections:
-  - [ ] Whitespace trimming
-  - [ ] Basic date normalization (DD/MM/YYYY ↔ YYYY-MM-DD if possible)
-  - [ ] Number conversion attempt (e.g., `1,23` → `1.23`)
+- [x] Simple automatic corrections:
+  - [x] Whitespace trimming
+  - [x] Basic date normalization (DD/MM/YYYY ↔ YYYY-MM-DD if possible)
+  - [x] Number conversion attempt (e.g., `1,23` → `1.23`)
 
-- [ ] User sees:
-  - [ ] Quality summary (e.g., "Column X: 5% missing values, 3% invalid values")
-  - [ ] What was automatically corrected
-  - [ ] List of uncorrected issues
+- [x] User sees:
+  - [x] Quality summary (e.g., "Column X: 5% missing values, 3% invalid values")
+  - [x] What was automatically corrected
+  - [x] List of uncorrected issues
 
 #### D. Algorithmic Analysis (MVP level)
 - [ ] Basic statistics per column:
