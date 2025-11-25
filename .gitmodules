@@ -1,6 +1,6 @@
 [submodule "server"]
 	path = server
-	url = https://github.com/hugocrne/varlor-server.git
+	url = git@github.com:hugocrne/varlor-server.git
 [submodule "client/web"]
 	path = client/web
-	url = https://github.com/hugocrne/varlor-client-web.git
+	url = git@github.com:hugocrne/varlor-client-web.git
