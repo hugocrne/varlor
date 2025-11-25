@@ -25,12 +25,12 @@
 - [x] No advanced multi-tenant yet → 1 environment = 1 client (or multiple clients managed "manually")
 
 #### B. Data Import (files only)
-- [ ] "Import Dataset" page:
-  - [ ] CSV or Excel file upload
-  - [ ] Reasonable max size (e.g., a few hundred thousand rows initially)
-- [ ] After upload, user sees:
-  - [ ] Preview of first rows
-  - [ ] Detected columns with assumed type: text, number, date
+- [x] "Import Dataset" page:
+  - [x] CSV or Excel file upload
+  - [x] Reasonable max size (e.g., a few hundred thousand rows initially)
+- [x] After upload, user sees:
+  - [x] Preview of first rows
+  - [x] Detected columns with assumed type: text, number, date
 
 #### C. Simple Automatic Cleaning
 - [ ] For each column:
