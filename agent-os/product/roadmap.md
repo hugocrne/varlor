@@ -18,11 +18,11 @@
 ### 1.1. User-Facing Features
 
 #### A. Auth + Access
-- [ ] Login page with:
-  - [ ] Email + password
-  - [ ] Basic session management (login / logout)
-- [ ] Admin account creation page (manual at first, not public)
-- [ ] No advanced multi-tenant yet → 1 environment = 1 client (or multiple clients managed "manually")
+- [x] Login page with:
+  - [x] Email + password
+  - [x] Basic session management (login / logout)
+- [x] Admin account creation page (manual at first, not public)
+- [x] No advanced multi-tenant yet → 1 environment = 1 client (or multiple clients managed "manually")
 
 #### B. Data Import (files only)
 - [ ] "Import Dataset" page:
