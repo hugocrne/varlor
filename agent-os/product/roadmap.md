@@ -49,26 +49,26 @@
   - [x] List of uncorrected issues
 
 #### D. Algorithmic Analysis (MVP level)
-- [ ] Basic statistics per column:
-  - [ ] Min, max, mean, median, standard deviation
-  - [ ] Distribution (histogram)
-  - [ ] Top N most frequent values
+- [x] Basic statistics per column:
+  - [x] Min, max, mean, median, standard deviation
+  - [x] Distribution (histogram)
+  - [x] Top N most frequent values
 
-- [ ] Simple outlier detection:
-  - [ ] On numeric columns
-  - [ ] Via simple rule (e.g., ±3 standard deviations)
+- [x] Simple outlier detection:
+  - [x] On numeric columns
+  - [x] Via simple rule (e.g., ±3 standard deviations)
 
-- [ ] Auto-generated charts:
-  - [ ] Histogram per numeric column
-  - [ ] Bar chart for categories
-  - [ ] Basic time curve if a date column is detected
+- [x] Auto-generated charts:
+  - [x] Histogram per numeric column
+  - [x] Bar chart for categories
+  - [x] Basic time curve if a date column is detected
 
 #### E. AI Analysis (MVP level)
-- [ ] Auto-generated text such as:
-  - [ ] "The most complete columns are..."
-  - [ ] "The columns with the most missing values are..."
-  - [ ] "The distribution of X is highly asymmetric..."
-  - [ ] "Column Y contains several extreme values, including..."
+- [x] Auto-generated text such as:
+  - [x] "The most complete columns are..."
+  - [x] "The columns with the most missing values are..."
+  - [x] "The distribution of X is highly asymmetric..."
+  - [x] "Column Y contains several extreme values, including..."
 
 👉 Here AI only **interprets** what algorithms output (no magic, just clear text).
 

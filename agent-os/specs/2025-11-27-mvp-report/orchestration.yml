@@ -1,0 +1,11 @@
+task_groups:
+  - name: Backend - Report Data Aggregation Service
+    claude_code_subagent: implementer
+  - name: Backend - PDF Generation Service & API
+    claude_code_subagent: implementer
+  - name: Frontend - API Client & Hooks
+    claude_code_subagent: implementer
+  - name: Frontend - UI Components
+    claude_code_subagent: implementer
+  - name: Integration & Polish
+    claude_code_subagent: implementer
