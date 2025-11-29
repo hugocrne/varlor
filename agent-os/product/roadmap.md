@@ -73,29 +73,29 @@
 👉 Here AI only **interprets** what algorithms output (no magic, just clear text).
 
 #### F. MVP Report
-- [ ] "Report" page + simple PDF export with:
-  - [ ] Dataset summary
-  - [ ] Quality synthesis
-  - [ ] Key charts
-  - [ ] Generated explanatory text
+- [x] "Report" page + simple PDF export with:
+  - [x] Dataset summary
+  - [x] Quality synthesis
+  - [x] Key charts
+  - [x] Generated explanatory text
 
 ---
 
 ### 1.2. Backend / Data Infrastructure
 
-- [ ] Simple pipeline:
-  1. [ ] Uploaded file → stored in internal storage
-  2. [ ] Parsing → schema detection
-  3. [ ] "Raw" storage + dataset version
-  4. [ ] Launch job for:
-     - [ ] Profiling
-     - [ ] Basic cleaning
-     - [ ] Stats calculation
-     - [ ] "Dataset summary" object generation
+- [x] Simple pipeline:
+  1. [x] Uploaded file → stored in internal storage
+  2. [x] Parsing → schema detection
+  3. [x] "Raw" storage + dataset version
+  4. [x] Launch job for:
+     - [x] Profiling
+     - [x] Basic cleaning
+     - [x] Stats calculation
+     - [x] "Dataset summary" object generation
 
-- [ ] No ontology at this stage
-- [ ] No API/DB connectors yet
-- [ ] No user-configurable analysis axes (everything is automatic)
+- [x] No ontology at this stage
+- [x] No API/DB connectors yet
+- [x] No user-configurable analysis axes (everything is automatic)
 
 ---
 
