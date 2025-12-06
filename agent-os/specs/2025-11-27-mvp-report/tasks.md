@@ -215,7 +215,7 @@ This group creates all UI components for the Report tab following the existing c
 This group integrates the Report tab into the dataset detail page and handles final polish.
 
 - [x] 5.0 Complete integration and final polish
-  - [ ] 5.1 Write 4-6 focused integration tests
+  - [x] 5.1 Write 4-6 focused integration tests
     - Test Report tab appears when analysis is completed
     - Test full flow: preview -> download -> receive PDF
     - Test tab navigation between Preview/Quality/Analysis/Report
@@ -240,7 +240,7 @@ This group integrates the Report tab into the dataset detail page and handles fi
     - Error messages in French with recovery options
     - Download triggers browser save dialog
     - Report preview matches PDF output closely
-  - [ ] 5.6 Ensure integration tests pass
+  - [x] 5.6 Ensure integration tests pass
     - Run full feature tests
     - Verify end-to-end workflow
 

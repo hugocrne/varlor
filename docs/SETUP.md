@@ -1,736 +1,434 @@
-# Varlor Developer Setup Guide
+# Developer Setup Guide
 
-## Welcome!
-
-This guide will help you set up your local development environment for Varlor. Follow these steps in order for a smooth onboarding experience.
-
----
+This guide helps developers set up Varlor for local development and contribution.
 
 ## Prerequisites
 
 ### Required Software
 
-Before you begin, ensure you have the following installed:
+- **Node.js** 18.x or higher
+- **npm** 9.x or higher
+- **PostgreSQL** 14.x or higher
+- **Redis** 6.x or higher
+- **Git**
 
-| Software | Version | Installation |
-|----------|---------|--------------|
-| **Node.js** | 18.x or higher | [nodejs.org](https://nodejs.org/) |
-| **npm** | 9.x or higher | Comes with Node.js |
-| **PostgreSQL** | 14.x or higher | [postgresql.org](https://www.postgresql.org/download/) |
-| **Git** | Latest | [git-scm.com](https://git-scm.com/) |
+### Optional but Recommended
 
-**Verify installations:**
-
-```bash
-node --version   # Should be v18.x or higher
-npm --version    # Should be 9.x or higher
-psql --version   # Should be 14.x or higher
-git --version    # Should be recent
-```
-
-### Recommended Software
-
-| Tool | Purpose | Installation |
-|------|---------|--------------|
-| **VS Code** | Code editor | [code.visualstudio.com](https://code.visualstudio.com/) |
-| **Postman** | API testing | [postman.com](https://www.postman.com/) |
-| **pgAdmin** or **TablePlus** | Database management | [pgadmin.org](https://www.pgadmin.org/), [tableplus.com](https://tableplus.com/) |
+- **Docker** & Docker Compose (for containerized development)
+- **PostgreSQL Client** (pgAdmin, DBeaver, or similar)
+- **Redis Desktop Manager**
+- **VS Code** with recommended extensions
 
 ---
 
-## Step 1: Clone the Repository
+## Quick Start
+
+### 1. Clone the Repository
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/varlor.git
+git clone https://github.com/varlor/varlor.git
 cd varlor
-
-# Verify directory structure
-ls -la
-# You should see: client/, server/, docs/, README.md, etc.
 ```
 
----
-
-## Step 2: PostgreSQL Setup
-
-### macOS (using Homebrew)
-
-```bash
-# Install PostgreSQL
-brew install postgresql@14
-
-# Start PostgreSQL service
-brew services start postgresql@14
-
-# Verify it's running
-psql postgres -c "SELECT version();"
-```
-
-### Ubuntu/Debian Linux
-
-```bash
-# Install PostgreSQL
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-
-# Start PostgreSQL service
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-
-# Verify it's running
-sudo systemctl status postgresql
-```
-
-### Windows
-
-1. Download installer from [postgresql.org](https://www.postgresql.org/download/windows/)
-2. Run installer and follow wizard
-3. Set password for `postgres` user
-4. Verify installation in Services (should be running)
-
-### Create Development Database
-
-```bash
-# Connect to PostgreSQL
-psql -U postgres  # or: psql -U <your-username>
-
-# Create user
-CREATE USER varlor_dev WITH PASSWORD 'varlor_dev_password';
-
-# Create database
-CREATE DATABASE varlor OWNER varlor_dev;
-
-# Grant privileges
-GRANT ALL PRIVILEGES ON DATABASE varlor TO varlor_dev;
-
-# Create test database (for running tests)
-CREATE DATABASE varlor_test OWNER varlor_dev;
-GRANT ALL PRIVILEGES ON DATABASE varlor_test TO varlor_dev;
-
-# Exit psql
-\q
-```
-
-**Test connection:**
-```bash
-psql -U varlor_dev -d varlor -h localhost
-# Should connect successfully
-# Type \q to exit
-```
-
----
-
-## Step 3: Backend Setup
-
-### Install Dependencies
+### 2. Setup Backend
 
 ```bash
 cd server
+
+# Install dependencies
 npm install
-```
 
-**If you encounter permission errors:**
-```bash
-sudo npm install -g npm@latest  # Update npm globally
-npm cache clean --force          # Clear npm cache
-rm -rf node_modules package-lock.json
-npm install
-```
-
-### Configure Environment
-
-```bash
-# Copy example environment file
+# Copy environment file
 cp .env.example .env
 
-# Edit .env file
-nano .env  # or use your preferred editor
+# Edit .env with your configuration
 ```
 
-**Update these critical values in `.env`:**
-
-```env
-# Application
-PORT=3001
-HOST=localhost
-NODE_ENV=development
-
-# Generate APP_KEY
-# Run: node ace generate:key
-APP_KEY=<paste-generated-key-here>
-
-# Database (match PostgreSQL setup from Step 2)
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_USER=varlor_dev
-DB_PASSWORD=varlor_dev_password
-DB_DATABASE=varlor
-
-# CORS (frontend URL)
-CORS_ORIGIN=http://localhost:3000
-
-# Generate ACCESS_TOKEN_SECRET
-# Run: node ace generate:key
-ACCESS_TOKEN_SECRET=<paste-generated-key-here>
-
-# Authentication
-ACCESS_TOKEN_EXPIRES_IN=15m
-REFRESH_TOKEN_EXPIRES_IN=7d
-
-# Admin account for seeding
-ADMIN_EMAIL=admin@varlor.local
-ADMIN_PASSWORD=AdminPassword123!
-```
-
-**Generate secrets:**
+### 3. Setup Database
 
 ```bash
-# Generate APP_KEY
-node ace generate:key
-# Copy the output and paste into .env as APP_KEY
+# Create PostgreSQL database
+createdb varlor_dev
 
-# Generate ACCESS_TOKEN_SECRET
-node ace generate:key
-# Copy the output and paste into .env as ACCESS_TOKEN_SECRET
-```
+# Run migrations
+npm run migrate
 
-### Run Database Migrations
-
-```bash
-# Run migrations to create tables
-node ace migration:run
-
-# Verify migrations succeeded
-node ace migration:status
-# Should show all migrations as "completed"
-```
-
-### Seed Admin Account
-
-```bash
-# Create initial admin user
+# Seed admin user
 npm run seed:admin
-
-# You should see:
-# [ success ] Admin user created successfully!
-# [ info ]  Email: admin@varlor.local
 ```
 
-### Start Development Server
+### 4. Setup Frontend
 
 ```bash
-# Start backend
+cd ../client/web
+
+# Install dependencies
+npm install
+
+# Copy environment file
+cp .env.example .env.local
+```
+
+### 5. Start Development Servers
+
+```bash
+# Terminal 1: Backend
+cd server
 npm run dev
 
-# You should see:
-# [ info ] Server started on http://localhost:3001
+# Terminal 2: Frontend
+cd client/web
+npm run dev
 ```
 
-**Keep this terminal open and running.**
-
-### Test Backend API
-
-Open a new terminal and test the API:
-
-```bash
-# Test health endpoint (when implemented)
-curl http://localhost:3001/
-
-# Test login endpoint
-curl -X POST http://localhost:3001/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "admin@varlor.local",
-    "password": "AdminPassword123!"
-  }'
-
-# Should return user data and access token
-```
+Visit http://localhost:3000 to access the application.
 
 ---
 
-## Step 4: Frontend Setup
+## Detailed Setup
 
-### Install Dependencies
+### Backend Configuration
 
-Open a new terminal (keep backend running):
+#### Environment Variables
 
-```bash
-cd client/web
-npm install
+Edit `server/.env`:
+
+```env
+# Application
+NODE_ENV=development
+PORT=3001
+HOST=localhost
+
+# Database
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_DATABASE=varlor_dev
+
+# Redis (optional for dev)
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+# CORS
+CORS_ORIGIN=http://localhost:3000
+
+# Auth
+ACCESS_TOKEN_SECRET=your_secret_key_here
+REFRESH_TOKEN_SECRET=your_refresh_secret_here
+
+# Admin (for seeding)
+ADMIN_EMAIL=admin@varlor.com
+ADMIN_PASSWORD=YourSecurePassword123!
 ```
 
-### Configure Environment
+#### Generate Keys
 
 ```bash
-# Copy example environment file
-cp .env.example .env.local
+# Generate APP_KEY
+node ace generate:key
 
-# Edit .env.local
-nano .env.local
+# Generate token secrets
+node ace generate:key  # Use for ACCESS_TOKEN_SECRET
+node ace generate:key  # Use for REFRESH_TOKEN_SECRET
 ```
 
-**Default values should work (no changes needed for local dev):**
+#### Database Setup
+
+1. **Create Database User (PostgreSQL):**
+
+```sql
+-- Connect to PostgreSQL
+psql -U postgres
+
+-- Create user
+CREATE USER varlor_dev WITH PASSWORD 'your_password';
+
+-- Create database
+CREATE DATABASE varlor_dev OWNER varlor_dev;
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE varlor_dev TO varlor_dev;
+```
+
+2. **Run Migrations:**
+
+```bash
+cd server
+node ace migration:run
+
+# Check status
+node ace migration:status
+```
+
+3. **Seed Data:**
+
+```bash
+# Create admin user
+npm run seed:admin
+
+# Add sample data (optional)
+npm run seed:samples
+```
+
+### Frontend Configuration
+
+#### Environment Variables
+
+Edit `client/web/.env.local`:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### Start Development Server
+#### Install Dependencies
 
 ```bash
-npm run dev
+cd client/web
 
-# You should see:
-# ▲ Next.js 16.x.x
-# - Local: http://localhost:3000
+# Install all dependencies
+npm install
+
+# Install specific types if needed
+npm install --save-dev @types/node
 ```
-
-**Keep this terminal open and running.**
-
-### Test Frontend
-
-1. Open browser: http://localhost:3000
-2. You should be redirected to http://localhost:3000/login
-3. Login with:
-   - Email: `admin@varlor.local`
-   - Password: `AdminPassword123!`
-4. You should be redirected to http://localhost:3000/dashboard
-5. Dashboard should display with your email
 
 ---
 
-## Step 5: VS Code Setup (Recommended)
+## Development Workflow
 
-### Install Extensions
+### 1. Code Organization
 
-Open VS Code and install these extensions:
+```
+varlor/
+├── server/                 # Backend application
+│   ├── app/
+│   │   ├── controllers/    # Route handlers
+│   │   ├── models/         # Database models
+│   │   ├── services/       # Business logic
+│   │   ├── validators/     # Input validation
+│   │   └── middleware/     # Custom middleware
+│   ├── config/             # App configuration
+│   ├── database/           # Migrations and seeds
+│   └── tests/              # Backend tests
+├── client/web/             # Frontend application
+│   ├── app/                # Next.js app router
+│   ├── components/         # React components
+│   ├── lib/                # Utilities and API
+│   ├── types/              # TypeScript types
+│   └── tests/              # Frontend tests
+└── docs/                   # Documentation
+```
 
-**Essential:**
-- **ESLint** (dbaeumer.vscode-eslint)
-- **Prettier** (esbenp.prettier-vscode)
-- **TypeScript** (built-in, ensure it's enabled)
-- **Tailwind CSS IntelliSense** (bradlc.vscode-tailwindcss)
+### 2. Making Changes
 
-**Recommended:**
-- **AdonisJS** (jripouteau.adonis-vscode-extension)
-- **GitLens** (eamodio.gitlens)
-- **Error Lens** (usernamehw.errorlens)
-- **Auto Rename Tag** (formulahendry.auto-rename-tag)
-- **Path Intellisense** (christian-kohler.path-intellisense)
-- **Better Comments** (aaron-bond.better-comments)
+#### Backend Changes
 
-### Configure VS Code Settings
+1. **Create a new route:**
 
-Create `.vscode/settings.json` in project root:
+```typescript
+// server/routes.ts
+Route.get('/example', 'ExampleController.index')
+```
 
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "tailwindCSS.experimental.classRegex": [
-    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-  ],
-  "files.exclude": {
-    "**/.git": true,
-    "**/.next": true,
-    "**/build": true,
-    "**/node_modules": true
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+2. **Create a controller:**
+
+```bash
+node ace make:controller ExampleController
+```
+
+3. **Create a model:**
+
+```bash
+node ace make:model Example -m
+```
+
+4. **Create migration:**
+
+```bash
+node ace make:migration create_examples_table
+```
+
+#### Frontend Changes
+
+1. **Create a new page:**
+
+```typescript
+// app/dashboard/new-page/page.tsx
+export default function NewPage() {
+  return <div>New Page Content</div>
 }
 ```
 
-### Workspace Recommended Extensions
+2. **Create a component:**
 
-Create `.vscode/extensions.json`:
+```typescript
+// components/ui/NewComponent.tsx
+interface NewComponentProps {
+  // props definition
+}
+
+export function NewComponent(props: NewComponentProps) {
+  // component logic
+}
+```
+
+3. **API Integration:**
+
+```typescript
+// lib/api/new-endpoint.ts
+export async function getNewData() {
+  const response = await fetch('/api/new-endpoint')
+  return response.json()
+}
+```
+
+### 3. Running Tests
+
+#### Backend Tests
+
+```bash
+cd server
+
+# Run all tests
+npm test
+
+# Run specific test suite
+npm run test:unit
+npm run test:functional
+
+# Run with coverage
+npm run test:coverage
+```
+
+#### Frontend Tests
+
+```bash
+cd client/web
+
+# Run unit tests
+npm test
+
+# Run E2E tests
+npm run test:e2e
+
+# Run with coverage
+npm run test:coverage
+```
+
+### 4. Code Quality
+
+#### Linting
+
+```bash
+# Backend
+cd server
+npm run lint
+npm run lint:fix
+
+# Frontend
+cd client/web
+npm run lint
+npm run lint:fix
+```
+
+#### Formatting
+
+```bash
+# Backend
+cd server
+npm run format
+
+# Frontend
+cd client/web
+npm run format
+```
+
+#### Type Checking
+
+```bash
+# Frontend only
+cd client/web
+npm run type-check
+```
+
+---
+
+## Useful Commands
+
+### Backend
+
+```bash
+# Development
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm start            # Start production server
+
+# Database
+npm run migrate      # Run migrations
+npm run migrate:rollback  # Rollback migrations
+npm run seed         # Run seeds
+npm run seed:admin   # Create admin user
+
+# Testing
+npm test             # Run tests
+npm run test:watch   # Watch mode
+npm run test:coverage  # Coverage report
+
+# Utilities
+node ace --list      # List all ace commands
+```
+
+### Frontend
+
+```bash
+# Development
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run start        # Start production server
+
+# Testing
+npm test             # Run tests
+npm run test:watch   # Watch mode
+npm run test:e2e     # E2E tests
+npm run test:coverage  # Coverage report
+
+# Linting/Formatting
+npm run lint         # ESLint
+npm run lint:fix     # Fix linting issues
+npm run format       # Prettier
+npm run type-check   # TypeScript check
+```
+
+---
+
+## VS Code Extensions
+
+Recommended extensions for development:
 
 ```json
 {
   "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
     "bradlc.vscode-tailwindcss",
-    "jripouteau.adonis-vscode-extension",
-    "eamodio.gitlens",
-    "usernamehw.errorlens"
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-json",
+    "adonisjs.vscode-adonisjs",
+    "ms-vscode.vscode-postgresql",
+    "cweijan.vscode-redis-client"
   ]
 }
 ```
 
 ---
 
-## Step 6: Run Tests
+## Debugging
 
-### Backend Tests
+### Backend Debugging
 
-```bash
-cd server
-
-# Run all tests
-npm test
-
-# Run specific test suites
-node ace test unit
-node ace test functional
-
-# Run with coverage
-npm test -- --coverage
-```
-
-**You should see all tests passing:**
-```
-✓ Backend initialization tests (3)
-✓ Database model tests (4)
-✓ Users service tests (6)
-✓ Token service tests (7)
-✓ Auth service tests (7)
-... (total 69 tests)
-
-Tests: 69 passed (69 total)
-```
-
-### Frontend Tests
-
-```bash
-cd client/web
-
-# Run all tests
-npm test
-
-# Run in watch mode
-npm test -- --watch
-
-# Run with coverage
-npm test -- --coverage
-```
-
----
-
-## Git Workflow
-
-### Branch Naming Convention
-
-```
-feature/<feature-name>     # New features
-fix/<bug-description>      # Bug fixes
-docs/<doc-update>          # Documentation updates
-refactor/<refactor-name>   # Code refactoring
-test/<test-addition>       # Test additions
-```
-
-**Examples:**
-- `feature/user-profile-page`
-- `fix/login-validation-error`
-- `docs/api-endpoint-documentation`
-
-### Commit Message Convention
-
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-<type>: <description>
-
-[optional body]
-
-[optional footer]
-```
-
-**Types:**
-- `feat:` New feature
-- `fix:` Bug fix
-- `docs:` Documentation changes
-- `style:` Code style changes (formatting, etc.)
-- `refactor:` Code refactoring
-- `test:` Test additions/modifications
-- `chore:` Build process or tooling changes
-
-**Examples:**
-```bash
-git commit -m "feat: add password reset functionality"
-git commit -m "fix: resolve login redirect loop on mobile"
-git commit -m "docs: update API endpoint documentation"
-git commit -m "test: add unit tests for auth service"
-```
-
-### Workflow
-
-```bash
-# 1. Create feature branch
-git checkout -b feature/my-new-feature
-
-# 2. Make changes and commit
-git add .
-git commit -m "feat: add new feature"
-
-# 3. Push to remote
-git push origin feature/my-new-feature
-
-# 4. Create Pull Request on GitHub
-# - Describe changes
-# - Link related issues
-# - Request review
-
-# 5. After PR approval, merge to main
-# (Usually done via GitHub UI)
-
-# 6. Delete feature branch
-git branch -d feature/my-new-feature
-git push origin --delete feature/my-new-feature
-```
-
----
-
-## Code Style and Linting
-
-### Backend (AdonisJS)
-
-**Linting:**
-```bash
-cd server
-npm run lint        # Check for issues
-npm run lint:fix    # Auto-fix issues
-```
-
-**Formatting:**
-```bash
-npm run format      # Format all files with Prettier
-```
-
-**Type Checking:**
-```bash
-npm run typecheck   # Check TypeScript types
-```
-
-### Frontend (Next.js)
-
-**Linting:**
-```bash
-cd client/web
-npm run lint        # Check for issues
-npm run lint:fix    # Auto-fix issues
-```
-
-**Type Checking:**
-```bash
-npx tsc --noEmit    # Check TypeScript types
-```
-
-### Pre-commit Hooks (Future)
-
-We plan to add Husky for automatic linting before commits:
-
-```bash
-# Will be added in future
-npm install -D husky lint-staged
-```
-
----
-
-## Common Issues and Troubleshooting
-
-### Issue: Port Already in Use
-
-**Error:**
-```
-Error: listen EADDRINUSE: address already in use :::3001
-```
-
-**Solution:**
-```bash
-# Find process using port 3001
-lsof -i :3001  # macOS/Linux
-netstat -ano | findstr :3001  # Windows
-
-# Kill process
-kill -9 <PID>  # macOS/Linux
-taskkill /PID <PID> /F  # Windows
-
-# Or use different port
-# Edit server/.env: PORT=3002
-```
-
----
-
-### Issue: Database Connection Failed
-
-**Error:**
-```
-Error: connect ECONNREFUSED 127.0.0.1:5432
-```
-
-**Solution:**
-```bash
-# Check PostgreSQL is running
-psql -U postgres  # Should connect
-
-# If not running:
-# macOS
-brew services start postgresql@14
-
-# Linux
-sudo systemctl start postgresql
-
-# Windows
-# Start PostgreSQL service in Services app
-
-# Verify .env has correct credentials
-cat server/.env | grep DB_
-```
-
----
-
-### Issue: Migration Failed
-
-**Error:**
-```
-Migration failed: relation already exists
-```
-
-**Solution:**
-```bash
-# Check migration status
-node ace migration:status
-
-# Rollback and re-run
-node ace migration:rollback
-node ace migration:run
-
-# If completely stuck, reset database
-node ace migration:reset  # WARNING: Deletes all data!
-node ace migration:run
-```
-
----
-
-### Issue: Module Not Found
-
-**Error:**
-```
-Cannot find module '@/components/ui/button'
-```
-
-**Solution:**
-```bash
-# Reinstall dependencies
-rm -rf node_modules package-lock.json
-npm install
-
-# Restart TypeScript server in VS Code
-# Command Palette (Cmd+Shift+P) → "TypeScript: Restart TS Server"
-
-# Restart Next.js dev server
-# Ctrl+C to stop, then npm run dev
-```
-
----
-
-### Issue: ESLint/Prettier Conflicts
-
-**Error:**
-```
-Unexpected error running Prettier: Cannot find module 'prettier'
-```
-
-**Solution:**
-```bash
-# Install Prettier
-npm install -D prettier
-
-# Verify ESLint and Prettier configs
-cat .eslintrc.json
-cat .prettierrc
-
-# Format all files
-npm run format
-```
-
----
-
-## Development Best Practices
-
-### 1. Always Run Tests Before Committing
-
-```bash
-# Backend
-cd server && npm test
-
-# Frontend
-cd client/web && npm test
-```
-
-### 2. Keep Dependencies Updated
-
-```bash
-# Check for outdated packages
-npm outdated
-
-# Update packages (be careful with major versions)
-npm update
-
-# Update specific package
-npm install package-name@latest
-```
-
-### 3. Use TypeScript Strictly
-
-- Never use `any` type
-- Enable strict mode in `tsconfig.json`
-- Define interfaces for all data structures
-
-### 4. Write Meaningful Commit Messages
-
-**Good:**
-```
-feat: add user profile editing functionality
-
-- Added ProfileEditForm component
-- Implemented PATCH /users/:id endpoint
-- Added validation for profile fields
-```
-
-**Bad:**
-```
-updates
-fixed stuff
-WIP
-```
-
-### 5. Comment Complex Logic
-
-```typescript
-/**
- * Rate limiting logic: tracks failed login attempts per user account.
- * After 5 failed attempts, account is locked for 15 minutes.
- *
- * @param userId - User ID to check
- * @returns true if account is locked, false otherwise
- */
-async function isAccountLocked(userId: number): Promise<boolean> {
-  // Implementation
-}
-```
-
----
-
-## IDE Configuration
-
-### Debugging in VS Code
+1. **Using VS Code:**
 
 Create `.vscode/launch.json`:
 
@@ -739,156 +437,176 @@ Create `.vscode/launch.json`:
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Backend: Debug",
+      "name": "Debug AdonisJS",
       "type": "node",
       "request": "launch",
-      "cwd": "${workspaceFolder}/server",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "program": "${workspaceFolder}/server/bin/server.js",
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
-    },
-    {
-      "name": "Frontend: Debug",
-      "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/client/web",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
+      "restart": true,
+      "runtimeExecutable": "npm"
     }
   ]
 }
 ```
 
-### Tasks for VS Code
+2. **Using Node Inspector:**
 
-Create `.vscode/tasks.json`:
+```bash
+cd server
+node --inspect bin/server.js
+```
 
-```json
-{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Backend: Dev",
-      "type": "shell",
-      "command": "npm run dev",
-      "options": {
-        "cwd": "${workspaceFolder}/server"
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Frontend: Dev",
-      "type": "shell",
-      "command": "npm run dev",
-      "options": {
-        "cwd": "${workspaceFolder}/client/web"
-      },
-      "isBackground": true,
-      "problemMatcher": []
-    },
-    {
-      "label": "Run All Dev Servers",
-      "dependsOn": ["Backend: Dev", "Frontend: Dev"],
-      "problemMatcher": []
-    }
-  ]
-}
+### Frontend Debugging
+
+1. **React DevTools:** Install browser extension
+2. **Network Tab:** Monitor API calls
+3. **Console:** Check for errors
+4. **Redux DevTools:** If using Redux (not in MVP)
+
+---
+
+## Common Issues
+
+### 1. Database Connection Errors
+
+```bash
+# Check PostgreSQL is running
+pg_isready
+
+# Check connection
+psql -h localhost -U varlor_dev -d varlor_dev
+```
+
+### 2. Permission Errors
+
+```bash
+# Fix npm permissions
+sudo chown -R $(whoami) ~/.npm
+
+# Fix node_modules permissions
+sudo chown -R $(whoami) node_modules
+```
+
+### 3. Port Already in Use
+
+```bash
+# Find process using port 3001
+lsof -i :3001
+
+# Kill process
+kill -9 <PID>
+```
+
+### 4. Migration Issues
+
+```bash
+# Reset migrations (dev only)
+node ace migration:refresh
+
+# Check migration status
+node ace migration:status
 ```
 
 ---
 
-## Next Steps
+## Contributing
 
-Now that your environment is set up:
+### 1. Branching
 
-1. **Explore the codebase:**
-   - Read the architecture documentation
-   - Review existing components
-   - Understand the patterns
+```bash
+# Create feature branch
+git checkout -b feature/new-feature
 
-2. **Pick up a task:**
-   - Check the project board
-   - Find a "good first issue"
-   - Ask questions in team chat
+# Commit changes
+git add .
+git commit -m "feat: add new feature"
 
-3. **Make your first contribution:**
-   - Create a feature branch
-   - Implement the change
-   - Write tests
-   - Submit a PR
+# Push branch
+git push origin feature/new-feature
+```
 
-4. **Learn more:**
-   - [API Documentation](../server/docs/API.md)
-   - [Database Schema](../server/docs/DATABASE.md)
-   - [Frontend Architecture](../client/web/docs/ARCHITECTURE.md)
-   - [Deployment Guide](./DEPLOYMENT.md)
+### 2. Commit Convention
+
+Use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat: New feature
+fix: Bug fix
+docs: Documentation changes
+style: Code style changes
+refactor: Code refactoring
+test: Adding or updating tests
+chore: Maintenance changes
+```
+
+### 3. Pull Request Process
+
+1. Ensure all tests pass
+2. Update documentation if needed
+3. Submit PR with clear description
+4. Request code review
+5. Address feedback
+6. Merge after approval
+
+---
+
+## Performance Tips
+
+### Development
+
+1. **Hot Reload:** Both frontend and backend support hot reload
+2. **Database Indexes:** Add indexes for slow queries
+3. **Caching:** Use Redis for caching API responses
+4. **Lazy Loading:** Implement for large datasets
+
+### Before Production
+
+1. **Bundle Analysis:** Check frontend bundle size
+2. **Database Optimization:** Add missing indexes
+3. **Environment Variables:** Review all settings
+4. **Security Check:** Run security audit
+
+```bash
+# Frontend bundle analysis
+cd client/web
+npm run build
+npm run analyze
+
+# Security audit
+npm audit
+```
 
 ---
 
 ## Getting Help
 
-### Internal Resources
+### Resources
 
-- **Documentation:** Check `/docs` and `/server/docs` directories
-- **Code Comments:** Complex logic is documented inline
-- **Tests:** See `/server/tests` and `/client/web/__tests__` for examples
+1. **Documentation:** `/docs` folder
+2. **AdonisJS Docs:** https://docs.adonisjs.com
+3. **Next.js Docs:** https://nextjs.org/docs
+4. **React Docs:** https://react.dev
 
-### External Resources
+### Troubleshooting
 
-- **AdonisJS:** https://docs.adonisjs.com/
-- **Next.js:** https://nextjs.org/docs
-- **React:** https://react.dev/
-- **TypeScript:** https://www.typescriptlang.org/docs/
-- **Tailwind CSS:** https://tailwindcss.com/docs
-- **PostgreSQL:** https://www.postgresql.org/docs/
-
-### Team Communication
-
-- **Slack/Discord:** (Add your team chat link)
-- **GitHub Discussions:** For longer-form discussions
-- **GitHub Issues:** For bug reports and feature requests
+1. **Check logs:** `server/logs/` and browser console
+2. **Search issues:** GitHub issues
+3. **Ask for help:** Team chat or email
+4. **Debug step-by-step:** Use debugger
 
 ---
 
-## Checklist
+## Next Steps
 
-Use this checklist to verify your setup:
+After setup:
 
-- [ ] Node.js 18+ installed and verified
-- [ ] PostgreSQL 14+ installed and running
-- [ ] Git configured with your name and email
-- [ ] Repository cloned
-- [ ] PostgreSQL databases created (`varlor` and `varlor_test`)
-- [ ] Backend dependencies installed
-- [ ] Backend `.env` configured with generated secrets
-- [ ] Database migrations run successfully
-- [ ] Admin account seeded
-- [ ] Backend server starts on port 3001
-- [ ] Frontend dependencies installed
-- [ ] Frontend `.env.local` configured
-- [ ] Frontend server starts on port 3000
-- [ ] Can login with admin credentials
-- [ ] VS Code extensions installed
-- [ ] All tests passing (backend and frontend)
-- [ ] Linting works without errors
-- [ ] TypeScript compilation successful
+1. **Explore the codebase:** Read through the code
+2. **Make small changes:** Fix a bug or add a feature
+3. **Write tests:** Ensure code quality
+4. **Contribute:** Submit your first PR
+5. **Learn more:** Study the architecture
 
-**If all checkboxes are ticked, you're ready to develop!**
-
----
-
-## Welcome to the Team!
-
-You're all set up and ready to contribute to Varlor. Remember:
-
-- Ask questions when you're stuck
-- Write tests for your code
-- Keep commits small and focused
-- Review others' code thoughtfully
-- Have fun building amazing features!
-
-Happy coding!
+Happy coding! 🚀
